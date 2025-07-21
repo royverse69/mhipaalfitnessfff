@@ -3,163 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calverse - Your AI Nutrition Companion</title>
+    <title>Calverse - Nutrition & Fitness</title>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         /* Custom Styles */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #111827; /* bg-gray-900 */
-            color: #d1d5db; /* text-gray-300 */
+            color: #F9FAFB; /* text-gray-50 */
         }
-        .sidebar-icon {
-            transition: all 0.2s ease-in-out;
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1F2937; }
+        ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
+
+        /* Sidebar active link */
+        .sidebar-link.active {
+            background-color: #FBBF24; /* bg-yellow-400 */
+            color: #111827;
         }
-        .sidebar-icon:hover, .sidebar-icon.active {
-            background-color: #facc15; /* yellow-400 */
-            color: #111827; /* bg-gray-900 */
-        }
-        .fab-halo {
-            box-shadow: 0 0 20px 5px rgba(250, 204, 21, 0.5);
-        }
-        .nutrition-label {
-            border: 2px solid #4b5563; /* gray-600 */
-            background-color: #1f2937; /* gray-800 */
-            color: white;
-        }
-        .nutrition-label h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            letter-spacing: -0.05em;
-            margin-bottom: 0.25rem;
-        }
-        .nutrition-label .line {
-            border-top: 10px solid #4b5563; /* gray-600 */
-        }
-        .nutrition-label .line.thin {
-            border-top-width: 5px;
-        }
-        .nutrition-label .line.medium {
-            border-top-width: 2px;
-        }
+        .sidebar-link.active i { color: #111827; }
+
+        /* Hide sections by default */
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        
+        /* FAB halo effect */
+        .fab-halo { box-shadow: 0 0 20px 5px rgba(251, 191, 36, 0.5); }
+
+        /* Nutrition Label Styles */
+        .nutrition-label { font-family: 'Inter', sans-serif; }
+        .nutrition-label .header { font-size: 2.2rem; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 2px; }
+        .nutrition-label .line { border-top: 10px solid #374151; }
+        .nutrition-label .line.thin { border-top-width: 1px; }
+        .nutrition-label .line.medium { border-top-width: 5px; }
+        .nutrition-label .item { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 2px; }
+        .nutrition-label .item .name { font-weight: 700; }
+        .nutrition-label .item .dv { font-weight: 700; text-align: right; }
+        .nutrition-label .item .sub-item { margin-left: 1.5rem; }
+
+        /* Accordion animation */
         .accordion-content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
         }
-        .accordion-button[aria-expanded="true"] + .accordion-content {
-            max-height: 1000px; /* Adjust as needed */
-        }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #facc15;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
-<body class="flex h-screen">
+<body class="flex h-screen overflow-hidden">
 
-    <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="bg-gray-800 text-gray-300 w-16 md:w-20 flex flex-col items-center space-y-6 py-6">
-        <a href="#" class="text-2xl font-bold text-yellow-400">C</a>
-        <nav class="flex flex-col items-center space-y-4 flex-grow">
-            <a href="#home" class="sidebar-icon p-3 rounded-lg" data-section="home" title="Home"><i class="fas fa-home"></i></a>
-            <a href="#nutrition" class="sidebar-icon p-3 rounded-lg active" data-section="nutrition" title="Nutrition"><i class="fas fa-utensils"></i></a>
-            <a href="#meal" class="sidebar-icon p-3 rounded-lg" data-section="meal" title="Know Your Meal"><i class="fas fa-plate-wheat"></i></a>
-            <a href="#recipe" class="sidebar-icon p-3 rounded-lg" data-section="recipe" title="Recipe Suggestion"><i class="fas fa-lightbulb"></i></a>
-            <a href="#calculators" class="sidebar-icon p-3 rounded-lg" data-section="calculators" title="Calculators"><i class="fas fa-calculator"></i></a>
-        </nav>
-        <div class="flex flex-col items-center space-y-4">
-            <a href="#settings" class="sidebar-icon p-3 rounded-lg" data-section="settings" title="Settings"><i class="fas fa-cog"></i></a>
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-50">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl text-center max-w-sm mx-auto">
+            <i class="fas fa-leaf text-yellow-400 text-5xl mb-4"></i>
+            <h1 class="text-3xl font-bold mb-2">Welcome to Calverse</h1>
+            <p class="text-gray-400 mb-6">Your AI-powered nutrition and fitness companion.</p>
+            <button id="google-login-btn" class="w-full bg-yellow-400 text-gray-900 font-bold py-3 px-4 rounded-lg flex items-center justify-center space-x-2 hover:bg-yellow-500 transition-all duration-300">
+                <i class="fab fa-google"></i>
+                <span>Sign in with Google</span>
+            </button>
         </div>
-    </aside>
+    </div>
 
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col overflow-hidden">
-        <!-- Header -->
-        <header class="bg-gray-800/50 backdrop-blur-sm sticky top-0 z-10 flex items-center justify-between p-4 border-b border-gray-700">
-            <h1 id="page-title" class="text-xl font-bold text-white">Nutrition</h1>
-            <div id="auth-container" class="relative">
-                <!-- Auth content will be injected here -->
+    <!-- Main App Structure (hidden until login) -->
+    <div id="app-container" class="flex h-full w-full hidden">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="bg-gray-800 text-gray-200 w-20 lg:w-64 flex-shrink-0 flex flex-col items-center lg:items-start p-4 space-y-6 transition-all duration-300">
+            <div class="flex items-center justify-center lg:justify-start w-full mb-8">
+                <i class="fas fa-leaf text-yellow-400 text-3xl"></i>
+                <span class="hidden lg:inline text-2xl font-bold ml-3">Calverse</span>
             </div>
-        </header>
+            <nav class="flex flex-col space-y-4 w-full">
+                <a href="#" data-section="nutrition" class="sidebar-link active flex items-center justify-center lg:justify-start p-3 rounded-lg hover:bg-gray-700">
+                    <i class="fas fa-utensils w-6 text-center text-xl"></i><span class="hidden lg:inline ml-4 font-semibold">Food</span>
+                </a>
+                <a href="#" data-section="meal" class="sidebar-link flex items-center justify-center lg:justify-start p-3 rounded-lg hover:bg-gray-700">
+                    <i class="fas fa-plate-wheat w-6 text-center text-xl"></i><span class="hidden lg:inline ml-4 font-semibold">Know Your Meal</span>
+                </a>
+                <a href="#" data-section="recipe" class="sidebar-link flex items-center justify-center lg:justify-start p-3 rounded-lg hover:bg-gray-700">
+                    <i class="fas fa-lightbulb w-6 text-center text-xl"></i><span class="hidden lg:inline ml-4 font-semibold">Recipe Ideas</span>
+                </a>
+                <a href="#" data-section="calculators" class="sidebar-link flex items-center justify-center lg:justify-start p-3 rounded-lg hover:bg-gray-700">
+                    <i class="fas fa-calculator w-6 text-center text-xl"></i><span class="hidden lg:inline ml-4 font-semibold">Calculators</span>
+                </a>
+                <a href="#" data-section="settings" class="sidebar-link flex items-center justify-center lg:justify-start p-3 rounded-lg hover:bg-gray-700">
+                    <i class="fas fa-cog w-6 text-center text-xl"></i><span class="hidden lg:inline ml-4 font-semibold">Settings</span>
+                </a>
+            </nav>
+        </aside>
 
-        <!-- App Sections -->
-        <main id="app-content" class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-gray-900">
-            <!-- Content will be injected here -->
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+            <!-- Header -->
+            <header class="sticky top-0 bg-gray-900 bg-opacity-80 backdrop-blur-md z-30 flex items-center justify-between p-4 border-b border-gray-700">
+                <h1 id="page-title" class="text-xl font-bold">Food</h1>
+                <div class="relative">
+                    <button id="profile-button" class="flex items-center space-x-2">
+                        <img id="user-avatar" src="https://placehold.co/40x40/FBBF24/111827?text=U" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-yellow-400">
+                    </button>
+                    <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-40">
+                        <a href="#" id="logout-button" class="block w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Logout</a>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div id="content-area" class="flex-1 p-4 sm:p-6 lg:p-8">
+                <!-- Nutrition Section -->
+                <section id="nutrition-section" class="content-section active">
+                    <div class="max-w-3xl mx-auto">
+                        <h2 class="text-2xl font-bold mb-4">Nutrition Analysis</h2>
+                        <div class="relative mb-4">
+                            <input type="text" id="nutrition-search" placeholder="e.g., '100g soya chunks' or '2 medium eggs'" class="w-full bg-gray-800 border-2 border-gray-700 rounded-lg py-3 px-4 focus:outline-none focus:border-yellow-400 transition-colors">
+                            <button id="analyze-nutrition-btn" class="absolute right-3 top-1/2 -translate-y-1/2 bg-yellow-400 text-gray-900 px-4 py-1.5 rounded-md font-semibold hover:bg-yellow-500 transition-colors">Analyze</button>
+                        </div>
+                        <div id="nutrition-label-container" class="bg-gray-800 border-4 border-gray-600 p-4 rounded-lg max-w-sm mx-auto mt-8"></div>
+                    </div>
+                </section>
+
+                <!-- Know Your Meal Section -->
+                <section id="meal-section" class="content-section">
+                    <h2 class="text-2xl font-bold mb-4">Know Your Meal</h2>
+                    <!-- ... content ... -->
+                </section>
+
+                <!-- Recipe Suggestion Section -->
+                <section id="recipe-section" class="content-section">
+                    <h2 class="text-2xl font-bold mb-4">Recipe Suggestions</h2>
+                    <!-- ... content ... -->
+                </section>
+
+                <!-- Calculators Section -->
+                <section id="calculators-section" class="content-section">
+                    <h2 class="text-2xl font-bold mb-4">Health Calculators</h2>
+                    <div class="max-w-2xl mx-auto space-y-2" id="calculator-accordion"></div>
+                </section>
+
+                <!-- Settings/Profile Section -->
+                <section id="settings-section" class="content-section">
+                    <h2 class="text-2xl font-bold mb-4">Profile & Settings</h2>
+                    <div class="bg-gray-800 p-6 rounded-lg max-w-md mx-auto">
+                        <p class="text-gray-400">User ID:</p>
+                        <p id="user-id-display" class="font-mono text-yellow-400 mb-4"></p>
+                        <p class="text-gray-400">Display Name:</p>
+                        <p id="user-name-display" class="text-lg font-semibold mb-4"></p>
+                        <p class="text-gray-400">Email:</p>
+                        <p id="user-email-display" class="text-lg font-semibold"></p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Footer -->
+            <footer class="sticky bottom-0 bg-gray-900 p-3 text-center text-gray-400 text-sm border-t border-gray-700 z-20">
+                Made with <i class="fas fa-heart text-red-500"></i> by Ashutosh Roy
+            </footer>
         </main>
-        
-        <!-- Footer -->
-        <footer id="footer" class="bg-gray-900 text-center p-4 text-gray-500 text-sm hidden">
-            Made with <span class="text-red-500">&hearts;</span> by Ashutosh Roy
-        </footer>
 
         <!-- FAB -->
-        <button id="fab" class="hidden fixed bottom-20 right-6 bg-yellow-400 text-gray-900 w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-lg fab-halo">
+        <button id="fab" class="hidden fixed bottom-20 right-8 bg-yellow-400 text-gray-900 w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-lg fab-halo hover:bg-yellow-500 transition-all duration-300 z-20">
             <i class="fas fa-plus"></i>
         </button>
     </div>
 
-    <!-- Login Modal -->
-    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-800 p-8 rounded-lg text-center shadow-xl">
-            <h2 class="text-2xl font-bold mb-2 text-white">Welcome to Calverse</h2>
-            <p class="text-gray-400 mb-6">Sign in to track your nutrition and health.</p>
-            <button id="login-with-google" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center w-full">
-                <i class="fab fa-google mr-2"></i> Sign in with Google
-            </button>
-        </div>
-    </div>
-    
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="loader"></div>
-    </div>
-
     <!-- Firebase and App Logic -->
     <script type="module">
+        // Firebase Imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, 
-            onAuthStateChanged, 
-            GoogleAuthProvider, 
-            signInWithPopup, 
-            signOut,
-            updateProfile,
-            updatePassword,
-            reauthenticateWithCredential,
-            EmailAuthProvider
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            setDoc, 
-            getDoc,
-            enableIndexedDbPersistence 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- 1. CONFIGURATION ---
+        // --- CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyCu5RfnRhT9refiyybPcW_IBt_7l5cgt2I",
             authDomain: "calverse-e3cdb.firebaseapp.com",
             projectId: "calverse-e3cdb",
-            storageBucket: "calverse-e3cdb.firebasestorage.app",
+            storageBucket: "calverse-e3cdb.appspot.com",
             messagingSenderId: "284415302963",
             appId: "1:284415302963:web:936ad62e589bad6fc9b246"
         };
-        
-        const geminiApiKeys = [
+
+        const GEMINI_API_KEYS = [
             "AIzaSyCiPL-DcZN82CxH6OmYv9Ll4yM3WiVjxXY",
             "AIzaSyAvU63lMyAjbSJfcTBuBnkZQ0DPoBpm6Ho",
             "AIzaSyAIJZmqyztvwoThqI7iu2-xzQr71aJaKEU",
@@ -167,653 +203,278 @@
         ];
         let currentApiKeyIndex = 0;
 
-        // --- 2. FIREBASE INITIALIZATION ---
+        // --- INITIALIZATION ---
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        enableIndexedDbPersistence(db).catch((err) => {
-            if (err.code == 'failed-precondition') {
-                console.warn("Multiple tabs open, persistence can only be enabled in one tab at a time.");
-            } else if (err.code == 'unimplemented') {
-                console.warn("The current browser does not support all of the features required to enable persistence.");
-            }
-        });
+        enableIndexedDbPersistence(db).catch(err => console.error("Firebase persistence error: ", err));
 
-        // --- 3. GLOBAL STATE & UI ELEMENTS ---
-        let currentUser = null;
-        let userId = null;
-
+        // --- DOM ELEMENTS ---
         const loginModal = document.getElementById('login-modal');
-        const loginButton = document.getElementById('login-with-google');
-        const authContainer = document.getElementById('auth-container');
-        const appContent = document.getElementById('app-content');
+        const appContainer = document.getElementById('app-container');
+        const googleLoginBtn = document.getElementById('google-login-btn');
+        const logoutButton = document.getElementById('logout-button');
+        const profileButton = document.getElementById('profile-button');
+        const profileDropdown = document.getElementById('profile-dropdown');
+        const userAvatar = document.getElementById('user-avatar');
         const pageTitle = document.getElementById('page-title');
-        const sidebarLinks = document.querySelectorAll('.sidebar-icon');
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const contentSections = document.querySelectorAll('.content-section');
         const fab = document.getElementById('fab');
-        const footer = document.getElementById('footer');
-        const loadingOverlay = document.getElementById('loading-overlay');
+        const nutritionSearchInput = document.getElementById('nutrition-search');
+        const analyzeNutritionBtn = document.getElementById('analyze-nutrition-btn');
+        const nutritionLabelContainer = document.getElementById('nutrition-label-container');
+        const calculatorAccordionContainer = document.getElementById('calculator-accordion');
 
-        // --- 4. GEMINI API HANDLER ---
-        async function callGemini(prompt) {
-            loadingOverlay.classList.remove('hidden');
-            let success = false;
-            let data = null;
-
-            for (let i = 0; i < geminiApiKeys.length; i++) {
-                const apiKey = geminiApiKeys[currentApiKeyIndex];
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
-                
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: prompt }] }],
-                            generationConfig: {
-                                responseMimeType: "application/json",
-                            }
-                        })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`API call failed with status: ${response.status}`);
-                    }
-                    
-                    const result = await response.json();
-                    const text = result.candidates[0].content.parts[0].text;
-                    data = JSON.parse(text.replace(/```json|```/g, '').trim());
-                    success = true;
-                    break; // Exit loop on success
-
-                } catch (error) {
-                    console.error(`Error with API key index ${currentApiKeyIndex}:`, error);
-                    currentApiKeyIndex = (currentApiKeyIndex + 1) % geminiApiKeys.length; // Rotate key
-                }
-            }
-
-            loadingOverlay.classList.add('hidden');
-            if (!success) {
-                alert('Failed to get nutrition data after trying all available keys. Please try again later.');
-                return null;
-            }
-            return data;
-        }
-
-        // --- 5. AUTHENTICATION ---
+        // --- AUTHENTICATION LOGIC ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                currentUser = user;
-                const displayName = user.displayName || 'User';
-                const prefix = displayName.substring(0, 3).toLowerCase();
-                const randomPart = Math.random().toString(36).substring(2, 7);
-                userId = `${prefix}${randomPart}`;
-
-                const userRef = doc(db, "users", user.uid);
-                const userDoc = await getDoc(userRef);
-
-                if (!userDoc.exists()) {
-                    await setDoc(userRef, {
-                        uid: user.uid,
-                        displayName: user.displayName,
-                        email: user.email,
-                        photoURL: user.photoURL,
-                        customUserId: userId,
-                        createdAt: new Date(),
-                        recentActivity: []
-                    });
-                } else {
-                    userId = userDoc.data().customUserId || userId;
-                }
-
+                // User is signed in
                 loginModal.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                await setupUser(user);
                 updateUIForUser(user);
-                navigateTo(window.location.hash || '#nutrition');
+                initApp();
             } else {
-                currentUser = null;
-                userId = null;
+                // User is signed out
                 loginModal.classList.remove('hidden');
-                authContainer.innerHTML = '';
+                appContainer.classList.add('hidden');
             }
         });
 
-        loginButton.addEventListener('click', () => {
+        googleLoginBtn.addEventListener('click', async () => {
             const provider = new GoogleAuthProvider();
-            signInWithPopup(auth, provider).catch(error => {
-                console.error("Google Sign-In Error:", error);
-                alert("Could not sign in with Google. Please try again.");
-            });
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Authentication error:", error);
+                alert("Could not sign in. Please try again.");
+            }
         });
 
-        function handleLogout() {
-            signOut(auth).then(() => {
-                window.location.hash = '';
-                window.location.reload();
-            }).catch(error => {
-                console.error("Logout Error:", error);
-            });
-        }
-
-        // --- 6. UI RENDERING & ROUTING ---
-        function updateUIForUser(user) {
-            authContainer.innerHTML = `
-                <div class="relative">
-                    <button id="profile-button" class="w-10 h-10 rounded-full overflow-hidden border-2 border-yellow-400">
-                        <img src="${user.photoURL || 'https://placehold.co/40x40/1f2937/facc15?text=U'}" alt="User Avatar" class="w-full h-full object-cover">
-                    </button>
-                    <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-gray-700 rounded-md shadow-lg py-1 z-20">
-                        <a href="#settings" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600" data-section="settings">Edit Profile</a>
-                        <button id="logout-button" class="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-600">Logout</button>
-                    </div>
-                </div>
-            `;
-            document.getElementById('profile-button').addEventListener('click', () => {
-                document.getElementById('profile-dropdown').classList.toggle('hidden');
-            });
-            document.getElementById('logout-button').addEventListener('click', handleLogout);
-            document.querySelectorAll('#profile-dropdown a').forEach(link => {
-                link.addEventListener('click', () => {
-                    document.getElementById('profile-dropdown').classList.add('hidden');
-                })
-            });
-        }
-
-        function navigateTo(hash) {
-            const section = hash.substring(1) || 'home';
-            renderSection(section);
-            updateActiveSidebar(section);
-        }
-
-        function updateActiveSidebar(activeSection) {
-            sidebarLinks.forEach(link => {
-                if (link.dataset.section === activeSection) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
-            pageTitle.textContent = document.querySelector(`a[data-section="${activeSection}"]`).title;
-
-            if (activeSection === 'settings') {
-                fab.classList.remove('hidden');
-                footer.classList.remove('hidden');
-            } else {
-                fab.classList.add('hidden');
-                footer.classList.add('hidden');
-            }
-        }
-
-        window.addEventListener('hashchange', () => navigateTo(window.location.hash));
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                navigateTo(link.getAttribute('href'));
-            });
+        logoutButton.addEventListener('click', () => {
+            signOut(auth);
         });
         
-        function renderSection(section) {
-            appContent.innerHTML = ''; // Clear previous content
-            switch (section) {
-                case 'nutrition':
-                    renderNutritionSection();
-                    break;
-                case 'meal':
-                    renderMealSection();
-                    break;
-                case 'recipe':
-                    renderRecipeSection();
-                    break;
-                case 'calculators':
-                    renderCalculatorsSection();
-                    break;
-                case 'settings':
-                    renderSettingsSection();
-                    break;
-                case 'home':
-                default:
-                    renderHomeSection();
-                    break;
-            }
-        }
-
-        // --- 7. SECTION RENDERERS ---
-        
-        function renderHomeSection() {
-            appContent.innerHTML = `
-                <div class="text-center">
-                    <h2 class="text-3xl font-bold text-white mb-4">Welcome to Calverse, ${currentUser?.displayName || 'User'}!</h2>
-                    <p class="text-lg text-gray-400">Your AI-powered nutrition and health companion.</p>
-                    <p class="mt-4 text-gray-500">Select an option from the sidebar to get started.</p>
-                </div>
-            `;
-        }
-        
-        function renderNutritionSection() {
-            appContent.innerHTML = `
-                <div class="max-w-3xl mx-auto">
-                    <div class="bg-gray-800 p-4 rounded-lg shadow-md">
-                        <h2 class="text-2xl font-bold text-white mb-4">Analyze Food Nutrition</h2>
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <input type="text" id="nutrition-input" class="flex-grow bg-gray-700 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="e.g., '100g soya chunks' or '1 large apple'">
-                            <button id="analyze-nutrition-btn" class="bg-yellow-400 text-gray-900 font-bold px-6 py-2 rounded-md hover:bg-yellow-500 transition">Analyze</button>
-                        </div>
-                         <div id="nutrition-suggestions" class="mt-3 flex flex-wrap gap-2">
-                            <button class="bg-gray-700 text-sm text-gray-300 px-3 py-1 rounded-full hover:bg-gray-600">1 glass milk</button>
-                            <button class="bg-gray-700 text-sm text-gray-300 px-3 py-1 rounded-full hover:bg-gray-600">2 boiled eggs</button>
-                            <button class="bg-gray-700 text-sm text-gray-300 px-3 py-1 rounded-full hover:bg-gray-600">100g chicken breast</button>
-                        </div>
-                    </div>
-                    <div id="nutrition-result" class="mt-6"></div>
-                </div>
-            `;
-            
-            document.getElementById('analyze-nutrition-btn').addEventListener('click', handleNutritionAnalysis);
-            document.querySelectorAll('#nutrition-suggestions button').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.getElementById('nutrition-input').value = btn.textContent;
-                    handleNutritionAnalysis();
-                });
-            });
-        }
-
-        async function handleNutritionAnalysis() {
-            const query = document.getElementById('nutrition-input').value.trim();
-            if (!query) {
-                alert('Please enter a food item.');
-                return;
-            }
-
-            const prompt = `
-                Analyze the nutrition for "${query}". Return a JSON object in the FDA Nutrition Facts label format.
-                The JSON object must have these exact keys: "servingSize", "calories", "nutrients".
-                "nutrients" should be an array of objects, each with "name", "amount", "dv" (Daily Value as a percentage number), and optional "isBold" (boolean).
-                Include major nutrients like Total Fat, Saturated Fat, Trans Fat, Cholesterol, Sodium, Total Carbohydrate, Dietary Fiber, Total Sugars, Added Sugars, and Protein.
-                Also include at least 4 key micronutrients like Vitamin D, Calcium, Iron, and Potassium.
-                Example structure:
-                {
-                  "servingSize": "1 cup (244g)",
-                  "calories": 150,
-                  "nutrients": [
-                    { "name": "Total Fat", "amount": "8g", "dv": 10, "isBold": true },
-                    { "name": "Saturated Fat", "amount": "1g", "dv": 5, "isBold": false },
-                    { "name": "Protein", "amount": "8g", "dv": 16, "isBold": true }
-                  ]
-                }
-            `;
-
-            const data = await callGemini(prompt);
-            if (data) {
-                renderNutritionLabel(data, 'nutrition-result');
-            }
-        }
-
-        function renderNutritionLabel(data, containerId) {
-            const container = document.getElementById(containerId);
-            if (!data || !data.servingSize || !data.calories || !data.nutrients) {
-                container.innerHTML = `<p class="text-red-400 text-center">Could not parse nutrition data. The AI response might be in an unexpected format.</p>`;
-                return;
-            }
-
-            let nutrientsHtml = data.nutrients.map(n => {
-                const isIndented = !n.isBold && (n.name.includes('Fat') || n.name.includes('Sugars'));
-                return `
-                    <div class="flex justify-between items-end py-1 border-t border-gray-600 ${n.isBold ? 'font-bold' : ''} ${isIndented ? 'pl-4' : ''}">
-                        <span>${n.name} ${n.amount}</span>
-                        ${n.dv !== undefined ? `<span>${n.dv}%</span>` : ''}
-                    </div>
-                `;
-            }).join('');
-
-            container.innerHTML = `
-                <div class="nutrition-label p-4 rounded-lg max-w-sm mx-auto">
-                    <h1 class="font-extrabold tracking-tighter">Nutrition Facts</h1>
-                    <div class="line"></div>
-                    <div class="py-1">
-                        <span>Serving size</span>
-                        <span class="float-right font-bold">${data.servingSize}</span>
-                    </div>
-                    <div class="line thin"></div>
-                    <div class="flex justify-between font-bold py-1">
-                        <span>Calories</span>
-                        <span>${data.calories}</span>
-                    </div>
-                    <div class="line"></div>
-                    <div class="text-right font-bold py-1">% Daily Value*</div>
-                    <div class="line medium"></div>
-                    ${nutrientsHtml}
-                    <div class="line"></div>
-                    <p class="text-xs pt-2">*The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2,000 calories a day is used for general nutrition advice.</p>
-                </div>
-            `;
-        }
-        
-        function renderMealSection() {
-            appContent.innerHTML = `
-                <div class="max-w-3xl mx-auto">
-                    <div class="bg-gray-800 p-4 rounded-lg shadow-md">
-                        <h2 class="text-2xl font-bold text-white mb-4">Know Your Meal</h2>
-                        <textarea id="meal-input" class="w-full bg-gray-700 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" rows="6" placeholder="Paste a list of ingredients (e.g., '100g chicken, 1 cup rice, 1 tbsp olive oil'), a recipe, or a YouTube recipe link."></textarea>
-                        <button id="analyze-meal-btn" class="mt-2 w-full bg-yellow-400 text-gray-900 font-bold px-6 py-2 rounded-md hover:bg-yellow-500 transition">Analyze Meal</button>
-                    </div>
-                    <div id="meal-result" class="mt-6"></div>
-                    <div id="meal-suggestions" class="mt-6"></div>
-                </div>
-            `;
-            document.getElementById('analyze-meal-btn').addEventListener('click', handleMealAnalysis);
-        }
-
-        async function handleMealAnalysis() {
-            const input = document.getElementById('meal-input').value.trim();
-            if (!input) {
-                alert('Please enter ingredients or a recipe link.');
-                return;
-            }
-
-            const prompt = `
-                Analyze the total nutrition for the following meal input: "${input}". 
-                First, determine the ingredients and quantities. If it's a URL, extract the recipe.
-                Then, calculate the total nutrition for the entire meal.
-                Finally, provide two smart, actionable suggestions to make the meal healthier.
-
-                Return a JSON object with the exact keys: "nutrition", "suggestions".
-                The "nutrition" value should be an object formatted for the FDA label (with "servingSize", "calories", "nutrients"). Set "servingSize" to "1 entire meal".
-                The "suggestions" value should be an array of two strings.
-                
-                Example Response:
-                {
-                  "nutrition": {
-                    "servingSize": "1 entire meal",
-                    "calories": 850,
-                    "nutrients": [
-                      { "name": "Total Fat", "amount": "40g", "dv": 51, "isBold": true },
-                      ...
-                    ]
-                  },
-                  "suggestions": [
-                    "Suggestion 1: Replace white rice with brown rice to increase fiber content.",
-                    "Suggestion 2: Bake the chicken instead of frying to reduce the total fat."
-                  ]
-                }
-            `;
-
-            const data = await callGemini(prompt);
-            if (data && data.nutrition && data.suggestions) {
-                renderNutritionLabel(data.nutrition, 'meal-result');
-                const suggestionsContainer = document.getElementById('meal-suggestions');
-                suggestionsContainer.innerHTML = `
-                    <h3 class="text-xl font-bold text-white mb-2">Healthy Suggestions</h3>
-                    <ul class="list-disc list-inside space-y-2 text-gray-300">
-                        ${data.suggestions.map(s => `<li>${s}</li>`).join('')}
-                    </ul>
-                `;
-            } else {
-                 document.getElementById('meal-result').innerHTML = `<p class="text-red-400 text-center">Could not analyze the meal. Please check your input or try again.</p>`;
-                 document.getElementById('meal-suggestions').innerHTML = '';
-            }
-        }
-
-        function renderRecipeSection() {
-            appContent.innerHTML = `
-                <div class="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Recipe Suggestion -->
-                    <div class="bg-gray-800 p-4 rounded-lg shadow-md">
-                        <h2 class="text-2xl font-bold text-white mb-4">Healthy Recipe Ideas</h2>
-                        <textarea id="recipe-ingredients-input" class="w-full bg-gray-700 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" rows="4" placeholder="What ingredients do you have? (e.g., 'eggs, tomatoes, spinach, cheese')"></textarea>
-                        <button id="suggest-recipe-btn" class="mt-2 w-full bg-yellow-400 text-gray-900 font-bold px-6 py-2 rounded-md hover:bg-yellow-500 transition">Get Recipe</button>
-                        <div id="recipe-suggestion-result" class="mt-4 text-gray-300"></div>
-                    </div>
-
-                    <!-- Craving Box -->
-                    <div class="bg-gray-800 p-4 rounded-lg shadow-md">
-                        <h2 class="text-2xl font-bold text-white mb-4">Craving Something?</h2>
-                        <input type="text" id="craving-input" class="w-full bg-gray-700 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="e.g., 'ice cream', 'salty chips'">
-                        <button id="find-alternative-btn" class="mt-2 w-full bg-yellow-400 text-gray-900 font-bold px-6 py-2 rounded-md hover:bg-yellow-500 transition">Find Healthy Alternative</button>
-                        <div id="craving-alternative-result" class="mt-4 text-gray-300"></div>
-                    </div>
-                </div>
-            `;
-            document.getElementById('suggest-recipe-btn').addEventListener('click', handleRecipeSuggestion);
-            document.getElementById('find-alternative-btn').addEventListener('click', handleCravingAlternative);
-        }
-
-        async function handleRecipeSuggestion() {
-            const ingredients = document.getElementById('recipe-ingredients-input').value.trim();
-            if (!ingredients) {
-                alert('Please list your ingredients.');
-                return;
-            }
-            const resultContainer = document.getElementById('recipe-suggestion-result');
-            resultContainer.innerHTML = `<div class="loader mx-auto"></div>`;
-
-            const prompt = `
-                Based on these ingredients: "${ingredients}", suggest one healthy and simple recipe.
-                Return a JSON object with keys "recipeName", "description", "ingredients" (an array of strings), and "instructions" (an array of strings).
-                
-                Example:
-                {
-                  "recipeName": "Spinach and Tomato Omelette",
-                  "description": "A quick and protein-packed breakfast.",
-                  "ingredients": ["2 eggs", "1 cup spinach", "1/2 tomato, diced", "1/4 cup cheese"],
-                  "instructions": ["Whisk eggs in a bowl.", "Heat a pan...", "..."]
-                }
-            `;
-            const data = await callGemini(prompt);
-            if (data && data.recipeName) {
-                resultContainer.innerHTML = `
-                    <h3 class="font-bold text-lg text-yellow-400">${data.recipeName}</h3>
-                    <p class="text-sm italic mb-2">${data.description}</p>
-                    <h4 class="font-semibold mt-2">Ingredients:</h4>
-                    <ul class="list-disc list-inside text-sm">${data.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
-                    <h4 class="font-semibold mt-2">Instructions:</h4>
-                    <ol class="list-decimal list-inside text-sm">${data.instructions.map(i => `<li>${i}</li>`).join('')}</ol>
-                `;
-            } else {
-                resultContainer.innerHTML = `<p class="text-red-400">Could not generate a recipe. Try different ingredients.</p>`;
-            }
-        }
-
-        async function handleCravingAlternative() {
-            const craving = document.getElementById('craving-input').value.trim();
-            if (!craving) {
-                alert('Please enter your craving.');
-                return;
-            }
-            const resultContainer = document.getElementById('craving-alternative-result');
-            resultContainer.innerHTML = `<div class="loader mx-auto"></div>`;
-
-            const prompt = `
-                I'm craving "${craving}". Suggest a healthier alternative and a simple recipe for it.
-                Return a JSON object with keys "alternativeName", "reason", and "recipe" (a string with simple instructions).
-
-                Example for "ice cream":
-                {
-                  "alternativeName": "Greek Yogurt with Berries",
-                  "reason": "It's high in protein and lower in sugar, but still creamy and satisfying.",
-                  "recipe": "Mix 1 cup of plain Greek yogurt with a handful of mixed berries and a drizzle of honey or maple syrup. For a frozen treat, spread on a tray and freeze for 2 hours."
-                }
-            `;
-            const data = await callGemini(prompt);
-             if (data && data.alternativeName) {
-                resultContainer.innerHTML = `
-                    <h3 class="font-bold text-lg text-yellow-400">${data.alternativeName}</h3>
-                    <p class="text-sm italic mb-2">${data.reason}</p>
-                    <p class="text-sm">${data.recipe}</p>
-                `;
-            } else {
-                resultContainer.innerHTML = `<p class="text-red-400">Could not find an alternative. Please try again.</p>`;
-            }
-        }
-
-        function renderCalculatorsSection() {
-            appContent.innerHTML = `
-                <div class="max-w-3xl mx-auto space-y-4" id="calculator-accordion">
-                    <!-- BMI Calculator -->
-                    <div class="bg-gray-800 rounded-lg">
-                        <h2>
-                            <button type="button" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-300 hover:bg-gray-700 rounded-lg" aria-expanded="false">
-                                <span>BMI Calculator</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
-                        </h2>
-                        <div class="accordion-content p-5 border-t border-gray-700">
-                            <!-- BMI Form -->
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label for="bmi-height" class="block mb-2 text-sm font-medium text-gray-400">Height (cm)</label>
-                                    <input type="number" id="bmi-height" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block w-full p-2.5">
-                                </div>
-                                <div>
-                                    <label for="bmi-weight" class="block mb-2 text-sm font-medium text-gray-400">Weight (kg)</label>
-                                    <input type="number" id="bmi-weight" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block w-full p-2.5">
-                                </div>
-                            </div>
-                            <button id="calc-bmi-btn" class="mt-4 bg-yellow-400 text-gray-900 font-bold py-2 px-4 rounded">Calculate</button>
-                            <div id="bmi-result" class="mt-4 text-lg font-bold"></div>
-                        </div>
-                    </div>
-                    <!-- BMR Calculator -->
-                     <div class="bg-gray-800 rounded-lg">
-                        <h2>
-                            <button type="button" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-300 hover:bg-gray-700 rounded-lg" aria-expanded="false">
-                                <span>BMR Calculator</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
-                        </h2>
-                        <div class="accordion-content p-5 border-t border-gray-700">
-                            <!-- BMR Form -->
-                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block mb-2 text-sm font-medium text-gray-400">Gender</label>
-                                    <div class="flex gap-4">
-                                        <label><input type="radio" name="bmr-gender" value="male" class="text-yellow-400 focus:ring-yellow-500"> Male</label>
-                                        <label><input type="radio" name="bmr-gender" value="female" class="text-yellow-400 focus:ring-yellow-500"> Female</label>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="bmr-age" class="block mb-2 text-sm font-medium text-gray-400">Age</label>
-                                    <input type="number" id="bmr-age" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg w-full p-2.5">
-                                </div>
-                                <div>
-                                    <label for="bmr-height" class="block mb-2 text-sm font-medium text-gray-400">Height (cm)</label>
-                                    <input type="number" id="bmr-height" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg w-full p-2.5">
-                                </div>
-                                <div>
-                                    <label for="bmr-weight" class="block mb-2 text-sm font-medium text-gray-400">Weight (kg)</label>
-                                    <input type="number" id="bmr-weight" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg w-full p-2.5">
-                                </div>
-                            </div>
-                            <button id="calc-bmr-btn" class="mt-4 bg-yellow-400 text-gray-900 font-bold py-2 px-4 rounded">Calculate</button>
-                            <div id="bmr-result" class="mt-4 text-lg font-bold"></div>
-                        </div>
-                    </div>
-                    <!-- More calculators can be added here -->
-                </div>
-            `;
-            setupAccordion();
-            document.getElementById('calc-bmi-btn').addEventListener('click', calculateBmi);
-            document.getElementById('calc-bmr-btn').addEventListener('click', calculateBmr);
-        }
-        
-        function setupAccordion() {
-            const accordionButtons = document.querySelectorAll('#calculator-accordion button[aria-expanded]');
-            accordionButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const isExpanded = button.getAttribute('aria-expanded') === 'true';
-                    
-                    // Close all accordions first
-                    accordionButtons.forEach(btn => {
-                        btn.setAttribute('aria-expanded', 'false');
-                        btn.querySelector('i').classList.remove('rotate-180');
-                    });
-
-                    // Open the clicked one if it was closed
-                    if (!isExpanded) {
-                        button.setAttribute('aria-expanded', 'true');
-                        button.querySelector('i').classList.add('rotate-180');
-                    }
-                });
-            });
-        }
-
-        function calculateBmi() {
-            const height = parseFloat(document.getElementById('bmi-height').value);
-            const weight = parseFloat(document.getElementById('bmi-weight').value);
-            const resultEl = document.getElementById('bmi-result');
-            if (height > 0 && weight > 0) {
-                const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
-                let category = '';
-                if (bmi < 18.5) category = 'Underweight';
-                else if (bmi < 24.9) category = 'Normal weight';
-                else if (bmi < 29.9) category = 'Overweight';
-                else category = 'Obesity';
-                resultEl.innerHTML = `Your BMI is <span class="text-yellow-400">${bmi}</span> (${category})`;
-            } else {
-                resultEl.textContent = 'Please enter valid height and weight.';
-            }
-        }
-
-        function calculateBmr() {
-            const gender = document.querySelector('input[name="bmr-gender"]:checked')?.value;
-            const age = parseFloat(document.getElementById('bmr-age').value);
-            const height = parseFloat(document.getElementById('bmr-height').value);
-            const weight = parseFloat(document.getElementById('bmr-weight').value);
-            const resultEl = document.getElementById('bmr-result');
-
-            if (gender && age > 0 && height > 0 && weight > 0) {
-                let bmr = 0;
-                if (gender === 'male') {
-                    bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
-                } else {
-                    bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
-                }
-                resultEl.innerHTML = `Your BMR is <span class="text-yellow-400">${bmr.toFixed(0)}</span> calories/day`;
-            } else {
-                resultEl.textContent = 'Please fill in all fields correctly.';
-            }
-        }
-
-        async function renderSettingsSection() {
-            const userRef = doc(db, "users", currentUser.uid);
+        const setupUser = async (user) => {
+            const userRef = doc(db, "users", user.uid);
             const userDoc = await getDoc(userRef);
-            const userData = userDoc.data();
+            if (!userDoc.exists()) {
+                const randomPart = Math.random().toString(36).substring(2, 8);
+                const customId = `${user.displayName.substring(0, 3).toLowerCase()}${randomPart}`;
+                await setDoc(userRef, {
+                    uid: user.uid,
+                    displayName: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL,
+                    createdAt: new Date(),
+                    customId: customId
+                });
+            }
+        };
+        
+        const updateUIForUser = async (user) => {
+            userAvatar.src = user.photoURL || `https://placehold.co/40x40/FBBF24/111827?text=${user.displayName[0]}`;
+            const userRef = doc(db, "users", user.uid);
+            const userDoc = await getDoc(userRef);
+            if(userDoc.exists()) {
+                const userData = userDoc.data();
+                document.getElementById('user-id-display').textContent = userData.customId;
+                document.getElementById('user-name-display').textContent = userData.displayName;
+                document.getElementById('user-email-display').textContent = userData.email;
+            }
+        };
 
-            appContent.innerHTML = `
-                <div class="max-w-3xl mx-auto bg-gray-800 p-6 rounded-lg shadow-md">
-                    <div class="flex items-center space-x-4 mb-6">
-                        <img src="${userData.photoURL}" alt="Avatar" class="w-20 h-20 rounded-full border-2 border-yellow-400">
-                        <div>
-                            <h2 class="text-2xl font-bold text-white">${userData.displayName}</h2>
-                            <p class="text-sm text-gray-400">User ID: ${userData.customUserId}</p>
-                            <p class="text-sm text-gray-400">${userData.email}</p>
-                        </div>
+        // --- UI & NAVIGATION LOGIC ---
+        function initApp() {
+            profileButton.addEventListener('click', () => profileDropdown.classList.toggle('hidden'));
+            window.addEventListener('click', (e) => {
+                if (!profileButton.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    profileDropdown.classList.add('hidden');
+                }
+            });
+
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = link.dataset.section;
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    contentSections.forEach(s => s.classList.remove('active'));
+                    document.getElementById(`${section}-section`).classList.add('active');
+                    pageTitle.textContent = link.querySelector('span').textContent;
+                    fab.classList.toggle('hidden', section !== 'settings');
+                });
+            });
+
+            // Initialize calculators
+            buildCalculators();
+        }
+        
+        // --- GEMINI API LOGIC ---
+        async function callGemini(prompt) {
+            const apiKey = GEMINI_API_KEYS[currentApiKeyIndex];
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+
+            } catch (error) {
+                console.error("Gemini API call failed:", error);
+                currentApiKeyIndex = (currentApiKeyIndex + 1) % GEMINI_API_KEYS.length;
+                console.log(`Switched to API key index ${currentApiKeyIndex}`);
+                if (currentApiKeyIndex !== 0) { // Avoid infinite loops
+                    return callGemini(prompt); // Retry with the next key
+                } else {
+                    return JSON.stringify({ error: "All API keys failed. Please try again later." });
+                }
+            }
+        }
+        
+        // --- NUTRITION ANALYSIS ---
+        analyzeNutritionBtn.addEventListener('click', async () => {
+            const query = nutritionSearchInput.value.trim();
+            if (!query) return;
+
+            nutritionLabelContainer.innerHTML = `
+                <div class="text-center py-10">
+                    <i class="fas fa-spinner fa-spin text-yellow-400 text-4xl"></i>
+                    <p class="mt-2 text-lg">Analyzing with Gemini...</p>
+                </div>`;
+            
+            const prompt = `Analyze the nutrition for "${query}". Return a JSON object with the following structure, using FDA guidelines. If a value is not applicable or zero, use 0. Do not use strings for numeric values.
+            {
+              "itemName": "Name of the food",
+              "servingSize": "e.g., 1 cup (240g)",
+              "calories": 150,
+              "totalFat": {"value": 5, "dv": 6},
+              "saturatedFat": {"value": 1, "dv": 5},
+              "transFat": {"value": 0, "dv": null},
+              "cholesterol": {"value": 0, "dv": 0},
+              "sodium": {"value": 160, "dv": 7},
+              "totalCarbohydrate": {"value": 30, "dv": 11},
+              "dietaryFiber": {"value": 4, "dv": 14},
+              "totalSugars": {"value": 1, "dv": null},
+              "addedSugars": {"value": 0, "dv": 0},
+              "protein": {"value": 3, "dv": 6},
+              "vitaminD": {"value": 2, "dv": 10},
+              "calcium": {"value": 260, "dv": 20},
+              "iron": {"value": 8, "dv": 45},
+              "potassium": {"value": 2350, "dv": 50}
+            }`;
+
+            const resultText = await callGemini(prompt);
+            try {
+                const jsonString = resultText.match(/```json\n([\s\S]*?)\n```/)[1];
+                const data = JSON.parse(jsonString);
+                renderNutritionLabel(data);
+            } catch (e) {
+                console.error("Error parsing Gemini response:", e, resultText);
+                nutritionLabelContainer.innerHTML = `<p class="text-red-400 text-center">Sorry, I couldn't understand the nutrition data. Please try a different query.</p>`;
+            }
+        });
+
+        function renderNutritionLabel(data) {
+            if (data.error) {
+                nutritionLabelContainer.innerHTML = `<p class="text-red-400 text-center">${data.error}</p>`;
+                return;
+            }
+
+            const html = `
+                <div class="nutrition-label text-gray-50">
+                    <h1 class="header">Nutrition Facts</h1>
+                    <div class="line"></div>
+                    <p class="font-semibold">Serving Size <span class="float-right">${data.servingSize || 'N/A'}</span></p>
+                    <div class="line medium"></div>
+                    <div class="item">
+                        <span class="name">Calories</span>
+                        <span class="font-bold text-2xl">${data.calories || 0}</span>
                     </div>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <label for="displayName" class="block mb-2 text-sm font-medium text-gray-400">Display Name</label>
-                            <input type="text" id="displayName" value="${userData.displayName}" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg w-full p-2.5">
-                        </div>
-                        <button id="update-profile-btn" class="bg-yellow-400 text-gray-900 font-bold py-2 px-4 rounded">Update Profile</button>
-                    </div>
+                    <div class="line"></div>
+                    <div class="item"><span class="name"></span><span class="dv">% Daily Value*</span></div>
+                    <div class="line thin"></div>
+                    <div class="item"><span class="name">Total Fat</span> ${data.totalFat?.value || 0}g <span class="dv">${data.totalFat?.dv || 0}%</span></div>
+                    <div class="line thin"></div>
+                    <div class="item"><span class="sub-item">Saturated Fat</span> ${data.saturatedFat?.value || 0}g <span class="dv">${data.saturatedFat?.dv || 0}%</span></div>
+                    <div class="line thin"></div>
+                    <div class="item"><span class="sub-item"><i>Trans</i> Fat</span> ${data.transFat?.value || 0}g <span class="dv"></span></div>
+                    <div class="line thin"></div>
+                    <div class="item"><span class="name">Cholesterol</span> ${data.cholesterol?.value || 0}mg <span class="dv">${data.cholesterol?.dv || 0}%</span></div>
+                    <div class="line thin"></div>
+                    <div class="item"><span class="name">Sodium</span> ${data.sodium?.value || 0}mg <span class="dv">${data.sodium?.dv || 0}%</span></div>
+                    <div class="line thin"></div>
+                    <div class="item"><span class="name">Total Carbohydrate</span> ${data.totalCarbohydrate?.value || 0}g <span class="dv">${data.totalCarbohydrate?.dv || 0}%</span></div>
+                    <div class="line thin"></div>
+                    <div class="item"><span class="sub-item">Dietary Fiber</span> ${data.dietaryFiber?.value || 0}g <span class="dv">${data.dietaryFiber?.dv || 0}%</span></div>
+                    <div class="line thin"></div>
+                    <div class="item"><span class="sub-item">Total Sugars</span> ${data.totalSugars?.value || 0}g <span class="dv"></span></div>
+                    <div class="line thin"></div>
+                    <div class="item"><span class="sub-item" style="padding-left: 2rem;">Includes ${data.addedSugars?.value || 0}g Added Sugars</span><span class="dv">${data.addedSugars?.dv || 0}%</span></div>
+                    <div class="line thin"></div>
+                    <div class="item"><span class="name">Protein</span> ${data.protein?.value || 0}g <span class="dv">${data.protein?.dv || 0}%</span></div>
+                    <div class="line medium"></div>
+                    <div class="item"><span>Vitamin D</span> ${data.vitaminD?.value || 0}mcg <span class="dv">${data.vitaminD?.dv || 0}%</span></div>
+                    <div class="line thin"></div>
+                    <div class="item"><span>Calcium</span> ${data.calcium?.value || 0}mg <span class="dv">${data.calcium?.dv || 0}%</span></div>
+                    <div class="line thin"></div>
+                    <div class="item"><span>Iron</span> ${data.iron?.value || 0}mg <span class="dv">${data.iron?.dv || 0}%</span></div>
+                    <div class="line thin"></div>
+                    <div class="item"><span>Potassium</span> ${data.potassium?.value || 0}mg <span class="dv">${data.potassium?.dv || 0}%</span></div>
+                    <div class="line thin"></div>
+                    <p class="text-xs mt-2">*The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2,000 calories a day is used for general nutrition advice.</p>
                 </div>
             `;
-            document.getElementById('update-profile-btn').addEventListener('click', async () => {
-                const newName = document.getElementById('displayName').value.trim();
-                if (newName && newName !== currentUser.displayName) {
-                    loadingOverlay.classList.remove('hidden');
-                    try {
-                        await updateProfile(currentUser, { displayName: newName });
-                        await setDoc(userRef, { displayName: newName }, { merge: true });
-                        alert('Profile updated successfully!');
-                        // Refresh header
-                        updateUIForUser(auth.currentUser);
-                        renderSettingsSection(); // Re-render to show changes
-                    } catch (error) {
-                        console.error("Profile update error:", error);
-                        alert('Failed to update profile.');
-                    } finally {
-                        loadingOverlay.classList.add('hidden');
+            nutritionLabelContainer.innerHTML = html;
+        }
+
+        // --- CALCULATORS ---
+        const calculators = [
+            { name: 'BMI Calculator', id: 'bmi' },
+            { name: 'BMR Calculator', id: 'bmr' },
+            { name: 'Ideal Weight', id: 'ideal-weight' },
+        ];
+
+        function buildCalculators() {
+            calculatorAccordionContainer.innerHTML = calculators.map(calc => `
+                <div class="bg-gray-800 rounded-lg">
+                    <button class="accordion-header w-full flex justify-between items-center p-4 font-semibold text-left">
+                        <span>${calc.name}</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="accordion-content px-4 pb-4">
+                        <!-- Content for ${calc.id} will be here -->
+                    </div>
+                </div>
+            `).join('');
+            
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    const icon = header.querySelector('i');
+                    
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                        icon.classList.remove('rotate-180');
+                    } else {
+                        // Close other accordions
+                        document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = null);
+                        document.querySelectorAll('.accordion-header i').forEach(i => i.classList.remove('rotate-180'));
+                        
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        icon.classList.add('rotate-180');
                     }
-                }
+                });
             });
         }
     </script>
