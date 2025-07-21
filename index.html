@@ -8,751 +8,768 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide-react@0.292.0/dist/lucide-react.js"></script>
-    <script src="https://unpkg.com/lucide-icons@0.292.0/dist/lucide.min.js"></script>
+    <script src="https://unpkg.com/lucide-icons@latest/dist/lucide.min.js"></script>
 
-    <!-- Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, onSnapshot, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        // --- Your Firebase Configuration ---
-        // IMPORTANT: Replace with your actual Firebase project configuration.
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Expose Firebase modules to the global window object for access in other scripts
-        window.firebase = {
-            app,
-            auth,
-            db,
-            GoogleAuthProvider,
-            signInWithPopup,
-            onAuthStateChanged,
-            signOut,
-            setPersistence,
-            browserLocalPersistence,
-            doc,
-            setDoc,
-            getDoc,
-            collection,
-            addDoc,
-            query,
-            onSnapshot,
-            orderBy,
-            limit
-        };
-
-        // Initialize the app after the DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            window.initializeApp();
-        });
-    </script>
-
+    <!-- Custom Styles -->
     <style>
-        /* Custom Styles */
         body {
-            background-color: #121212;
-            color: #E0E0E0;
             font-family: 'Inter', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
+            color: #f9fafb; /* text-gray-50 */
         }
-        .accent-yellow { color: #FFD700; }
-        .bg-accent-yellow { background-color: #FFD700; }
-        .border-accent-yellow { border-color: #FFD700; }
-        
-        /* Scrollbar styling */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1f1f1f; }
-        ::-webkit-scrollbar-thumb { background: #4a4a4a; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #FFD700; }
-
-        /* Nutrition Label Styling */
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        .profile-drawer {
+            transition: transform 0.3s ease-in-out;
+        }
         .nutrition-label {
-            border: 2px solid #fff;
-            padding: 0.5rem;
-            max-width: 400px;
-            margin: 1rem auto;
-            font-family: 'Helvetica', 'Arial', sans-serif;
-            background: #1a1a1a;
+            border: 2px solid #4b5563; /* border-gray-600 */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            background-color: #1f2937; /* bg-gray-800 */
+            max-width: 380px;
+            margin: auto;
         }
         .nutrition-label h1 {
-            font-size: 2.5rem;
-            font-weight: 900;
-            margin: 0;
-            letter-spacing: -2px;
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 800;
+            margin-bottom: 0.25rem;
         }
-        .nutrition-label .line { height: 10px; background: #fff; }
-        .nutrition-label .line.thick { height: 15px; }
+        .nutrition-label .serving-size {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .nutrition-label .header {
+            border-bottom: 10px solid #4b5563; /* border-gray-600 */
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
         .nutrition-label .item {
             display: flex;
             justify-content: space-between;
-            padding: 2px 0;
-            border-bottom: 1px solid #444;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #374151; /* border-gray-700 */
         }
-        .nutrition-label .item.indent { margin-left: 20px; }
-        .nutrition-label .item span:first-child { font-weight: bold; }
-        .nutrition-label .dv { text-align: right; font-weight: bold; }
+        .nutrition-label .item span:first-child {
+            font-weight: 600;
+        }
+        .nutrition-label .item .indent {
+            margin-left: 1.5rem;
+        }
         .nutrition-label .footer {
-            font-size: 0.75rem;
-            text-align: center;
-            margin-top: 1rem;
+            border-top: 5px solid #4b5563; /* border-gray-600 */
             padding-top: 0.5rem;
-            border-top: 2px solid #fff;
+            margin-top: 0.5rem;
+            font-size: 0.875rem; /* text-sm */
+        }
+        /* Accordion styles */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        /* Scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937; /* bg-gray-800 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563; /* bg-gray-600 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; /* bg-gray-500 */
         }
     </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
 </head>
-<body class="flex h-screen overflow-hidden">
+<body class="bg-gray-900 text-gray-50">
 
-    <!-- Loading Spinner -->
-    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32" style="border-top-color: #FFD700;"></div>
+    <div id="loading-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-50 flex items-center justify-center">
+        <div class="flex flex-col items-center">
+            <svg class="animate-spin h-10 w-10 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="mt-4 text-lg font-semibold">Initializing Calverse...</p>
+        </div>
     </div>
 
-    <!-- Main Content -->
-    <div id="app-container" class="hidden w-full h-full flex">
-        <!-- Sidebar Navigation -->
-        <aside class="w-20 lg:w-64 bg-black/50 p-2 lg:p-4 flex flex-col justify-between transition-all duration-300">
-            <div>
-                <div class="flex items-center justify-center lg:justify-start mb-10">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flame-kindling"><path d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2Z"/><path d="M12 2a2 2 0 0 0-2 2c0 1.1.9 2 2 2s2-.9 2-2a2 2 0 0 0-2-2Z"/><path d="M12 6h.01"/><path d="m15.6 9.4-.8.8"/><path d="M20 12h-1"/><path d="m15.6 14.6.8.8"/><path d="M12 18h.01"/><path d="M8.4 14.6-.8.8"/><path d="M4 12H3"/><path d="m8.4 9.4-.8.8"/></svg>
-                    <span class="hidden lg:inline text-2xl font-bold ml-2">Calverse</span>
-                </div>
-                <nav id="main-nav" class="space-y-2">
-                    <a href="#home" class="nav-item flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors duration-200 active">
-                        <i data-lucide="home" class="w-6 h-6"></i>
-                        <span class="hidden lg:inline ml-4 font-semibold">Home</span>
+    <div id="auth-container" class="hidden h-screen w-screen flex items-center justify-center bg-gray-900">
+        <div class="text-center p-8 bg-gray-800 rounded-2xl shadow-2xl max-w-sm mx-auto">
+            <h1 class="text-4xl font-bold text-white mb-2">Welcome to Calverse</h1>
+            <p class="text-gray-400 mb-8">Your AI-powered health companion.</p>
+            <button id="google-signin-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300 ease-in-out">
+                <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691c-1.258 3.055-1.95 6.45-1.95 10.023s.692 6.968 1.95 10.023l-5.657 5.657C.252 34.668 0 29.556 0 24.614s.252-10.053 1.95-15.58l5.657 5.657z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-5.657-5.657C30.01 35.091 27.215 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-5.657 5.657C9.033 40.519 15.903 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083L43.595 20L42 20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l5.657 5.657C42.463 35.931 44 30.556 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+                Sign In with Google
+            </button>
+        </div>
+    </div>
+
+    <div id="app-container" class="hidden">
+        <div class="flex h-screen">
+            <!-- Sidebar -->
+            <aside id="sidebar" class="sidebar bg-gray-800 text-gray-200 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0">
+                <a href="#" class="text-white flex items-center space-x-2 px-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"/><path d="M7 13l3 3 7-7"/></svg>
+                    <span class="text-2xl font-extrabold">Calverse</span>
+                </a>
+                <nav id="main-nav">
+                    <a href="#nutrition-lookup" class="nav-link block py-2.5 px-4 rounded transition duration-200 bg-gray-700 text-white">
+                        <i data-lucide="search" class="inline-block w-5 h-5 mr-2"></i> Nutrition Lookup
                     </a>
-                    <a href="#nutrition" class="nav-item flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors duration-200">
-                        <i data-lucide="utensils-crossed" class="w-6 h-6"></i>
-                        <span class="hidden lg:inline ml-4 font-semibold">Food</span>
+                    <a href="#know-your-meal" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                        <i data-lucide="utensils-crossed" class="inline-block w-5 h-5 mr-2"></i> Know Your Meal
                     </a>
-                    <a href="#calculators" class="nav-item flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors duration-200">
-                        <i data-lucide="calculator" class="w-6 h-6"></i>
-                        <span class="hidden lg:inline ml-4 font-semibold">Calculators</span>
+                    <a href="#recipe-suggestions" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                        <i data-lucide="notebook-pen" class="inline-block w-5 h-5 mr-2"></i> Recipes & Cravings
+                    </a>
+                    <a href="#health-calculators" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                        <i data-lucide="calculator" class="inline-block w-5 h-5 mr-2"></i> Health Calculators
+                    </a>
+                    <a href="#settings" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                        <i data-lucide="settings" class="inline-block w-5 h-5 mr-2"></i> Settings
                     </a>
                 </nav>
-            </div>
-            <div id="profile-nav-item">
-                <a href="#profile" class="nav-item flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors duration-200">
-                    <i data-lucide="settings" class="w-6 h-6"></i>
-                    <span class="hidden lg:inline ml-4 font-semibold">Profile & Settings</span>
-                </a>
-            </div>
-        </aside>
+            </aside>
 
-        <!-- Main Content Area -->
-        <main class="flex-1 bg-[#121212] overflow-y-auto p-4 md:p-8 relative">
-            <!-- Header -->
-            <header class="flex justify-between items-center mb-8">
-                <h1 id="page-title" class="text-3xl font-bold">Welcome</h1>
-                <div class="relative">
-                    <img id="user-avatar" src="https://placehold.co/40x40/121212/FFD700?text=U" class="w-10 h-10 rounded-full cursor-pointer border-2 border-transparent hover:border-accent-yellow">
-                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-20">
-                        <a href="#profile" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Edit Profile</a>
-                        <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Logout</a>
+            <!-- Main content -->
+            <div class="flex-1 flex flex-col overflow-hidden">
+                <header class="bg-gray-800/50 backdrop-blur-sm shadow-md sticky top-0 z-10">
+                    <div class="flex justify-between items-center p-4">
+                        <div class="flex items-center">
+                            <button id="mobile-menu-btn" class="md:hidden text-gray-300 focus:outline-none mr-4">
+                                <i data-lucide="menu" class="h-6 w-6"></i>
+                            </button>
+                            <h1 id="page-title" class="text-xl font-semibold">Nutrition Lookup</h1>
+                        </div>
+                        <button id="profile-avatar-btn" class="flex items-center space-x-2">
+                            <img id="user-avatar" src="https://placehold.co/40x40/7c3aed/ffffff?text=U" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-indigo-400">
+                        </button>
                     </div>
-                </div>
-            </header>
+                </header>
+                <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-900 p-4 sm:p-6 lg:p-8">
+                    
+                    <!-- App Sections -->
+                    <section id="nutrition-lookup" class="app-section">
+                        <div class="max-w-4xl mx-auto">
+                            <h2 class="text-2xl font-bold mb-4">AI-Powered Nutrition Lookup</h2>
+                            <p class="text-gray-400 mb-6">Enter a food item and quantity to get its detailed nutrition facts.</p>
+                            <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                                <input id="nutrition-input" type="text" placeholder="e.g., '100g soya chunks' or '2 medium bananas'" class="flex-grow bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                                <button id="get-nutrition-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="bar-chart-big" class="w-5 h-5 mr-2"></i> Analyze
+                                </button>
+                            </div>
+                            <div id="nutrition-output" class="mt-8">
+                                <!-- FDA Label will be rendered here -->
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <section id="know-your-meal" class="app-section hidden">
+                        <div class="max-w-4xl mx-auto">
+                            <h2 class="text-2xl font-bold mb-4">Know Your Meal</h2>
+                            <p class="text-gray-400 mb-6">Paste a recipe URL or list ingredients to analyze your entire meal.</p>
+                            <div class="space-y-6">
+                                <input id="meal-url-input" type="text" placeholder="Paste a recipe URL (e.g., from YouTube, blogs)" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                                <div class="text-center text-gray-500">OR</div>
+                                <textarea id="meal-ingredients-input" placeholder="List ingredients and quantities, e.g.,&#10;1 cup cooked rice&#10;150g grilled chicken breast&#10;1/2 avocado" class="w-full h-32 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"></textarea>
+                                <button id="analyze-meal-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="brain-circuit" class="w-5 h-5 mr-2"></i> Analyze Meal
+                                </button>
+                            </div>
+                             <div id="meal-output" class="mt-8">
+                                <!-- Meal analysis will be rendered here -->
+                            </div>
+                        </div>
+                    </section>
 
-            <!-- Page Content -->
-            <div id="page-content">
-                <!-- All sections will be dynamically loaded here -->
-            </div>
-            
-            <!-- Floating Action Button for Profile Page -->
-            <button id="fab" class="hidden fixed bottom-8 right-8 bg-accent-yellow text-black p-4 rounded-full shadow-lg hover:bg-yellow-300 transition-transform transform hover:scale-110">
-                <i data-lucide="plus" class="w-6 h-6"></i>
-            </button>
-            
-            <!-- Footer for Profile Page -->
-            <footer id="page-footer" class="hidden text-center text-gray-500 py-4 mt-8">
-                Made with <span class="text-red-500">&hearts;</span> by Ashutosh Roy
-            </footer>
-        </main>
-    </div>
+                    <section id="recipe-suggestions" class="app-section hidden">
+                        <div class="max-w-4xl mx-auto">
+                            <h2 class="text-2xl font-bold mb-4">Recipes & Cravings</h2>
+                            <p class="text-gray-400 mb-6">Get recipe ideas based on ingredients you have, or find healthier alternatives for your cravings.</p>
+                            <div class="grid md:grid-cols-2 gap-8">
+                                <!-- Recipe Generator -->
+                                <div class="bg-gray-800 p-6 rounded-lg">
+                                    <h3 class="text-xl font-semibold mb-4 flex items-center"><i data-lucide="chef-hat" class="w-6 h-6 mr-2 text-indigo-400"></i>Recipe Generator</h3>
+                                    <textarea id="recipe-ingredients-input" placeholder="What ingredients do you have?&#10;e.g., chicken breast, broccoli, soy sauce, garlic" class="w-full h-32 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"></textarea>
+                                    <button id="generate-recipe-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg">Generate Recipe</button>
+                                </div>
+                                <!-- Craving Solver -->
+                                <div class="bg-gray-800 p-6 rounded-lg">
+                                    <h3 class="text-xl font-semibold mb-4 flex items-center"><i data-lucide="cookie" class="w-6 h-6 mr-2 text-indigo-400"></i>Craving Solver</h3>
+                                    <input id="craving-input" type="text" placeholder="What are you craving? e.g., Pizza" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                                    <button id="solve-craving-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg">Find Healthy Alternative</button>
+                                </div>
+                            </div>
+                            <div id="recipe-output" class="mt-8">
+                                <!-- Recipe/Craving output will be rendered here -->
+                            </div>
+                        </div>
+                    </section>
 
-    <!-- Login Screen -->
-    <div id="login-screen" class="w-full h-full flex items-center justify-center">
-        <div class="text-center p-8 bg-gray-900 rounded-xl shadow-2xl">
-            <div class="flex items-center justify-center mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flame-kindling"><path d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2Z"/><path d="M12 2a2 2 0 0 0-2 2c0 1.1.9 2 2 2s2-.9 2-2a2 2 0 0 0-2-2Z"/><path d="M12 6h.01"/><path d="m15.6 9.4-.8.8"/><path d="M20 12h-1"/><path d="m15.6 14.6.8.8"/><path d="M12 18h.01"/><path d="M8.4 14.6-.8.8"/><path d="M4 12H3"/><path d="m8.4 9.4-.8.8"/></svg>
-                <h1 class="text-4xl font-bold ml-3">Calverse</h1>
+                    <section id="health-calculators" class="app-section hidden">
+                        <div class="max-w-4xl mx-auto">
+                            <h2 class="text-2xl font-bold mb-4">Health Calculators</h2>
+                            <p class="text-gray-400 mb-6">A suite of tools to help you track your health metrics.</p>
+                            <div id="calculator-accordion" class="space-y-4">
+                                <!-- BMI Calculator -->
+                                <div class="accordion-item bg-gray-800 rounded-lg">
+                                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                                        <span>BMI (Body Mass Index) Calculator</span>
+                                        <i data-lucide="chevron-down" class="transform transition-transform"></i>
+                                    </button>
+                                    <div class="accordion-content px-4 pb-4">
+                                        <div class="grid sm:grid-cols-2 gap-4">
+                                            <input type="number" id="bmi-height" placeholder="Height (cm)" class="bg-gray-700 p-2 rounded">
+                                            <input type="number" id="bmi-weight" placeholder="Weight (kg)" class="bg-gray-700 p-2 rounded">
+                                        </div>
+                                        <button onclick="calculateBMI()" class="mt-4 bg-indigo-600 px-4 py-2 rounded">Calculate</button>
+                                        <p id="bmi-result" class="mt-4 font-bold"></p>
+                                    </div>
+                                </div>
+                                <!-- BMR Calculator -->
+                                <div class="accordion-item bg-gray-800 rounded-lg">
+                                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                                        <span>BMR (Basal Metabolic Rate) Calculator</span>
+                                        <i data-lucide="chevron-down" class="transform transition-transform"></i>
+                                    </button>
+                                    <div class="accordion-content px-4 pb-4">
+                                        <div class="grid sm:grid-cols-2 gap-4">
+                                            <input type="number" id="bmr-age" placeholder="Age" class="bg-gray-700 p-2 rounded">
+                                            <select id="bmr-gender" class="bg-gray-700 p-2 rounded">
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                            </select>
+                                            <input type="number" id="bmr-height" placeholder="Height (cm)" class="bg-gray-700 p-2 rounded">
+                                            <input type="number" id="bmr-weight" placeholder="Weight (kg)" class="bg-gray-700 p-2 rounded">
+                                        </div>
+                                        <button onclick="calculateBMR()" class="mt-4 bg-indigo-600 px-4 py-2 rounded">Calculate</button>
+                                        <p id="bmr-result" class="mt-4 font-bold"></p>
+                                    </div>
+                                </div>
+                                <!-- Other calculators can be added here -->
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="settings" class="app-section hidden">
+                        <div class="max-w-4xl mx-auto">
+                            <h2 class="text-2xl font-bold mb-4">Settings</h2>
+                            <div class="bg-gray-800 p-6 rounded-lg">
+                                <h3 class="text-xl font-semibold mb-2" id="user-name-display">User Name</h3>
+                                <p class="text-gray-400 mb-4" id="user-email-display">user@example.com</p>
+                                <p class="text-gray-400 text-sm" id="user-id-display">User ID: </p>
+                            </div>
+                             <footer class="text-center mt-12 text-gray-500">
+                                Made with ❤️ by Ashutosh Roy
+                            </footer>
+                        </div>
+                    </section>
+                </main>
             </div>
-            <p class="text-gray-400 mb-8">Your AI-powered nutrition companion.</p>
-            <button id="login-btn" class="flex items-center justify-center w-full bg-white text-black font-semibold py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors duration-300">
-                <svg class="w-6 h-6 mr-3" viewBox="0 0 48 48"><path fill="#4285F4" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#34A853" d="m43.611 20.083-7.637 6.021C37.631 24.643 38 23.352 38 22c0-1.925-.539-3.725-1.455-5.286l7.49-6.095C43.862 13.318 44 16.63 44 20c0 .333 0 .667-.01.999z"/><path fill="#FBBC05" d="M6.306 14.845c-2.16 3.9-2.16 8.41 0 12.31L.649 32.81C-2.215 26.736-2.215 19.264.649 13.189l5.657 1.656z"/><path fill="#EA4335" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-4.938C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-                Sign in with Google
-            </button>
         </div>
-    </div>
 
-    <!-- Section Templates -->
-    <template id="home-template">
-        <div class="text-center">
-            <h2 class="text-4xl font-extrabold mb-4">Welcome to <span class="accent-yellow">Calverse</span></h2>
-            <p class="text-lg text-gray-400 max-w-2xl mx-auto">Your journey to smarter, healthier eating starts here. Use the navigation on the left to look up food nutrition, analyze your meals, or use our health calculators.</p>
-            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-gray-800/50 p-6 rounded-lg border border-gray-700 hover:border-accent-yellow transition-all">
-                    <i data-lucide="utensils-crossed" class="w-12 h-12 accent-yellow mx-auto mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2">Nutrition Lookup</h3>
-                    <p class="text-gray-400">Instantly get detailed FDA-style nutrition facts for any food item.</p>
-                </div>
-                <div class="bg-gray-800/50 p-6 rounded-lg border border-gray-700 hover:border-accent-yellow transition-all">
-                    <i data-lucide="blender" class="w-12 h-12 accent-yellow mx-auto mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2">Meal Analysis</h3>
-                    <p class="text-gray-400">Combine ingredients to see the full nutritional profile of your meal.</p>
-                </div>
-                <div class="bg-gray-800/50 p-6 rounded-lg border border-gray-700 hover:border-accent-yellow transition-all">
-                    <i data-lucide="calculator" class="w-12 h-12 accent-yellow mx-auto mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2">Health Calculators</h3>
-                    <p class="text-gray-400">Calculate your BMI, BMR, daily calorie needs, and more.</p>
-                </div>
-            </div>
-        </div>
-    </template>
-
-    <template id="nutrition-template">
-        <!-- Nutrition Lookup -->
-        <div class="mb-12">
-            <h2 class="text-2xl font-bold mb-4">Nutrition Lookup</h2>
-            <div class="flex flex-col sm:flex-row gap-2">
-                <input id="nutrition-input" type="text" placeholder="e.g., 1 large apple or 100g chicken breast" class="flex-grow bg-gray-800 border border-gray-700 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent-yellow">
-                <button id="nutrition-search-btn" class="bg-accent-yellow text-black font-bold p-3 rounded-lg flex items-center justify-center">
-                    <i data-lucide="search" class="w-6 h-6"></i>
+        <!-- Profile Drawer -->
+        <div id="profile-drawer" class="profile-drawer fixed bottom-0 right-0 h-screen w-80 bg-gray-800 shadow-lg p-6 transform translate-x-full z-30">
+            <button id="close-drawer-btn" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="flex flex-col items-center">
+                <img id="drawer-user-avatar" src="https://placehold.co/80x80/7c3aed/ffffff?text=U" alt="User Avatar" class="w-20 h-20 rounded-full border-4 border-indigo-400 mb-4">
+                <h3 id="drawer-user-name" class="text-xl font-semibold">User Name</h3>
+                <p id="drawer-user-email" class="text-sm text-gray-400">user@example.com</p>
+                <button id="logout-btn" class="mt-8 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center">
+                    <i data-lucide="log-out" class="w-5 h-5 mr-2"></i> Logout
                 </button>
             </div>
-            <div class="mt-4 flex gap-2 overflow-x-auto pb-2">
-                <button class="food-chip">Oats</button>
-                <button class="food-chip">Chicken Breast</button>
-                <button class="food-chip">Banana</button>
-                <button class="food-chip">Egg</button>
-                <button class="food-chip">Broccoli</button>
-                <button class="food-chip">Salmon</button>
-            </div>
-            <div id="nutrition-result" class="mt-6"></div>
         </div>
+        <div id="drawer-overlay" class="fixed inset-0 bg-black/50 z-20 hidden"></div>
+    </div>
 
-        <!-- Know Your Meal -->
-        <div class="mb-12">
-            <h2 class="text-2xl font-bold mb-4">Know Your Meal</h2>
-            <div id="meal-ingredients" class="space-y-2">
-                <div class="flex gap-2">
-                    <input type="text" placeholder="Ingredient (e.g., 100g rice)" class="meal-ingredient-input flex-grow bg-gray-800 border border-gray-700 rounded-lg p-3">
-                </div>
-            </div>
-            <button id="add-ingredient-btn" class="mt-2 text-sm accent-yellow hover:underline">+ Add Ingredient</button>
-            <div class="mt-4">
-                <input id="meal-link-input" type="text" placeholder="Or paste a recipe link (e.g., from YouTube)" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3">
-            </div>
-            <button id="analyze-meal-btn" class="mt-4 w-full bg-accent-yellow text-black font-bold p-3 rounded-lg">Analyze Nutrition</button>
-            <div id="meal-analysis-result" class="mt-6"></div>
-        </div>
-
-        <!-- Recipe Suggestion -->
-        <div>
-            <h2 class="text-2xl font-bold mb-4">Smart Recipe Builder</h2>
-            <textarea id="recipe-ingredients-input" placeholder="List ingredients you have, separated by commas... (e.g., chicken, tomatoes, onion, garlic)" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 h-24"></textarea>
-            <button id="suggest-recipe-btn" class="mt-4 w-full bg-accent-yellow text-black font-bold p-3 rounded-lg">Suggest Recipes</button>
-            <div id="recipe-suggestion-result" class="mt-6"></div>
-        </div>
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
-        <!-- Craving Fix -->
-        <div class="mt-12">
-            <h2 class="text-2xl font-bold mb-4">Craving Something?</h2>
-            <input id="craving-input" type="text" placeholder="e.g., chocolate cake, potato chips" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3">
-            <button id="fix-craving-btn" class="mt-4 w-full bg-accent-yellow text-black font-bold p-3 rounded-lg">Find a Healthy Alternative</button>
-            <div id="craving-fix-result" class="mt-6"></div>
-        </div>
-    </template>
-    
-    <template id="calculators-template">
-        <div class="space-y-4" id="calculator-accordion">
-            <!-- Calculators will be inserted here by JS -->
-        </div>
-    </template>
-    
-    <template id="profile-template">
-        <div class="max-w-2xl mx-auto">
-            <div class="bg-gray-800/50 p-6 rounded-lg text-center border border-gray-700">
-                <img id="profile-page-avatar" src="https://placehold.co/100x100/121212/FFD700?text=U" class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-accent-yellow">
-                <h2 id="profile-name" class="text-2xl font-bold">User Name</h2>
-                <p id="profile-email" class="text-gray-400">user.email@example.com</p>
-                <p class="text-sm text-gray-500 mt-1">User ID: <span id="profile-uid"></span></p>
-            </div>
-            <div class="mt-8">
-                <h3 class="text-xl font-bold mb-4">Recent Activity</h3>
-                <div id="recent-activity-list" class="space-y-3">
-                    <!-- Activity items will be loaded here -->
-                    <p class="text-gray-500">No recent activity.</p>
-                </div>
-            </div>
-        </div>
-    </template>
+        // --- CONFIGURATION ---
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCu5RfnRhT9refiyybPcW_IBt_7l5cgt2I",
+  authDomain: "calverse-e3cdb.firebaseapp.com",
+  projectId: "calverse-e3cdb",
+  storageBucket: "calverse-e3cdb.firebasestorage.app",
+  messagingSenderId: "284415302963",
+  appId: "1:284415302963:web:936ad62e589bad6fc9b246",
+  measurementId: "G-X28DSX7WYB"
+};
+      
+        
+        // --- INITIALIZATION ---
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        enableIndexedDbPersistence(db).catch((err) => {
+            if (err.code == 'failed-precondition') {
+                console.warn("Firestore persistence failed: Multiple tabs open?");
+            } else if (err.code == 'unimplemented') {
+                console.warn("Firestore persistence not available in this browser.");
+            }
+        });
 
-    <!-- JS -->
-    <script>
-    // --- Main App Logic (IIFE) ---
-    (function() {
-        // --- State Management ---
-        let currentUser = null;
-        let currentUserId = null;
+        // --- DOM ELEMENTS ---
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const authContainer = document.getElementById('auth-container');
+        const appContainer = document.getElementById('app-container');
+        const googleSignInBtn = document.getElementById('google-signin-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        
+        // --- AUTHENTICATION ---
+        const provider = new GoogleAuthProvider();
 
-        // --- Gemini API Configuration ---
-        const GEMINI_API_KEYS = [
-            "AIzaSyCiPL-DcZN82CxH6OmYv9Ll4yM3WiVjxXY",
-            "AIzaSyAvU63lMyAjbSJfcTBuBnkZQ0DPoBpm6Ho",
-            "AIzaSyAIJZmqyztvwoThqI7iu2-xzQr71aJaKEU",
-            "AIzaSyAmbO3Szmr9vAj24MkRkbMQeQi1j7_-m4Y"
-        ];
-        let currentApiKeyIndex = 0;
+        googleSignInBtn.addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                await handleUserLogin(user);
+            } catch (error) {
+                console.error("Google Sign-In Error:", error);
+            }
+        });
+        
+        logoutBtn.addEventListener('click', async () => {
+            await signOut(auth);
+            window.location.reload();
+        });
 
-        // --- DOM Elements ---
-        const dom = {
-            loadingOverlay: document.getElementById('loading-overlay'),
-            loginScreen: document.getElementById('login-screen'),
-            appContainer: document.getElementById('app-container'),
-            loginBtn: document.getElementById('login-btn'),
-            logoutBtn: document.getElementById('logout-btn'),
-            userAvatar: document.getElementById('user-avatar'),
-            userDropdown: document.getElementById('user-dropdown'),
-            pageTitle: document.getElementById('page-title'),
-            pageContent: document.getElementById('page-content'),
-            mainNav: document.getElementById('main-nav'),
-            fab: document.getElementById('fab'),
-            pageFooter: document.getElementById('page-footer'),
-        };
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                handleUserLogin(user);
+                authContainer.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                loadingOverlay.classList.add('hidden');
+                // Initialize icons once the app container is visible
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            } else {
+                authContainer.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+                loadingOverlay.classList.add('hidden');
+            }
+        });
 
-        // --- Utility Functions ---
-        const utils = {
-            showLoading: () => dom.loadingOverlay.classList.remove('hidden'),
-            hideLoading: () => dom.loadingOverlay.classList.add('hidden'),
-            generateUserId: (displayName) => {
-                const prefix = displayName.substring(0, 3).toLowerCase();
-                const randomPart = Math.random().toString(36).substring(2, 8);
-                return `${prefix}${randomPart}`;
+        async function handleUserLogin(user) {
+            const userRef = doc(db, "users", user.uid);
+            const userDoc = await getDoc(userRef);
+
+            if (!userDoc.exists()) {
+                const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
+                const simpleName = user.displayName.split(' ')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+                const customId = `${simpleName}-${randomPart}`;
+
+                await setDoc(userRef, {
+                    uid: user.uid,
+                    displayName: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL,
+                    customId: customId,
+                    createdAt: new Date()
+                });
+            }
+            updateUIWithUserData(user);
+        }
+
+        async function updateUIWithUserData(user) {
+            const userRef = doc(db, "users", user.uid);
+            const userDoc = await getDoc(userRef);
+            const userData = userDoc.data();
+
+            // Nav Bar
+            document.getElementById('user-avatar').src = user.photoURL || `https://placehold.co/40x40/7c3aed/ffffff?text=${user.displayName[0]}`;
+            // Profile Drawer
+            document.getElementById('drawer-user-avatar').src = user.photoURL || `https://placehold.co/80x80/7c3aed/ffffff?text=${user.displayName[0]}`;
+            document.getElementById('drawer-user-name').textContent = user.displayName;
+            document.getElementById('drawer-user-email').textContent = user.email;
+            // Settings Page
+            document.getElementById('user-name-display').textContent = user.displayName;
+            document.getElementById('user-email-display').textContent = user.email;
+            document.getElementById('user-id-display').textContent = `User ID: ${userData.customId}`;
+        }
+
+        // --- GEMINI API LOGIC ---
+        const geminiKeys = [ "AIzaSyAjKByev9K4Zh6Tx9b99ESdBYT-7iEp850","AIzaSyAIJZmqyztvwoThqI7iu2-xzQr71aJaKEU" ];
+        let currentKeyIndex = 0;
+
+        const nutritionSchema = {
+            type: "OBJECT",
+            properties: {
+                foodItem: { type: "STRING" },
+                servingSize: { type: "STRING" },
+                calories: { type: "NUMBER" },
+                totalFat: { type: "STRING" },
+                saturatedFat: { type: "STRING" },
+                transFat: { type: "STRING" },
+                cholesterol: { type: "STRING" },
+                sodium: { type: "STRING" },
+                totalCarbohydrate: { type: "STRING" },
+                dietaryFiber: { type: "STRING" },
+                totalSugars: { type: "STRING" },
+                protein: { type: "STRING" },
+                vitaminD: { type: "STRING" },
+                calcium: { type: "STRING" },
+                iron: { type: "STRING" },
+                potassium: { type: "STRING" },
             },
-            logActivity: async (action, details) => {
-                if (!currentUserId) return;
-                try {
-                    await window.firebase.addDoc(window.firebase.collection(window.firebase.db, 'users', currentUserId, 'activity'), {
-                        action,
-                        details,
-                        timestamp: new Date()
-                    });
-                } catch (error) {
-                    console.error("Error logging activity:", error);
-                }
-            }
+            required: ["foodItem", "servingSize", "calories", "totalFat", "protein", "totalCarbohydrate"]
         };
 
-        // --- Gemini API Handler ---
-        const gemini = {
-            call: async (prompt) => {
-                utils.showLoading();
-                for (let i = 0; i < GEMINI_API_KEYS.length; i++) {
-                    const apiKey = GEMINI_API_KEYS[currentApiKeyIndex];
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
-                    
-                    try {
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                        });
-
-                        if (!response.ok) {
-                            throw new Error(`API call failed with status: ${response.status}`);
-                        }
-
-                        const data = await response.json();
-                        utils.hideLoading();
-                        if (data.candidates && data.candidates.length > 0) {
-                            return data.candidates[0].content.parts[0].text;
-                        } else {
-                           throw new Error("No content in Gemini response");
-                        }
-                    } catch (error) {
-                        console.error(`Error with API key index ${currentApiKeyIndex}:`, error);
-                        currentApiKeyIndex = (currentApiKeyIndex + 1) % GEMINI_API_KEYS.length;
-                        if (i === GEMINI_API_KEYS.length - 1) {
-                            utils.hideLoading();
-                            alert("All API keys failed. Please check your connection or API key validity.");
-                            return null;
-                        }
-                    }
-                }
+        async function callGeminiApi(prompt, schema = null) {
+            if (geminiKeys.length === 0) {
+                console.error("Gemini API keys are not configured.");
+                alert("This feature is currently unavailable. API keys are not set up.");
+                return null;
             }
-        };
 
-        // --- UI Rendering and Event Handling ---
-        const ui = {
-            renderPage: (hash) => {
-                dom.pageContent.innerHTML = ''; // Clear previous content
-                const route = hash.substring(1) || 'home';
-                const template = document.getElementById(`${route}-template`);
+            const apiKey = geminiKeys[currentKeyIndex];
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: schema ? {
+                    responseMimeType: "application/json",
+                    responseSchema: schema
+                } : {}
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed with status ${response.status}`);
+                }
                 
-                dom.fab.classList.add('hidden');
-                dom.pageFooter.classList.add('hidden');
-
-                if (template) {
-                    const content = template.content.cloneNode(true);
-                    dom.pageContent.appendChild(content);
-                    dom.pageTitle.textContent = route.charAt(0).toUpperCase() + route.slice(1);
-                    ui.setActiveNav(route);
-                    ui.bindEventListenersForPage(route);
+                const data = await response.json();
+                if (data.candidates && data.candidates.length > 0) {
+                    const content = data.candidates[0].content.parts[0].text;
+                    return schema ? JSON.parse(content) : content;
                 } else {
-                    // Fallback to home if route not found
-                    dom.pageContent.appendChild(document.getElementById('home-template').content.cloneNode(true));
-                    dom.pageTitle.textContent = 'Home';
-                    ui.setActiveNav('home');
+                     throw new Error("No content returned from API.");
                 }
-                lucide.createIcons();
-            },
-            setActiveNav: (route) => {
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.classList.remove('bg-accent-yellow', 'text-black');
-                    if (item.getAttribute('href') === `#${route}`) {
-                        item.classList.add('bg-accent-yellow', 'text-black');
+
+            } catch (error) {
+                console.error(`Error with API key index ${currentKeyIndex}:`, error);
+                currentKeyIndex = (currentKeyIndex + 1) % geminiKeys.length;
+                console.log(`Failing over to next API key index: ${currentKeyIndex}`);
+                // Simple failover, doesn't retry the same request automatically in this version
+                alert("An error occurred while contacting the AI. Please try again.");
+                return null;
+            }
+        }
+
+        // --- UI & NAVIGATION ---
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.app-section');
+        const pageTitle = document.getElementById('page-title');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                
+                // Update active link style
+                navLinks.forEach(l => l.classList.remove('bg-gray-700', 'text-white'));
+                link.classList.add('bg-gray-700', 'text-white');
+
+                // Show target section
+                sections.forEach(section => {
+                    if (section.id === targetId) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
                     }
                 });
-            },
-            bindEventListenersForPage: (route) => {
-                switch(route) {
-                    case 'nutrition':
-                        ui.bindNutritionEvents();
-                        break;
-                    case 'calculators':
-                        ui.bindCalculatorEvents();
-                        break;
-                    case 'profile':
-                        ui.bindProfileEvents();
-                        break;
+
+                // Update page title
+                pageTitle.textContent = link.textContent.trim();
+                
+                // Close sidebar on mobile after navigation
+                if (window.innerWidth < 768) {
+                    document.getElementById('sidebar').classList.add('-translate-x-full');
                 }
-            },
-            bindNutritionEvents: () => {
-                document.getElementById('nutrition-search-btn').onclick = handlers.handleNutritionSearch;
-                document.querySelectorAll('.food-chip').forEach(chip => {
-                    chip.onclick = () => {
-                        document.getElementById('nutrition-input').value = chip.textContent;
-                        handlers.handleNutritionSearch();
-                    };
-                });
-                document.getElementById('add-ingredient-btn').onclick = handlers.handleAddIngredient;
-                document.getElementById('analyze-meal-btn').onclick = handlers.handleMealAnalysis;
-                document.getElementById('suggest-recipe-btn').onclick = handlers.handleRecipeSuggestion;
-                document.getElementById('fix-craving-btn').onclick = handlers.handleCravingFix;
-            },
-            bindCalculatorEvents: () => {
-                const calculators = [
-                    { id: 'bmi', title: 'BMI Calculator', inputs: ['Height (cm)', 'Weight (kg)'], formula: (i) => (i[1] / ((i[0]/100)**2)).toFixed(2) },
-                    { id: 'bmr', title: 'BMR Calculator', inputs: ['Age', 'Weight (kg)', 'Height (cm)'], gender: true, formula: (i, g) => (g === 'male' ? (88.362 + (13.397 * i[1]) + (4.799 * i[2]) - (5.677 * i[0])) : (447.593 + (9.247 * i[1]) + (3.098 * i[2]) - (4.330 * i[0]))).toFixed(0) },
-                    // Add more calculators here
-                ];
-                const accordionContainer = document.getElementById('calculator-accordion');
-                accordionContainer.innerHTML = calculators.map(calc => `
-                    <div class="calculator-card bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden">
-                        <button class="w-full text-left p-4 flex justify-between items-center" data-calculator-id="${calc.id}">
-                            <h3 class="text-lg font-bold">${calc.title}</h3>
-                            <i data-lucide="chevron-down" class="transition-transform"></i>
-                        </button>
-                        <div class="calculator-content hidden p-4 border-t border-gray-700">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                ${calc.inputs.map(label => `<input type="number" placeholder="${label}" class="bg-gray-700 p-2 rounded">`).join('')}
-                                ${calc.gender ? `<select class="bg-gray-700 p-2 rounded"><option value="male">Male</option><option value="female">Female</option></select>` : ''}
-                            </div>
-                            <button class="calc-btn mt-4 bg-accent-yellow text-black font-bold p-2 rounded w-full">Calculate</button>
-                            <div class="calc-result mt-4 text-center font-bold text-2xl"></div>
-                        </div>
-                    </div>
-                `).join('');
+            });
+        });
+
+        // Mobile menu toggle
+        const sidebar = document.getElementById('sidebar');
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        // Profile drawer toggle
+        const profileDrawer = document.getElementById('profile-drawer');
+        const drawerOverlay = document.getElementById('drawer-overlay');
+        document.getElementById('profile-avatar-btn').addEventListener('click', () => {
+            profileDrawer.classList.remove('translate-x-full');
+            drawerOverlay.classList.remove('hidden');
+        });
+        document.getElementById('close-drawer-btn').addEventListener('click', () => {
+            profileDrawer.classList.add('translate-x-full');
+            drawerOverlay.classList.add('hidden');
+        });
+        drawerOverlay.addEventListener('click', () => {
+            profileDrawer.classList.add('translate-x-full');
+            drawerOverlay.classList.add('hidden');
+        });
+
+        // Accordion logic for calculators
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('i');
                 
-                document.querySelectorAll('.calculator-card button[data-calculator-id]').forEach(button => {
-                    button.onclick = (e) => {
-                        const content = button.nextElementSibling;
-                        const icon = button.querySelector('i');
-                        const isOpen = !content.classList.contains('hidden');
-
-                        // Close all others
-                        document.querySelectorAll('.calculator-content').forEach(c => c.classList.add('hidden'));
-                        document.querySelectorAll('.calculator-card button i').forEach(i => i.classList.remove('rotate-180'));
-
-                        if (!isOpen) {
-                            content.classList.remove('hidden');
-                            icon.classList.add('rotate-180');
-                        }
-                    };
-                });
-
-                document.querySelectorAll('.calc-btn').forEach(btn => {
-                    btn.onclick = () => {
-                        const card = btn.closest('.calculator-card');
-                        const id = card.querySelector('button[data-calculator-id]').dataset.calculatorId;
-                        const calcDef = calculators.find(c => c.id === id);
-                        const inputs = Array.from(card.querySelectorAll('input')).map(i => parseFloat(i.value));
-                        const gender = card.querySelector('select')?.value;
-                        
-                        if (inputs.some(isNaN)) {
-                            card.querySelector('.calc-result').textContent = 'Please fill all fields.';
-                            return;
-                        }
-                        
-                        const result = calcDef.formula(inputs, gender);
-                        card.querySelector('.calc-result').innerHTML = `Result: <span class="accent-yellow">${result}</span>`;
-                        utils.logActivity(`Calculated ${calcDef.title}`, { result });
-                    };
-                });
-                lucide.createIcons();
-            },
-            bindProfileEvents: () => {
-                dom.fab.classList.remove('hidden');
-                dom.pageFooter.classList.remove('hidden');
-                
-                document.getElementById('profile-page-avatar').src = currentUser.photoURL;
-                document.getElementById('profile-name').textContent = currentUser.displayName;
-                document.getElementById('profile-email').textContent = currentUser.email;
-                document.getElementById('profile-uid').textContent = currentUserId;
-
-                // Fetch and display recent activity
-                const activityList = document.getElementById('recent-activity-list');
-                const q = window.firebase.query(
-                    window.firebase.collection(window.firebase.db, 'users', currentUserId, 'activity'),
-                    window.firebase.orderBy('timestamp', 'desc'),
-                    window.firebase.limit(5)
-                );
-
-                window.firebase.onSnapshot(q, (querySnapshot) => {
-                    if (querySnapshot.empty) {
-                        activityList.innerHTML = '<p class="text-gray-500">No recent activity.</p>';
-                        return;
+                header.parentElement.parentElement.querySelectorAll('.accordion-content').forEach(c => {
+                    if (c !== content) {
+                        c.style.maxHeight = null;
+                        c.previousElementSibling.querySelector('i').classList.remove('rotate-180');
                     }
-                    activityList.innerHTML = '';
-                    querySnapshot.forEach((doc) => {
-                        const activity = doc.data();
-                        const date = activity.timestamp.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                        const activityItem = document.createElement('div');
-                        activityItem.className = 'bg-gray-800 p-3 rounded-lg flex justify-between items-center';
-                        activityItem.innerHTML = `
-                            <span>${activity.action} - ${activity.details.query || activity.details.result || ''}</span>
-                            <span class="text-sm text-gray-500">${date}</span>
-                        `;
-                        activityList.appendChild(activityItem);
-                    });
                 });
-            },
-            renderNutritionLabel: (data, containerId) => {
-                const container = document.getElementById(containerId);
-                // Basic parsing, assuming Gemini returns a clean JSON string
+
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    icon.classList.remove('rotate-180');
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    icon.classList.add('rotate-180');
+                }
+            });
+        });
+
+        // --- FEATURE LOGIC ---
+        
+        // Nutrition Lookup
+        const getNutritionBtn = document.getElementById('get-nutrition-btn');
+        const nutritionInput = document.getElementById('nutrition-input');
+        const nutritionOutput = document.getElementById('nutrition-output');
+
+        getNutritionBtn.addEventListener('click', handleGetNutrition);
+        nutritionInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleGetNutrition();
+        });
+
+        async function handleGetNutrition() {
+            const query = nutritionInput.value.trim();
+            if (!query) return;
+
+            setLoadingState(getNutritionBtn, true, 'Analyzing...');
+            nutritionOutput.innerHTML = getSpinnerHTML('Fetching nutrition data...');
+
+            const prompt = `Analyze the nutrition facts for the following food item and provide the data in JSON format according to the specified schema. All values should be strings, except for calories which should be a number. If a value is not applicable or unknown, use "N/A". Food: "${query}"`;
+            
+            const data = await callGeminiApi(prompt, nutritionSchema);
+            
+            if (data) {
+                nutritionOutput.innerHTML = renderNutritionLabel(data);
+            } else {
+                nutritionOutput.innerHTML = `<p class="text-red-400">Could not retrieve nutrition data. Please try again.</p>`;
+            }
+            setLoadingState(getNutritionBtn, false, 'Analyze');
+        }
+
+        // Know Your Meal
+        const analyzeMealBtn = document.getElementById('analyze-meal-btn');
+        const mealUrlInput = document.getElementById('meal-url-input');
+        const mealIngredientsInput = document.getElementById('meal-ingredients-input');
+        const mealOutput = document.getElementById('meal-output');
+
+        analyzeMealBtn.addEventListener('click', async () => {
+            const url = mealUrlInput.value.trim();
+            const ingredients = mealIngredientsInput.value.trim();
+            if (!url && !ingredients) return;
+
+            setLoadingState(analyzeMealBtn, true, 'Analyzing...');
+            mealOutput.innerHTML = getSpinnerHTML('Analyzing your meal...');
+
+            const mealInput = url ? `URL: ${url}` : `Ingredients: ${ingredients}`;
+            const prompt = `Analyze the following meal. First, provide the total nutrition facts for the entire meal in the specified JSON schema format. Second, provide two actionable suggestions: one to improve the taste and one to improve the healthiness of the meal. Format the suggestions as a simple string. Meal details: ${mealInput}`;
+            
+            // For this combined prompt, we will parse the response manually
+            const responseText = await callGeminiApi(prompt);
+
+            if (responseText) {
                 try {
-                    const nutrition = JSON.parse(data.replace(/```json|```/g, '').trim());
-                    container.innerHTML = `
-                        <div class="nutrition-label">
-                            <h1>Nutrition Facts</h1>
-                            <div class="line thick"></div>
-                            <div class="item"><span>Serving Size</span> <span>${nutrition.serving_size || '100g'}</span></div>
-                            <div class="line"></div>
-                            <div class="item"><span>Calories</span> <span>${nutrition.calories || 'N/A'}</span></div>
-                            <div class="line thick"></div>
-                            <div class="item"><span></span> <span class="dv">% Daily Value*</span></div>
-                            <div class="item"><span>Total Fat</span> <span>${nutrition.total_fat?.value || 'N/A'}</span> <span class="dv">${nutrition.total_fat?.dv || 'N/A'}</span></div>
-                            <div class="item indent"><span>Saturated Fat</span> <span>${nutrition.saturated_fat?.value || 'N/A'}</span> <span class="dv">${nutrition.saturated_fat?.dv || 'N/A'}</span></div>
-                            <div class="item indent"><span>Trans Fat</span> <span>${nutrition.trans_fat?.value || 'N/A'}</span></div>
-                            <div class="item"><span>Cholesterol</span> <span>${nutrition.cholesterol?.value || 'N/A'}</span> <span class="dv">${nutrition.cholesterol?.dv || 'N/A'}</span></div>
-                            <div class="item"><span>Sodium</span> <span>${nutrition.sodium?.value || 'N/A'}</span> <span class="dv">${nutrition.sodium?.dv || 'N/A'}</span></div>
-                            <div class="item"><span>Total Carbohydrate</span> <span>${nutrition.total_carbohydrate?.value || 'N/A'}</span> <span class="dv">${nutrition.total_carbohydrate?.dv || 'N/A'}</span></div>
-                            <div class="item indent"><span>Dietary Fiber</span> <span>${nutrition.dietary_fiber?.value || 'N/A'}</span> <span class="dv">${nutrition.dietary_fiber?.dv || 'N/A'}</span></div>
-                            <div class="item indent"><span>Total Sugars</span> <span>${nutrition.total_sugars?.value || 'N/A'}</span></div>
-                            <div class="item indent" style="margin-left: 40px;"><span>Includes Added Sugars</span> <span>${nutrition.added_sugars?.value || 'N/A'}</span> <span class="dv">${nutrition.added_sugars?.dv || 'N/A'}</span></div>
-                            <div class="item"><span>Protein</span> <span>${nutrition.protein?.value || 'N/A'}</span></div>
-                            <div class="line thick"></div>
-                            <div class="footer">*The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2,000 calories a day is used for general nutrition advice.</div>
-                        </div>
-                    `;
+                    // This is a simplified parsing. A more robust solution might need more advanced logic.
+                    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+                    const suggestionsMatch = responseText.split(/\{[\s\S]*\}/)[1];
+
+                    const nutritionData = JSON.parse(jsonMatch[0]);
+                    
+                    let html = renderNutritionLabel(nutritionData, 'Total Meal Nutrition');
+                    html += `<div class="mt-8 bg-gray-800 p-6 rounded-lg">
+                                <h3 class="text-xl font-semibold mb-4 flex items-center"><i data-lucide="lightbulb" class="w-6 h-6 mr-2 text-yellow-400"></i>AI Suggestions</h3>
+                                <div class="text-gray-300">${suggestionsMatch.replace(/\n/g, '<br>')}</div>
+                             </div>`;
+                    mealOutput.innerHTML = html;
+                    lucide.createIcons();
                 } catch (e) {
-                    console.error("Failed to parse nutrition data:", e);
-                    container.innerHTML = `<div class="bg-red-900 text-white p-4 rounded-lg">Error: Could not parse nutrition data from the AI. The response might be malformed. <br><pre class="mt-2 text-sm whitespace-pre-wrap">${data}</pre></div>`;
+                    console.error("Error parsing meal response:", e);
+                    mealOutput.innerHTML = `<p class="text-red-400">Could not parse the meal analysis. The AI returned an unexpected format.</p>`;
                 }
+            } else {
+                mealOutput.innerHTML = `<p class="text-red-400">Could not analyze the meal. Please try again.</p>`;
             }
-        };
+            setLoadingState(analyzeMealBtn, false, 'Analyze Meal');
+        });
 
-        // --- Event Handlers ---
-        const handlers = {
-            handleLogin: async () => {
-                utils.showLoading();
-                const provider = new window.firebase.GoogleAuthProvider();
-                try {
-                    await window.firebase.setPersistence(window.firebase.auth, window.firebase.browserLocalPersistence);
-                    const result = await window.firebase.signInWithPopup(window.firebase.auth, provider);
-                    // This will trigger onAuthStateChanged, which handles the rest
-                } catch (error) {
-                    console.error("Login failed:", error);
-                    alert("Google Sign-In failed. Please try again.");
-                    utils.hideLoading();
-                }
-            },
-            handleLogout: async () => {
-                await window.firebase.signOut(window.firebase.auth);
-                // onAuthStateChanged will handle UI changes
-            },
-            handleHashChange: () => {
-                ui.renderPage(window.location.hash);
-            },
-            handleNutritionSearch: async () => {
-                const query = document.getElementById('nutrition-input').value;
-                if (!query) return;
-                const prompt = `Provide detailed FDA-style nutrition facts for "${query}". Return the data as a single, minified JSON object. The JSON should have keys like "serving_size", "calories", "total_fat", "saturated_fat", "trans_fat", "cholesterol", "sodium", "total_carbohydrate", "dietary_fiber", "total_sugars", "added_sugars", and "protein". For nutrients with a Daily Value, make the value an object with "value" (e.g., "10g") and "dv" (e.g., "15%"). Example for total_fat: { "value": "8g", "dv": "10%" }.`;
-                const result = await gemini.call(prompt);
-                if (result) {
-                    ui.renderNutritionLabel(result, 'nutrition-result');
-                    utils.logActivity('Nutrition Lookup', { query });
-                }
-            },
-            handleAddIngredient: () => {
-                const container = document.getElementById('meal-ingredients');
-                const newIngredient = document.createElement('div');
-                newIngredient.className = 'flex gap-2';
-                newIngredient.innerHTML = `
-                    <input type="text" placeholder="Another ingredient" class="meal-ingredient-input flex-grow bg-gray-800 border border-gray-700 rounded-lg p-3">
-                    <button class="remove-ingredient-btn text-red-500 p-3"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+        // Recipe & Cravings
+        const generateRecipeBtn = document.getElementById('generate-recipe-btn');
+        const solveCravingBtn = document.getElementById('solve-craving-btn');
+        const recipeOutput = document.getElementById('recipe-output');
+
+        generateRecipeBtn.addEventListener('click', async () => {
+            const ingredients = document.getElementById('recipe-ingredients-input').value.trim();
+            if (!ingredients) return;
+            setLoadingState(generateRecipeBtn, true, 'Generating...');
+            recipeOutput.innerHTML = getSpinnerHTML('Creating a recipe for you...');
+            const prompt = `Create a healthy and delicious recipe using the following ingredients: ${ingredients}. Provide a recipe name, a list of ingredients (including the ones provided), and step-by-step instructions. Format the response clearly with headings.`;
+            const recipe = await callGeminiApi(prompt);
+            if (recipe) {
+                recipeOutput.innerHTML = `<div class="bg-gray-800 p-6 rounded-lg">${recipe.replace(/\n/g, '<br>')}</div>`;
+            } else {
+                 recipeOutput.innerHTML = `<p class="text-red-400">Could not generate a recipe. Please try again.</p>`;
+            }
+            setLoadingState(generateRecipeBtn, false, 'Generate Recipe');
+        });
+
+        solveCravingBtn.addEventListener('click', async () => {
+            const craving = document.getElementById('craving-input').value.trim();
+            if (!craving) return;
+            setLoadingState(solveCravingBtn, true, 'Solving...');
+            recipeOutput.innerHTML = getSpinnerHTML('Finding a healthy alternative...');
+            const prompt = `I'm craving ${craving}. Suggest a delicious and healthy alternative recipe. Provide the recipe name, ingredients, and step-by-step instructions. Explain briefly why it's a healthier choice.`;
+            const alternative = await callGeminiApi(prompt);
+            if (alternative) {
+                recipeOutput.innerHTML = `<div class="bg-gray-800 p-6 rounded-lg">${alternative.replace(/\n/g, '<br>')}</div>`;
+            } else {
+                 recipeOutput.innerHTML = `<p class="text-red-400">Could not find an alternative. Please try again.</p>`;
+            }
+            setLoadingState(solveCravingBtn, false, 'Find Healthy Alternative');
+        });
+
+
+        // --- HELPER FUNCTIONS ---
+        function renderNutritionLabel(data, title = 'Nutrition Facts') {
+            return `
+                <div class="nutrition-label">
+                    <div class="header">
+                        <h1>${title}</h1>
+                        <div class="serving-size">${data.foodItem || 'N/A'}</div>
+                        <div>Serving Size ${data.servingSize || 'N/A'}</div>
+                    </div>
+                    <div class="item"><span>Calories</span> <span>${data.calories || 'N/A'}</span></div>
+                    <div class="item"><span>Total Fat</span> <span>${data.totalFat || 'N/A'}</span></div>
+                    <div class="item indent"><span>Saturated Fat</span> <span>${data.saturatedFat || 'N/A'}</span></div>
+                    <div class="item indent"><span>Trans Fat</span> <span>${data.transFat || 'N/A'}</span></div>
+                    <div class="item"><span>Cholesterol</span> <span>${data.cholesterol || 'N/A'}</span></div>
+                    <div class="item"><span>Sodium</span> <span>${data.sodium || 'N/A'}</span></div>
+                    <div class="item"><span>Total Carbohydrate</span> <span>${data.totalCarbohydrate || 'N/A'}</span></div>
+                    <div class="item indent"><span>Dietary Fiber</span> <span>${data.dietaryFiber || 'N/A'}</span></div>
+                    <div class="item indent"><span>Total Sugars</span> <span>${data.totalSugars || 'N/A'}</span></div>
+                    <div class="item"><span>Protein</span> <span>${data.protein || 'N/A'}</span></div>
+                    <div class="footer">
+                        <div class="item"><span>Vitamin D</span> <span>${data.vitaminD || 'N/A'}</span></div>
+                        <div class="item"><span>Calcium</span> <span>${data.calcium || 'N/A'}</span></div>
+                        <div class="item"><span>Iron</span> <span>${data.iron || 'N/A'}</span></div>
+                        <div class="item"><span>Potassium</span> <span>${data.potassium || 'N/A'}</span></div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function setLoadingState(button, isLoading, loadingText) {
+            const originalContent = button.innerHTML;
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    ${loadingText}
                 `;
-                newIngredient.querySelector('.remove-ingredient-btn').onclick = () => newIngredient.remove();
-                container.appendChild(newIngredient);
-                lucide.createIcons();
-            },
-            handleMealAnalysis: async () => {
-                const ingredients = Array.from(document.querySelectorAll('.meal-ingredient-input')).map(i => i.value).filter(Boolean);
-                const link = document.getElementById('meal-link-input').value;
-                if (ingredients.length === 0 && !link) return;
-
-                const query = link ? `the recipe from this link: ${link}` : `a meal consisting of: ${ingredients.join(', ')}`;
-                const prompt = `Analyze the nutrition for ${query}. First, provide the combined FDA-style nutrition facts as a single, minified JSON object, same format as before. Then, on a new line after the JSON, provide two personalized, actionable tips to improve the meal's health or taste, each tip starting with "TIP:".`;
-                
-                const result = await gemini.call(prompt);
-                if (result) {
-                    const resultContainer = document.getElementById('meal-analysis-result');
-                    const parts = result.split('\n');
-                    const jsonPart = parts.find(p => p.startsWith('{'));
-                    const tips = parts.filter(p => p.startsWith('TIP:')).map(t => `<p class="mt-2 bg-green-900/50 p-3 rounded-lg">${t.replace('TIP: ', '')}</p>`).join('');
-
-                    if (jsonPart) {
-                        const nutritionContainer = document.createElement('div');
-                        resultContainer.innerHTML = '';
-                        resultContainer.appendChild(nutritionContainer);
-                        ui.renderNutritionLabel(jsonPart, nutritionContainer.id = 'meal-nutrition-label');
-                        
-                        const tipsContainer = document.createElement('div');
-                        tipsContainer.className = "mt-4";
-                        tipsContainer.innerHTML = `<h3 class="font-bold text-lg">Suggestions</h3>${tips}`;
-                        resultContainer.appendChild(tipsContainer);
-
-                        utils.logActivity('Meal Analysis', { query: ingredients.join(', ') || link });
-                    } else {
-                        resultContainer.innerHTML = `<div class="bg-red-900 text-white p-4 rounded-lg">Could not extract nutrition data from the response.</div>`;
-                    }
-                }
-            },
-            handleRecipeSuggestion: async () => {
-                const ingredients = document.getElementById('recipe-ingredients-input').value;
-                if (!ingredients) return;
-                const prompt = `I have these ingredients: ${ingredients}. Suggest 2-3 healthy and simple recipe ideas. For each recipe, provide a title, a short description, and a list of steps. Format the response clearly using Markdown.`;
-                const result = await gemini.call(prompt);
-                if (result) {
-                    // This assumes a simple Markdown-like response that can be displayed directly.
-                    // A more robust solution would parse the markdown.
-                    document.getElementById('recipe-suggestion-result').innerHTML = `<div class="prose prose-invert bg-gray-800/50 p-4 rounded-lg">${result.replace(/\n/g, '<br>')}</div>`;
-                    utils.logActivity('Recipe Suggestion', { query: ingredients });
-                }
-            },
-            handleCravingFix: async () => {
-                const craving = document.getElementById('craving-input').value;
-                if (!craving) return;
-                const prompt = `I'm craving ${craving}. Suggest a healthier, satisfying alternative. Provide its name, why it's a good alternative, and simple steps to prepare it. Format the response clearly using Markdown.`;
-                const result = await gemini.call(prompt);
-                if (result) {
-                    document.getElementById('craving-fix-result').innerHTML = `<div class="prose prose-invert bg-gray-800/50 p-4 rounded-lg">${result.replace(/\n/g, '<br>')}</div>`;
-                    utils.logActivity('Craving Fix', { query: craving });
-                }
+            } else {
+                button.disabled = false;
+                // The button's original content needs to be restored correctly.
+                // The loadingText parameter when isLoading is false will be the original text.
+                button.innerHTML = loadingText;
             }
-        };
+        }
 
-        // --- App Initialization ---
-        window.initializeApp = () => {
-            utils.showLoading();
+        function getSpinnerHTML(text) {
+            return `
+                <div class="flex flex-col items-center justify-center p-8 text-center">
+                    <svg class="animate-spin h-8 w-8 text-indigo-400 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="text-lg font-semibold text-gray-300">${text}</p>
+                </div>
+            `;
+        }
 
-            // Bind static event listeners
-            dom.loginBtn.addEventListener('click', handlers.handleLogin);
-            dom.logoutBtn.addEventListener('click', handlers.handleLogout);
-            dom.userAvatar.addEventListener('click', () => dom.userDropdown.classList.toggle('hidden'));
-            window.addEventListener('hashchange', handlers.handleHashChange);
-            window.addEventListener('popstate', handlers.handleHashChange); // For browser back/forward
+        // --- CALCULATOR FUNCTIONS (Global Scope) ---
+        window.calculateBMI = function() {
+            const height = parseFloat(document.getElementById('bmi-height').value);
+            const weight = parseFloat(document.getElementById('bmi-weight').value);
+            const resultEl = document.getElementById('bmi-result');
+            if (height > 0 && weight > 0) {
+                const bmi = (weight / ((height / 100) ** 2)).toFixed(2);
+                let category = '';
+                if (bmi < 18.5) category = 'Underweight';
+                else if (bmi < 24.9) category = 'Normal weight';
+                else if (bmi < 29.9) category = 'Overweight';
+                else category = 'Obesity';
+                resultEl.textContent = `Your BMI is ${bmi} (${category})`;
+            } else {
+                resultEl.textContent = 'Please enter valid height and weight.';
+            }
+        }
 
-            // Close dropdown if clicked outside
-            document.addEventListener('click', (event) => {
-                if (!dom.userAvatar.contains(event.target) && !dom.userDropdown.contains(event.target)) {
-                    dom.userDropdown.classList.add('hidden');
-                }
-            });
+        window.calculateBMR = function() {
+            const age = parseFloat(document.getElementById('bmr-age').value);
+            const gender = document.getElementById('bmr-gender').value;
+            const height = parseFloat(document.getElementById('bmr-height').value);
+            const weight = parseFloat(document.getElementById('bmr-weight').value);
+            const resultEl = document.getElementById('bmr-result');
 
-            // Auth state observer
-            window.firebase.onAuthStateChanged(window.firebase.auth, async (user) => {
-                if (user) {
-                    currentUser = user;
-                    // Check if user profile exists, if not, create it
-                    const userRef = window.firebase.doc(window.firebase.db, 'users', user.uid);
-                    const userSnap = await window.firebase.getDoc(userRef);
-
-                    if (!userSnap.exists()) {
-                        // First time login, create profile
-                        const newUserId = utils.generateUserId(user.displayName);
-                        currentUserId = newUserId;
-                        await window.firebase.setDoc(userRef, {
-                            uid: user.uid,
-                            calverseId: newUserId,
-                            displayName: user.displayName,
-                            email: user.email,
-                            photoURL: user.photoURL,
-                            createdAt: new Date()
-                        });
-                        await window.firebase.setDoc(window.firebase.doc(window.firebase.db, 'calverse_ids', newUserId), { uid: user.uid });
-                    } else {
-                        currentUserId = userSnap.data().calverseId;
-                    }
-
-                    // Update UI for logged-in state
-                    dom.userAvatar.src = user.photoURL;
-                    dom.loginScreen.classList.add('hidden');
-                    dom.appContainer.classList.remove('hidden');
-                    dom.appContainer.classList.add('flex');
-                    
-                    // Initial page load
-                    handlers.handleHashChange();
+            if (age > 0 && height > 0 && weight > 0) {
+                let bmr = 0;
+                if (gender === 'male') {
+                    bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
                 } else {
-                    // User is signed out
-                    currentUser = null;
-                    currentUserId = null;
-                    dom.loginScreen.classList.remove('hidden');
-                    dom.appContainer.classList.add('hidden');
-                    dom.appContainer.classList.remove('flex');
+                    bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
                 }
-                utils.hideLoading();
-            });
-        };
-    })();
+                resultEl.textContent = `Your BMR is approx. ${bmr.toFixed(0)} calories/day.`;
+            } else {
+                resultEl.textContent = 'Please fill in all fields correctly.';
+            }
+        }
+
     </script>
 </body>
 </html>
