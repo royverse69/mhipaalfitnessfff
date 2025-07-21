@@ -598,11 +598,14 @@
             // Add event listener for body fat hip input
             const bfGenderSelect = document.getElementById('bf-gender');
             if (bfGenderSelect) {
-                bfGenderSelect.addEventListener('change', (e) => {
-                    document.getElementById('bf-hip-group').style.display = e.target.value === 'female' ? 'block' : 'none';
-                });
-                // Initial hide
-                document.getElementById('bf-hip-group').style.display = 'none';
+                const hipGroup = document.getElementById('bf-hip-group');
+                if (hipGroup) { // Check if the hip input group exists
+                    bfGenderSelect.addEventListener('change', (e) => {
+                        hipGroup.style.display = e.target.value === 'female' ? 'block' : 'none';
+                    });
+                    // Initial hide
+                    hipGroup.style.display = 'none';
+                }
             }
         }
         renderCalculators();
