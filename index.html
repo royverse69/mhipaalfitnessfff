@@ -7,19 +7,18 @@
     <!-- Google Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        /* --- Professional UI Overhaul --- */
+        /* --- Professional Dark Mode UI --- */
         :root {
-            --primary-color: #f59e0b; /* A richer, modern orange/yellow */
-            --background-color: #f4f4f5; /* Light gray */
-            --surface-color: #ffffff;
-            --text-color: #18181b;
-            --text-muted-color: #71717a;
-            --border-color: #e4e4e7;
+            --primary-color: #facc15; /* Gold/Yellow */
+            --background-color: #111111;
+            --surface-color: #1e1e1e;
+            --text-color: #f5f5f5;
+            --text-muted-color: #a3a3a3;
+            --border-color: #2e2e2e;
             --error-color: #ef4444;
-            --success-color: #22c55e;
         }
 
         * {
@@ -36,168 +35,154 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
-            padding-top: 80px; /* Header height + padding */
         }
 
-        /* --- Header --- */
-        header {
-            background-color: var(--surface-color);
+        .app-container {
+            display: flex;
+        }
+
+        /* --- Sidebar Navigation (Desktop) --- */
+        .sidebar {
+            display: none; /* Hidden on mobile */
+            width: 240px;
+            background-color: var(--background-color);
+            border-right: 1px solid var(--border-color);
+            height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 65px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 2.5rem;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            z-index: 100;
+            gap: 0.5rem;
         }
 
-        .logo {
+        .sidebar .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .sidebar .nav-link {
             display: flex;
             align-items: center;
-            font-weight: 700;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            color: var(--text-muted-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: var(--surface-color);
+        }
+
+        .sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: #000;
+        }
+        
+        .sidebar .nav-link.active .material-icons {
+             color: #000;
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            width: 100%;
+            padding: 1.5rem;
+            padding-bottom: 100px; /* Space for bottom nav */
+        }
+
+        /* --- Header (Mobile) --- */
+        .mobile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .mobile-header .logo {
             font-size: 1.5rem;
+            font-weight: 700;
             color: var(--primary-color);
         }
-
-        .logo .material-icons {
-            font-size: 2rem;
-            margin-right: 0.5rem;
-        }
-
-        .profile-container {
-            position: relative;
-        }
-
+        
         #user-profile-icon {
             cursor: pointer;
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--border-color);
+            background-color: var(--surface-color);
             overflow: hidden;
-        }
-        
-        #user-profile-icon .material-icons {
-            font-size: 2rem;
-            color: var(--text-muted-color);
+            border: 1px solid var(--border-color);
         }
         
         #user-profile-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        
+        #user-profile-icon .material-icons {
+             font-size: 2.5rem; color: var(--text-muted-color);
         }
 
-        #profile-menu {
+        /* --- Page Sections --- */
+        .page-section {
             display: none;
-            position: absolute;
-            top: 55px;
-            right: 0;
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-            width: 180px;
-            z-index: 101;
-            overflow: hidden;
         }
-
-        #profile-menu button {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            padding: 12px 16px;
-            background: none;
-            border: none;
-            color: var(--text-color);
-            text-align: left;
-            cursor: pointer;
-            font-size: 0.95rem;
+        .page-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
         }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        #profile-menu button:hover {
-            background-color: var(--background-color);
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
         }
         
-        #logout-btn {
-            color: var(--error-color);
+        .page-subtitle {
+            color: var(--text-muted-color);
+            margin-bottom: 2rem;
         }
 
-        /* --- Main Content & Accordion Structure --- */
-        main {
-            padding: 0 1rem 80px 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .accordion-item {
+        /* --- Card & Input Styles --- */
+        .card {
             background-color: var(--surface-color);
+            padding: 1.5rem;
             border-radius: 12px;
             border: 1px solid var(--border-color);
-            overflow: hidden;
-            transition: all 0.3s ease-in-out;
-        }
-        
-        .accordion-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.25rem;
-            cursor: pointer;
-        }
-        
-        .accordion-header h2 {
-            font-size: 1.25rem;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .accordion-header .icon {
-            transition: transform 0.3s ease;
-        }
-        
-        .accordion-item.active .accordion-header .icon {
-            transform: rotate(180deg);
-        }
-        
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
-        }
-        
-        .accordion-content-inner {
-            padding: 0 1.25rem 1.25rem 1.25rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        /* --- Forms & Inputs --- */
-        .input-group {
             margin-bottom: 1.5rem;
         }
         
-        .input-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-muted-color);
-            font-size: 0.9rem;
+        .input-group {
+            position: relative;
+            margin-bottom: 1rem;
         }
-
+        
+        .input-group .material-icons {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            color: var(--text-muted-color);
+        }
+        
         input, textarea, select {
             width: 100%;
-            padding: 12px;
+            padding: 1rem;
             background-color: var(--background-color);
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -206,37 +191,51 @@
             font-family: 'Inter', sans-serif;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
+        
+        .input-group input {
+             padding-left: 3rem;
+        }
+        
+        textarea { min-height: 120px; }
 
         input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+            box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.3);
         }
 
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: #ffffff;
-            border: none;
-            padding: 14px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 1rem;
+        .suggestion-pills {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-wrap: wrap;
             gap: 0.5rem;
-            transition: background-color 0.2s, transform 0.1s;
-            width: 100%;
+            margin-top: 1rem;
         }
         
-        button:active {
-            transform: scale(0.98);
+        .pill {
+            background-color: var(--border-color);
+            color: var(--text-muted-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .pill:hover {
+            background-color: #3f3f46;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            width: 100%;
+            transition: background-color 0.2s;
         }
 
         /* --- Results & Utility --- */
@@ -250,7 +249,7 @@
             line-height: 1.6;
             font-size: 0.95rem;
         }
-
+        
         .loader {
             border: 4px solid var(--border-color);
             border-top: 4px solid var(--primary-color);
@@ -260,214 +259,179 @@
             animation: spin 1s linear infinite;
             margin: 2rem auto;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .error-message {
-            background-color: var(--error-color);
-            color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: 500;
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .disclaimer {
             font-size: 0.8rem;
             color: var(--text-muted-color);
-            background-color: var(--background-color);
             padding: 0.75rem;
             border-radius: 8px;
             margin-top: 1rem;
             text-align: center;
         }
 
-        /* --- Calculator Specific --- */
-        #calculators-accordion .accordion-item {
-            background-color: var(--background-color);
-            border: none;
-        }
-        
-        #calculators-accordion .accordion-header {
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+        /* --- Bottom Navigation (Mobile) --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
             background-color: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem 0;
+            z-index: 100;
         }
         
-        #calculators-accordion .accordion-content-inner {
-            padding: 1.25rem;
-            border: 1px solid var(--border-color);
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-            margin-top: -8px;
-            background-color: var(--surface-color);
-        }
-        
-        .calc-input-group {
+        .bottom-nav .nav-link {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted-color);
+            text-decoration: none;
+            padding: 0.5rem;
+            flex-grow: 1;
         }
         
-        .calc-input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            align-items: center;
-            gap: 1rem;
+        .bottom-nav .nav-link.active {
+            color: var(--primary-color);
         }
 
-        /* --- Login Modal --- */
+        /* --- Responsive Layout --- */
+        @media (min-width: 768px) {
+            .sidebar {
+                display: flex;
+            }
+            .main-content {
+                margin-left: 240px;
+                padding: 2.5rem;
+            }
+            .mobile-header, .bottom-nav {
+                display: none;
+            }
+        }
+        
+        /* Login Modal remains similar */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.6);
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.8); justify-content: center; align-items: center; backdrop-filter: blur(5px);
         }
-
         .modal-content {
-            background-color: var(--surface-color);
-            margin: auto;
-            padding: 2rem;
-            border: 1px solid var(--border-color);
-            width: 90%;
-            max-width: 400px;
-            border-radius: 16px;
-            text-align: center;
-            animation: slideIn 0.3s ease-out;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            background-color: var(--surface-color); margin: auto; padding: 2rem; border: 1px solid var(--border-color);
+            width: 90%; max-width: 400px; border-radius: 16px; text-align: center;
+            animation: slideIn 0.3s ease-out; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
         }
-
-        @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         #login-with-google-btn {
-            background-color: #4285F4;
-            color: #fff;
-            width: 100%;
-            margin-top: 1.5rem;
+            background-color: #4285F4; color: #fff; width: 100%; margin-top: 1.5rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.75rem;
         }
         #login-with-google-btn img {
-            width: 20px;
-            height: 20px;
-            background-color: #fff;
-            border-radius: 50%;
-            padding: 2px;
+            width: 20px; height: 20px; background-color: #fff; border-radius: 50%; padding: 2px;
         }
+        
     </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <header>
-        <div class="logo">
-            <span class="material-icons">spa</span>
-            <span>Calverse</span>
-        </div>
-        <div class="profile-container">
-            <div id="user-profile-icon">
-                <span class="material-icons">account_circle</span>
-            </div>
-            <div id="profile-menu">
-                <button id="logout-btn"><span class="material-icons">logout</span>Logout</button>
-            </div>
-        </div>
-    </header>
+    <div class="app-container">
+        <!-- Sidebar for Desktop -->
+        <nav class="sidebar">
+            <div class="logo"><span class="material-icons">spa</span>Calverse</div>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link active" data-target="nutrition"><span class="material-icons">search</span>Nutrition</a></li>
+                <li><a href="#" class="nav-link" data-target="meal"><span class="material-icons">restaurant_menu</span>Your Meal</a></li>
+                <li><a href="#" class="nav-link" data-target="recipe"><span class="material-icons">menu_book</span>Recipes</a></li>
+                <li><a href="#" class="nav-link" data-target="calculators"><span class="material-icons">calculate</span>Calculators</a></li>
+            </ul>
+        </nav>
 
-    <!-- Main Content Area -->
-    <main id="main-accordion">
-        <!-- Section 1: Nutrition Search -->
-        <div class="accordion-item">
-            <div class="accordion-header" data-target="nutrition-content">
-                <h2><span class="material-icons">search</span>Nutrition Lookup</h2>
-                <span class="material-icons icon">expand_more</span>
-            </div>
-            <div class="accordion-content" id="nutrition-content">
-                <div class="accordion-content-inner">
-                    <div class="input-group">
-                        <label for="food-search-input">Enter a food item with its quantity.</label>
-                        <input type="text" id="food-search-input" placeholder="e.g., 100g of soya chunks">
-                    </div>
-                    <button id="food-search-btn">Get Nutrition Facts</button>
-                    <div id="nutrition-results" class="results-container"></div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Header -->
+            <header class="mobile-header">
+                <div class="logo">Calverse</div>
+                <div id="user-profile-icon">
+                    <span class="material-icons">account_circle</span>
                 </div>
-            </div>
-        </div>
+            </header>
 
-        <!-- Section 2: Know Your Meal -->
-        <div class="accordion-item">
-            <div class="accordion-header" data-target="meal-content">
-                <h2><span class="material-icons">restaurant_menu</span>Know Your Meal</h2>
-                <span class="material-icons icon">expand_more</span>
-            </div>
-            <div class="accordion-content" id="meal-content">
-                <div class="accordion-content-inner">
+            <!-- Section 1: Nutrition Search -->
+            <section id="nutrition" class="page-section active">
+                <h1 class="page-title">Calorie Chart & Nutrition Facts</h1>
+                <p class="page-subtitle">Search for a food or select a suggestion.</p>
+                <div class="card">
                     <div class="input-group">
-                        <label for="meal-ingredients-input">List Ingredients (one per line)</label>
-                        <textarea id="meal-ingredients-input" placeholder="e.g.,&#10;1 cup rice&#10;150g lentils&#10;1 tbsp olive oil"></textarea>
-                        <button id="analyze-meal-btn">Analyze Ingredients</button>
+                        <span class="material-icons">search</span>
+                        <input type="text" id="food-search-input" placeholder="E.g., 'Apple' or 'Big Mac'">
                     </div>
-                    <div id="meal-results" class="results-container"></div>
+                    <div class="suggestion-pills">
+                        <span class="pill">Chicken Breast</span>
+                        <span class="pill">Salad</span>
+                        <span class="pill">Banana</span>
+                        <span class="pill">Protein Shake</span>
+                        <span class="pill">Oats</span>
+                        <span class="pill">Egg</span>
+                    </div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Section 3: Recipe Suggestions -->
-        <div class="accordion-item">
-            <div class="accordion-header" data-target="recipe-content">
-                <h2><span class="material-icons">menu_book</span>Recipe Ideas</h2>
-                <span class="material-icons icon">expand_more</span>
-            </div>
-            <div class="accordion-content" id="recipe-content">
-                <div class="accordion-content-inner">
-                    <div class="input-group">
-                        <label for="recipe-ingredients-input">What ingredients do you have?</label>
-                        <textarea id="recipe-ingredients-input" placeholder="e.g., chicken, tomatoes, onions, garlic"></textarea>
-                        <button id="get-recipe-btn">Suggest a Recipe</button>
-                    </div>
-                    <div class="input-group">
-                        <label for="craving-input">What are you craving?</label>
-                        <input type="text" id="craving-input" placeholder="e.g., something sweet and chocolaty">
-                        <button id="get-craving-btn">Find Healthier Alternative</button>
-                    </div>
-                    <div id="recipe-results" class="results-container"></div>
-                </div>
-            </div>
-        </div>
+                <div id="nutrition-results" class="results-container" style="display:none;"></div>
+            </section>
 
-        <!-- Section 4: Calculators -->
-        <div class="accordion-item">
-            <div class="accordion-header" data-target="calculators-content">
-                <h2><span class="material-icons">calculate</span>Health Calculators</h2>
-                <span class="material-icons icon">expand_more</span>
-            </div>
-            <div class="accordion-content" id="calculators-content">
-                <div class="accordion-content-inner" id="calculators-accordion">
-                    <!-- Calculator accordions will be injected here -->
+            <!-- Section 2: Know Your Meal -->
+            <section id="meal" class="page-section">
+                 <h1 class="page-title">Know Your Meal</h1>
+                 <p class="page-subtitle">Analyze ingredients to understand your meal's nutrition.</p>
+                 <div class="card">
+                    <textarea id="meal-ingredients-input" placeholder="e.g.,&#10;1 cup rice&#10;150g lentils&#10;1 tbsp olive oil"></textarea>
+                    <button id="analyze-meal-btn" style="margin-top: 1rem;">Analyze Ingredients</button>
+                 </div>
+                 <div id="meal-results" class="results-container" style="display:none;"></div>
+            </section>
+            
+            <!-- Section 3: Recipe Suggestions -->
+            <section id="recipe" class="page-section">
+                <h1 class="page-title">Recipe Ideas</h1>
+                <p class="page-subtitle">Get recipes based on ingredients or cravings.</p>
+                <div class="card">
+                    <label>What ingredients do you have?</label>
+                    <textarea id="recipe-ingredients-input" placeholder="e.g., chicken, tomatoes, onions" style="margin-top:0.5rem;"></textarea>
+                    <button id="get-recipe-btn" style="margin-top: 1rem;">Suggest a Recipe</button>
                 </div>
-            </div>
-        </div>
-    </main>
+                <div class="card">
+                    <label>What are you craving?</label>
+                    <input type="text" id="craving-input" placeholder="e.g., something sweet and chocolaty" style="margin-top:0.5rem;">
+                    <button id="get-craving-btn" style="margin-top: 1rem;">Find Healthier Alternative</button>
+                </div>
+                <div id="recipe-results" class="results-container" style="display:none;"></div>
+            </section>
+
+            <!-- Section 4: Calculators -->
+            <section id="calculators" class="page-section">
+                 <h1 class="page-title">Health Calculators</h1>
+                 <p class="page-subtitle">Select a tool to calculate your health metrics.</p>
+                 <div id="calculators-list">
+                     <!-- Calculators will be rendered here by JS -->
+                 </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Bottom Navigation for Mobile -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-link active" data-target="nutrition"><span class="material-icons">home</span>Home</a>
+        <a href="#" class="nav-link" data-target="meal"><span class="material-icons">restaurant_menu</span>Meal</a>
+        <a href="#" class="nav-link" data-target="recipe"><span class="material-icons">menu_book</span>Recipes</a>
+        <a href="#" class="nav-link" data-target="calculators"><span class="material-icons">calculate</span>Calculators</a>
+    </nav>
     
     <!-- Login Modal -->
     <div id="login-modal" class="modal-overlay">
         <div class="modal-content">
             <h3>Welcome to Calverse</h3>
             <p>Sign in with Google to save your data and track your nutrition journey.</p>
-            <div id="login-error-message" class="error-message" style="display: none; margin-bottom: 1rem; margin-top: 1rem; background-color: #B00020; color: #fff;"></div>
+            <div id="login-error-message" style="display: none; margin: 1rem 0; color: var(--error-color);"></div>
             <button id="login-with-google-btn">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
                 Sign in with Google
@@ -483,14 +447,13 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        // --- API & Firebase Configuration ---
+        // --- Config ---
         const GEMINI_API_KEYS = [
             "AIzaSyCiPL-DcZN82CxH6OmYv9Ll4yM3WiVjxXY",
             "AIzaSyAvU63lMyAjbSJfcTBuBnkZQ0DPoBpm6Ho",
             "AIzaSyAIJZmqyztvwoThqI7iu2-xzQr71aJaKEU",
             "AIzaSyAmbO3Szmr9vAj24MkRkbMQeQi1j7_-m4Y"
         ];
-
         const firebaseConfig = {
             apiKey: "AIzaSyCu5RfnRhT9refiyybPcW_IBt_7l5cgt2I",
             authDomain: "calverse-e3cdb.firebaseapp.com",
@@ -500,340 +463,203 @@
             appId: "1:284415302963:web:936ad62e589bad6fc9b246",
         };
 
-        // --- Initialize Firebase ---
+        // --- Init Firebase ---
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
         let currentUser = null;
-        let userId = null;
 
-        // --- Gemini API Key Management ---
+        // --- Gemini API Call ---
         let currentApiKeyIndex = 0;
-
         async function geminiFetch(prompt, resultContainer) {
             showLoader(resultContainer);
+            resultContainer.style.display = 'block';
             for (let i = 0; i < GEMINI_API_KEYS.length; i++) {
                 const apiKey = GEMINI_API_KEYS[currentApiKeyIndex];
-                // CRITICAL FIX: Using the correct v1 endpoint and a valid model name
                 const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
-
                 try {
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                     });
-
-                    if (!response.ok) {
-                         const errorData = await response.json();
-                         throw new Error(`API Error (${response.status}): ${errorData.error.message}`);
-                    }
-
+                    if (!response.ok) throw new Error(`API Error ${response.status}`);
                     const data = await response.json();
-                    
                     if (data.candidates && data.candidates.length > 0) {
                         hideLoader(resultContainer);
                         return data.candidates[0].content.parts[0].text;
-                    } else {
-                        throw new Error("Invalid response structure from Gemini API.");
-                    }
-
+                    } else { throw new Error("Invalid response structure."); }
                 } catch (error) {
-                    console.warn(`API Key ${currentApiKeyIndex + 1} failed: ${error.message}. Trying next one.`);
+                    console.warn(`API Key ${currentApiKeyIndex + 1} failed. Trying next.`);
                     currentApiKeyIndex = (currentApiKeyIndex + 1) % GEMINI_API_KEYS.length;
                 }
             }
-            
             hideLoader(resultContainer);
-            showError("All API attempts failed. The service might be temporarily unavailable. Please try again later.", resultContainer);
+            resultContainer.innerHTML = `<p style="color: var(--error-color);">Service is currently unavailable. Please try again later.</p>`;
             return null;
         }
 
-        // --- UI Element Selectors ---
+        // --- Auth ---
         const loginModal = document.getElementById('login-modal');
-        const loginBtn = document.getElementById('login-with-google-btn');
-        const logoutBtn = document.getElementById('logout-btn');
-        const profileIcon = document.getElementById('user-profile-icon');
-        const profileMenu = document.getElementById('profile-menu');
-
-        // --- Authentication Logic ---
         auth.onAuthStateChanged(user => {
-            if (user) {
-                currentUser = user;
-                userId = generateUserId(user.displayName);
-                loginModal.style.display = 'none';
-                updateProfileIcon(user.photoURL);
-            } else {
-                currentUser = null;
-                userId = null;
-                loginModal.style.display = 'flex';
-                updateProfileIcon(null);
-            }
+            currentUser = user;
+            loginModal.style.display = user ? 'none' : 'flex';
+            if (user) document.getElementById('user-profile-icon').innerHTML = `<img src="${user.photoURL}" alt="Profile">`;
         });
-
-        loginBtn.addEventListener('click', () => {
-            const errorMessageDiv = document.getElementById('login-error-message');
-            errorMessageDiv.style.display = 'none';
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider).catch(error => {
-                let message = "An unknown error occurred. Please try again.";
-                if (error.code === 'auth/popup-blocked') {
-                    message = "Login popup blocked by your browser. Please allow popups for this site.";
-                }
-                errorMessageDiv.textContent = message;
-                errorMessageDiv.style.display = 'block';
+        document.getElementById('login-with-google-btn').addEventListener('click', () => {
+            auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(err => {
+                document.getElementById('login-error-message').textContent = 'Login failed. Please try again.';
+                document.getElementById('login-error-message').style.display = 'block';
             });
         });
 
-        logoutBtn.addEventListener('click', () => {
-            auth.signOut();
-            profileMenu.style.display = 'none';
-        });
-
-        profileIcon.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (currentUser) {
-                profileMenu.style.display = profileMenu.style.display === 'block' ? 'none' : 'block';
-            } else {
-                loginModal.style.display = 'flex';
-            }
-        });
-        
-        window.addEventListener('click', () => profileMenu.style.display = 'none');
-
-
-        function generateUserId(name) {
-            const namePart = name ? name.slice(0, 3).toLowerCase() : 'usr';
-            const randomPart = Math.random().toString(36).substring(2, 7);
-            return `${namePart}${randomPart}`;
-        }
-        
-        function updateProfileIcon(photoURL) {
-            if (photoURL) {
-                profileIcon.innerHTML = `<img src="${photoURL}" alt="Profile Picture">`;
-            } else {
-                profileIcon.innerHTML = `<span class="material-icons">account_circle</span>`;
-            }
-        }
-        
-        // --- Accordion Logic ---
-        function setupAccordion(containerId) {
-            const accordionContainer = document.getElementById(containerId);
-            accordionContainer.addEventListener('click', function(e) {
-                const header = e.target.closest('.accordion-header');
-                if (!header) return;
-                
-                const item = header.parentElement;
-                const content = document.getElementById(header.dataset.target);
-                const isActive = item.classList.contains('active');
-
-                // Optional: Close other items when one is opened
-                // this.querySelectorAll('.accordion-item').forEach(otherItem => {
-                //     otherItem.classList.remove('active');
-                //     otherItem.querySelector('.accordion-content').style.maxHeight = '0px';
-                // });
-
-                if (!isActive) {
-                    item.classList.add('active');
-                    content.style.maxHeight = content.scrollHeight + 'px';
-                } else {
-                    item.classList.remove('active');
-                    content.style.maxHeight = '0px';
-                }
+        // --- Navigation ---
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pageSections = document.querySelectorAll('.page-section');
+        function switchPage(targetId) {
+            pageSections.forEach(section => section.classList.remove('active'));
+            document.getElementById(targetId)?.classList.add('active');
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.dataset.target === targetId);
             });
         }
-        setupAccordion('main-accordion');
-        setupAccordion('calculators-accordion');
+        navLinks.forEach(link => link.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchPage(e.currentTarget.dataset.target);
+        }));
 
-
-        // --- Section 1: Nutrition Lookup ---
-        document.getElementById('food-search-btn').addEventListener('click', async () => {
-            const query = document.getElementById('food-search-input').value.trim();
-            const resultsContainer = document.getElementById('nutrition-results');
+        // --- Nutrition Search ---
+        const foodSearchInput = document.getElementById('food-search-input');
+        const nutritionResults = document.getElementById('nutrition-results');
+        async function searchFood(query) {
             if (!query) return;
+            foodSearchInput.value = query;
             const prompt = `Provide a detailed nutrition facts label for "${query}". The output should be plain text, formatted like a standard US nutrition label. Include values for Calories, Total Fat, Saturated Fat, Trans Fat, Cholesterol, Sodium, Total Carbohydrate, Dietary Fiber, Total Sugars, and Protein. Also include values for Vitamin D, Calcium, Iron, and Potassium.`;
-            const result = await geminiFetch(prompt, resultsContainer);
-            if (result) resultsContainer.textContent = result;
-        });
-
-        // --- Section 2: Know Your Meal ---
+            const result = await geminiFetch(prompt, nutritionResults);
+            if (result) nutritionResults.textContent = result;
+        }
+        foodSearchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') searchFood(e.target.value.trim()); });
+        document.querySelectorAll('.pill').forEach(pill => pill.addEventListener('click', () => searchFood(pill.textContent)));
+        
+        // --- Meal & Recipe ---
         document.getElementById('analyze-meal-btn').addEventListener('click', async () => {
             const ingredients = document.getElementById('meal-ingredients-input').value.trim();
-            const resultsContainer = document.getElementById('meal-results');
             if (!ingredients) return;
             const prompt = `Analyze the nutritional content of a meal with these ingredients:\n${ingredients}\n\nFirst, provide an estimated total for key nutrients (Calories, Protein, Carbs, Fat). Then, give two specific, actionable suggestions to make this meal healthier and tastier. Format the entire response clearly with headings.`;
-            const result = await geminiFetch(prompt, resultsContainer);
-            if (result) resultsContainer.textContent = result;
+            const result = await geminiFetch(prompt, document.getElementById('meal-results'));
+            if (result) document.getElementById('meal-results').textContent = result;
         });
-
-        // --- Section 3: Recipe Suggestions ---
         document.getElementById('get-recipe-btn').addEventListener('click', async () => {
             const ingredients = document.getElementById('recipe-ingredients-input').value.trim();
-            const resultsContainer = document.getElementById('recipe-results');
             if (!ingredients) return;
             const prompt = `I have the following ingredients: ${ingredients}. Suggest a healthy and delicious recipe I can make. Provide a name for the recipe, a list of required ingredients, and a step-by-step cooking process.`;
-            const result = await geminiFetch(prompt, resultsContainer);
-            if (result) resultsContainer.textContent = result;
+            const result = await geminiFetch(prompt, document.getElementById('recipe-results'));
+            if (result) document.getElementById('recipe-results').textContent = result;
         });
-        
         document.getElementById('get-craving-btn').addEventListener('click', async () => {
             const craving = document.getElementById('craving-input').value.trim();
-            const resultsContainer = document.getElementById('recipe-results');
             if (!craving) return;
             const prompt = `I'm craving "${craving}". Suggest a healthier, delicious alternative. Provide a recipe name, ingredients, and step-by-step instructions to make it.`;
-            const result = await geminiFetch(prompt, resultsContainer);
-            if (result) resultsContainer.textContent = result;
+            const result = await geminiFetch(prompt, document.getElementById('recipe-results'));
+            if (result) document.getElementById('recipe-results').textContent = result;
         });
 
-        // --- Section 4: ALL Calculators ---
-        const calculatorsContainer = document.getElementById('calculators-accordion');
-        const calculatorTemplates = {
-            bmi: { title: 'BMI Calculator', icon: 'monitor_weight', html: `
-                <div class="calc-input-group">
-                    <div class="calc-input-row"><label for="bmi-weight">Weight (kg)</label><input type="number" id="bmi-weight" placeholder="70"></div>
-                    <div class="calc-input-row"><label for="bmi-height">Height (cm)</label><input type="number" id="bmi-height" placeholder="175"></div>
-                </div><button onclick="calculateBMI()">Calculate BMI</button>`},
-            bmr: { title: 'BMR Calculator', icon: 'local_fire_department', html: `
-                <div class="calc-input-group">
-                    <div class="calc-input-row"><label for="bmr-weight">Weight (kg)</label><input type="number" id="bmr-weight" placeholder="70"></div>
-                    <div class="calc-input-row"><label for="bmr-height">Height (cm)</label><input type="number" id="bmr-height" placeholder="175"></div>
-                    <div class="calc-input-row"><label for="bmr-age">Age</label><input type="number" id="bmr-age" placeholder="30"></div>
-                    <div class="calc-input-row"><label for="bmr-gender">Gender</label><select id="bmr-gender"><option value="male">Male</option><option value="female">Female</option></select></div>
-                </div><button onclick="calculateBMR()">Calculate BMR</button>`},
-            bodyFat: { title: 'Body Fat Calculator', icon: 'fitness_center', html: `
-                <p class="disclaimer" style="margin-bottom: 1rem; margin-top: 0;">Uses the U.S. Navy method. Measurements can be in cm or inches, just be consistent.</p>
-                <div class="calc-input-group">
-                    <div class="calc-input-row"><label for="bf-height">Height</label><input type="number" id="bf-height" placeholder="175"></div>
-                    <div class="calc-input-row"><label for="bf-neck">Neck</label><input type="number" id="bf-neck" placeholder="38"></div>
-                    <div class="calc-input-row"><label for="bf-waist">Waist</label><input type="number" id="bf-waist" placeholder="85"></div>
-                    <div class="calc-input-row" id="bf-hip-row" style="display:none;"><label for="bf-hip">Hip</label><input type="number" id="bf-hip" placeholder="95"></div>
-                    <div class="calc-input-row"><label for="bf-gender">Gender</label><select id="bf-gender" onchange="toggleHipInput(this.value)"><option value="male">Male</option><option value="female">Female</option></select></div>
-                </div><button onclick="calculateBodyFat()">Calculate Body Fat %</button>`},
-            idealWeight: { title: 'Ideal Weight Calculator', icon: 'scale', html: `
-                <div class="calc-input-group">
-                    <div class="calc-input-row"><label for="iw-height">Height (cm)</label><input type="number" id="iw-height" placeholder="175"></div>
-                    <div class="calc-input-row"><label for="iw-gender">Gender</label><select id="iw-gender"><option value="male">Male</option><option value="female">Female</option></select></div>
-                </div><button onclick="calculateIdealWeight()">Calculate Ideal Weight</button>`},
-            lbm: { title: 'Lean Body Mass Calculator', icon: 'directions_run', html: `
-                <div class="calc-input-group">
-                    <div class="calc-input-row"><label for="lbm-weight">Weight (kg)</label><input type="number" id="lbm-weight" placeholder="70"></div>
-                    <div class="calc-input-row"><label for="lbm-height">Height (cm)</label><input type="number" id="lbm-height" placeholder="175"></div>
-                    <div class="calc-input-row"><label for="lbm-gender">Gender</label><select id="lbm-gender"><option value="male">Male</option><option value="female">Female</option></select></div>
-                </div><button onclick="calculateLBM()">Calculate Lean Body Mass</button>`},
-            ovulation: { title: 'Ovulation Calculator', icon: 'calendar_month', html: `
-                <div class="calc-input-group">
-                    <div class="calc-input-row"><label for="ov-last-period">First Day of Last Period</label><input type="date" id="ov-last-period"></div>
-                    <div class="calc-input-row"><label for="ov-cycle-length">Average Cycle Length (days)</label><input type="number" id="ov-cycle-length" placeholder="28"></div>
-                </div><button onclick="calculateOvulation()">Estimate Fertile Window</button>`},
+        // --- Calculators ---
+        const calculatorsList = document.getElementById('calculators-list');
+        const calculatorData = {
+            bmi: { title: 'BMI Calculator', icon: 'monitor_weight', inputs: [{id: 'bmi-weight', label: 'Weight (kg)'}, {id: 'bmi-height', label: 'Height (cm)'}], func: 'calculateBMI'},
+            bmr: { title: 'BMR Calculator', icon: 'local_fire_department', inputs: [{id: 'bmr-weight', label: 'Weight (kg)'}, {id: 'bmr-height', label: 'Height (cm)'}, {id: 'bmr-age', label: 'Age'}, {id: 'bmr-gender', label: 'Gender', type: 'select', options: ['Male', 'Female']}], func: 'calculateBMR'},
+            bodyFat: { title: 'Body Fat Calculator', icon: 'fitness_center', inputs: [{id: 'bf-height', label: 'Height (cm)'}, {id: 'bf-neck', label: 'Neck (cm)'}, {id: 'bf-waist', label: 'Waist (cm)'}, {id: 'bf-hip', label: 'Hip (cm)', femaleOnly: true}, {id: 'bf-gender', label: 'Gender', type: 'select', options: ['Male', 'Female']}], func: 'calculateBodyFat'},
+            idealWeight: { title: 'Ideal Weight Calculator', icon: 'scale', inputs: [{id: 'iw-height', label: 'Height (cm)'}, {id: 'iw-gender', label: 'Gender', type: 'select', options: ['Male', 'Female']}], func: 'calculateIdealWeight'},
+            lbm: { title: 'Lean Body Mass Calculator', icon: 'directions_run', inputs: [{id: 'lbm-weight', label: 'Weight (kg)'}, {id: 'lbm-height', label: 'Height (cm)'}, {id: 'lbm-gender', label: 'Gender', type: 'select', options: ['Male', 'Female']}], func: 'calculateLBM'},
+            ovulation: { title: 'Ovulation Calculator', icon: 'calendar_month', inputs: [{id: 'ov-last-period', label: 'First Day of Last Period', type: 'date'}, {id: 'ov-cycle-length', label: 'Avg. Cycle (days)'}], func: 'calculateOvulation'},
         };
-
+        
         function renderCalculators() {
             let html = '';
-            for (const key in calculatorTemplates) {
-                const calc = calculatorTemplates[key];
+            for (const key in calculatorData) {
+                const calc = calculatorData[key];
+                let inputsHtml = calc.inputs.map(input => {
+                    if (input.type === 'select') {
+                        return `<div class="input-group" ${input.femaleOnly ? `id="${input.id}-group"` : ''}><label>${input.label}</label><select id="${input.id}">${input.options.map(o => `<option value="${o.toLowerCase()}">${o}</option>`).join('')}</select></div>`;
+                    }
+                    return `<div class="input-group"><label>${input.label}</label><input type="${input.type || 'number'}" id="${input.id}"></div>`;
+                }).join('');
                 html += `
-                <div class="accordion-item" id="${key}-item">
-                    <div class="accordion-header" data-target="${key}-content">
-                        <h2><span class="material-icons">${calc.icon}</span>${calc.title}</h2>
-                        <span class="material-icons icon">expand_more</span>
-                    </div>
-                    <div class="accordion-content" id="${key}-content">
-                        <div class="accordion-content-inner">
-                            ${calc.html}
-                            <div id="${key}-results" class="results-container" style="display:none;"></div>
-                            <div class="disclaimer">This calculator provides an estimate for informational purposes only and is not a substitute for professional medical advice.</div>
-                        </div>
-                    </div>
+                <div class="card">
+                    <h3><span class="material-icons">${calc.icon}</span> ${calc.title}</h3>
+                    <div class="calc-inputs">${inputsHtml}</div>
+                    <button onclick="${calc.func}()">Calculate</button>
+                    <div id="${key}-results" class="results-container" style="display:none;"></div>
+                    <p class="disclaimer">Estimates are for informational purposes only.</p>
                 </div>`;
             }
-            calculatorsContainer.innerHTML = html;
+            calculatorsList.innerHTML = html;
+            // Add event listener for body fat hip input
+            const bfGenderSelect = document.getElementById('bf-gender');
+            if (bfGenderSelect) {
+                bfGenderSelect.addEventListener('change', (e) => {
+                    document.getElementById('bf-hip-group').style.display = e.target.value === 'female' ? 'block' : 'none';
+                });
+                // Initial hide
+                document.getElementById('bf-hip-group').style.display = 'none';
+            }
         }
         renderCalculators();
-
-        // --- Helper Functions for UI ---
-        function showLoader(container) { container.innerHTML = '<div class="loader"></div>'; }
-        function hideLoader(container) { if (container.querySelector('.loader')) container.innerHTML = ''; }
-        function showError(message, container) { container.innerHTML = `<div class="error-message">${message}</div>`; }
-        function showResult(id, content) {
+        
+        // --- Calculation Functions ---
+        const showResult = (id, content) => {
             const el = document.getElementById(id);
             el.innerHTML = content;
             el.style.display = 'block';
-        }
-
-        // --- Make Calculation Functions Global for onclick ---
+        };
         window.calculateBMI = () => {
-            const weight = parseFloat(document.getElementById('bmi-weight').value);
-            const height = parseFloat(document.getElementById('bmi-height').value);
-            if (!weight || !height) return;
-            const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
-            let category = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal weight' : bmi < 30 ? 'Overweight' : 'Obesity';
-            showResult('bmi-results', `<h4>Your BMI is ${bmi}</h4><p>Category: ${category}</p>`);
-        };
-        
-        window.calculateBMR = () => {
-            const w = parseFloat(document.getElementById('bmr-weight').value), h = parseFloat(document.getElementById('bmr-height').value), age = parseInt(document.getElementById('bmr-age').value), gender = document.getElementById('bmr-gender').value;
-            if (!w || !h || !age) return;
-            let bmr = gender === 'male' ? (10 * w) + (6.25 * h) - (5 * age) + 5 : (10 * w) + (6.25 * h) - (5 * age) - 161;
-            showResult('bmr-results', `<h4>Your BMR is ${bmr.toFixed(0)} kcal/day</h4><p>This is your estimated calories at rest.</p>`);
-        };
-        
-        window.toggleHipInput = (gender) => { document.getElementById('bf-hip-row').style.display = gender === 'female' ? 'flex' : 'none'; };
-        
-        window.calculateBodyFat = () => {
-            const h = parseFloat(document.getElementById('bf-height').value), neck = parseFloat(document.getElementById('bf-neck').value), waist = parseFloat(document.getElementById('bf-waist').value), gender = document.getElementById('bf-gender').value;
-            const hip = parseFloat(document.getElementById('bf-hip').value);
-            if (!h || !neck || !waist || (gender === 'female' && !hip)) return;
-            let bfp = 0;
-            if (gender === 'male') {
-                bfp = 495 / (1.0324 - 0.19077 * Math.log10(waist - neck) + 0.15456 * Math.log10(h)) - 450;
-            } else {
-                bfp = 495 / (1.29579 - 0.35004 * Math.log10(waist + hip - neck) + 0.22100 * Math.log10(h)) - 450;
-            }
-            showResult('bodyFat-results', `<h4>Estimated Body Fat: ${bfp.toFixed(1)}%</h4>`);
-        };
-        
-        window.calculateIdealWeight = () => {
-            const h = parseFloat(document.getElementById('iw-height').value), gender = document.getElementById('iw-gender').value;
-            if (!h) return;
-            const heightInInches = h / 2.54;
-            let idealKg = 0;
-            if (gender === 'male') {
-                idealKg = 50 + 2.3 * (heightInInches - 60);
-            } else {
-                idealKg = 45.5 + 2.3 * (heightInInches - 60);
-            }
-            showResult('idealWeight-results', `<h4>Estimated Ideal Weight: ${idealKg.toFixed(1)} kg</h4>`);
-        };
-        
-        window.calculateLBM = () => {
-            const w = parseFloat(document.getElementById('lbm-weight').value), h = parseFloat(document.getElementById('lbm-height').value), gender = document.getElementById('lbm-gender').value;
+            const w = parseFloat(document.getElementById('bmi-weight').value), h = parseFloat(document.getElementById('bmi-height').value);
             if (!w || !h) return;
-            let lbm = 0;
-            if (gender === 'male') {
-                lbm = (0.407 * w) + (0.267 * h) - 19.2;
-            } else {
-                lbm = (0.252 * w) + (0.473 * h) - 48.3;
-            }
-            showResult('lbm-results', `<h4>Estimated Lean Body Mass: ${lbm.toFixed(1)} kg</h4>`);
+            const bmi = (w / ((h / 100) ** 2)).toFixed(1);
+            let cat = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal' : bmi < 30 ? 'Overweight' : 'Obesity';
+            showResult('bmi-results', `<h4>Your BMI is ${bmi} (${cat})</h4>`);
         };
-
+        window.calculateBMR = () => {
+            const w = parseFloat(document.getElementById('bmr-weight').value), h = parseFloat(document.getElementById('bmr-height').value), age = parseInt(document.getElementById('bmr-age').value), g = document.getElementById('bmr-gender').value;
+            if (!w || !h || !age) return;
+            let bmr = g === 'male' ? (10 * w) + (6.25 * h) - (5 * age) + 5 : (10 * w) + (6.25 * h) - (5 * age) - 161;
+            showResult('bmr-results', `<h4>Est. BMR: ${bmr.toFixed(0)} kcal/day</h4>`);
+        };
+        window.calculateBodyFat = () => {
+            const h = parseFloat(document.getElementById('bf-height').value), n = parseFloat(document.getElementById('bf-neck').value), w = parseFloat(document.getElementById('bf-waist').value), g = document.getElementById('bf-gender').value;
+            const hip = parseFloat(document.getElementById('bf-hip').value);
+            if (!h || !n || !w || (g === 'female' && !hip)) return;
+            let bfp = g === 'male' ? 495 / (1.0324 - 0.19077 * Math.log10(w - n) + 0.15456 * Math.log10(h)) - 450 : 495 / (1.29579 - 0.35004 * Math.log10(w + hip - n) + 0.22100 * Math.log10(h)) - 450;
+            showResult('bodyFat-results', `<h4>Est. Body Fat: ${bfp.toFixed(1)}%</h4>`);
+        };
+        window.calculateIdealWeight = () => {
+            const h = parseFloat(document.getElementById('iw-height').value), g = document.getElementById('iw-gender').value;
+            if (!h) return;
+            let iw = g === 'male' ? 50 + 0.91 * (h - 152.4) : 45.5 + 0.91 * (h - 152.4);
+            showResult('idealWeight-results', `<h4>Est. Ideal Weight: ${iw.toFixed(1)} kg</h4>`);
+        };
+        window.calculateLBM = () => {
+            const w = parseFloat(document.getElementById('lbm-weight').value), h = parseFloat(document.getElementById('lbm-height').value), g = document.getElementById('lbm-gender').value;
+            if (!w || !h) return;
+            let lbm = g === 'male' ? (0.407 * w) + (0.267 * h) - 19.2 : (0.252 * w) + (0.473 * h) - 48.3;
+            showResult('lbm-results', `<h4>Est. Lean Body Mass: ${lbm.toFixed(1)} kg</h4>`);
+        };
         window.calculateOvulation = () => {
-            const lastPeriodDate = new Date(document.getElementById('ov-last-period').value);
-            const cycleLength = parseInt(document.getElementById('ov-cycle-length').value);
-            if (isNaN(lastPeriodDate.getTime()) || !cycleLength) return;
-            
-            const ovulationDate = new Date(lastPeriodDate);
-            ovulationDate.setDate(lastPeriodDate.getDate() + cycleLength - 14);
-
+            const lastPeriod = new Date(document.getElementById('ov-last-period').value), cycle = parseInt(document.getElementById('ov-cycle-length').value);
+            if (isNaN(lastPeriod.getTime()) || !cycle) return;
+            const ovulationDate = new Date(lastPeriod);
+            ovulationDate.setDate(lastPeriod.getDate() + cycle - 14);
             const fertileStart = new Date(ovulationDate);
             fertileStart.setDate(ovulationDate.getDate() - 5);
-            
-            const fertileEnd = new Date(ovulationDate);
-            fertileEnd.setDate(ovulationDate.getDate() + 1);
-
-            const options = { month: 'long', day: 'numeric' };
-            showResult('ovulation-results', `<h4>Estimated Fertile Window:</h4><p>${fertileStart.toLocaleDateString(undefined, options)} - ${fertileEnd.toLocaleDateString(undefined, options)}</p>`);
+            const opts = { month: 'long', day: 'numeric' };
+            showResult('ovulation-results', `<h4>Est. Ovulation: ${ovulationDate.toLocaleDateString(undefined, opts)}</h4>`);
         };
+        
+        // --- UI Helpers ---
+        const showLoader = (container) => { container.innerHTML = '<div class="loader"></div>'; };
+        const hideLoader = (container) => { if (container.querySelector('.loader')) container.innerHTML = ''; };
+
     });
     </script>
 </body>
