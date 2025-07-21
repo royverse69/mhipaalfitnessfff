@@ -11,7 +11,7 @@
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide-icons@latest/dist/lucide.min.js"></script>
@@ -90,10 +90,27 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #6b7280; /* bg-gray-500 */
         }
+        /* Nicer formatting for AI responses */
+        .ai-content h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #93c5fd; /* text-blue-300 */
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .ai-content ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+         .ai-content li {
+            margin-bottom: 0.25rem;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-50">
 
+    <!-- Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-50 flex items-center justify-center">
         <div class="flex flex-col items-center">
             <svg class="animate-spin h-10 w-10 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -104,7 +121,8 @@
         </div>
     </div>
 
-    <div id="auth-container" class="hidden h-screen w-screen flex items-center justify-center bg-gray-900">
+    <!-- Auth Screen -->
+    <div id="auth-container" class="hidden h-screen w-screen flex items-center justify-center bg-gray-900 p-4">
         <div class="text-center p-8 bg-gray-800 rounded-2xl shadow-2xl max-w-sm mx-auto">
             <h1 class="text-4xl font-bold text-white mb-2">Welcome to Calverse</h1>
             <p class="text-gray-400 mb-8">Your AI-powered health companion.</p>
@@ -115,10 +133,11 @@
         </div>
     </div>
 
+    <!-- Main App Container -->
     <div id="app-container" class="hidden">
         <div class="flex h-screen">
             <!-- Sidebar -->
-            <aside id="sidebar" class="sidebar bg-gray-800 text-gray-200 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0">
+            <aside id="sidebar" class="sidebar bg-gray-800 text-gray-200 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 z-20">
                 <a href="#" class="text-white flex items-center space-x-2 px-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"/><path d="M7 13l3 3 7-7"/></svg>
                     <span class="text-2xl font-extrabold">Calverse</span>
@@ -230,12 +249,12 @@
                                         <i data-lucide="chevron-down" class="transform transition-transform"></i>
                                     </button>
                                     <div class="accordion-content px-4 pb-4">
-                                        <div class="grid sm:grid-cols-2 gap-4">
-                                            <input type="number" id="bmi-height" placeholder="Height (cm)" class="bg-gray-700 p-2 rounded">
-                                            <input type="number" id="bmi-weight" placeholder="Weight (kg)" class="bg-gray-700 p-2 rounded">
+                                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
+                                            <input type="number" id="bmi-height" placeholder="Height (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                            <input type="number" id="bmi-weight" placeholder="Weight (kg)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
                                         </div>
-                                        <button onclick="calculateBMI()" class="mt-4 bg-indigo-600 px-4 py-2 rounded">Calculate</button>
-                                        <p id="bmi-result" class="mt-4 font-bold"></p>
+                                        <button onclick="calculateBMI()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg">Calculate</button>
+                                        <p id="bmi-result" class="mt-4 font-bold text-lg"></p>
                                     </div>
                                 </div>
                                 <!-- BMR Calculator -->
@@ -245,20 +264,93 @@
                                         <i data-lucide="chevron-down" class="transform transition-transform"></i>
                                     </button>
                                     <div class="accordion-content px-4 pb-4">
-                                        <div class="grid sm:grid-cols-2 gap-4">
-                                            <input type="number" id="bmr-age" placeholder="Age" class="bg-gray-700 p-2 rounded">
-                                            <select id="bmr-gender" class="bg-gray-700 p-2 rounded">
+                                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
+                                            <input type="number" id="bmr-age" placeholder="Age" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                            <select id="bmr-gender" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
                                                 <option value="male">Male</option>
                                                 <option value="female">Female</option>
                                             </select>
-                                            <input type="number" id="bmr-height" placeholder="Height (cm)" class="bg-gray-700 p-2 rounded">
-                                            <input type="number" id="bmr-weight" placeholder="Weight (kg)" class="bg-gray-700 p-2 rounded">
+                                            <input type="number" id="bmr-height" placeholder="Height (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                            <input type="number" id="bmr-weight" placeholder="Weight (kg)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
                                         </div>
-                                        <button onclick="calculateBMR()" class="mt-4 bg-indigo-600 px-4 py-2 rounded">Calculate</button>
-                                        <p id="bmr-result" class="mt-4 font-bold"></p>
+                                        <button onclick="calculateBMR()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg">Calculate</button>
+                                        <p id="bmr-result" class="mt-4 font-bold text-lg"></p>
                                     </div>
                                 </div>
-                                <!-- Other calculators can be added here -->
+                                 <!-- Body Fat Calculator -->
+                                <div class="accordion-item bg-gray-800 rounded-lg">
+                                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                                        <span>Body Fat Calculator</span>
+                                        <i data-lucide="chevron-down" class="transform transition-transform"></i>
+                                    </button>
+                                    <div class="accordion-content px-4 pb-4">
+                                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
+                                             <select id="bf-gender" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                            </select>
+                                            <input type="number" id="bf-height" placeholder="Height (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                            <input type="number" id="bf-weight" placeholder="Weight (kg)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                            <input type="number" id="bf-neck" placeholder="Neck (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                            <input type="number" id="bf-waist" placeholder="Waist (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                            <input type="number" id="bf-hip" placeholder="Hip (cm) (Females only)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                        </div>
+                                        <button onclick="calculateBodyFat()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg">Calculate</button>
+                                        <p id="bf-result" class="mt-4 font-bold text-lg"></p>
+                                    </div>
+                                </div>
+                                <!-- Ideal Weight Calculator -->
+                                <div class="accordion-item bg-gray-800 rounded-lg">
+                                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                                        <span>Ideal Weight Calculator</span>
+                                        <i data-lucide="chevron-down" class="transform transition-transform"></i>
+                                    </button>
+                                    <div class="accordion-content px-4 pb-4">
+                                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
+                                            <select id="iw-gender" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                            </select>
+                                            <input type="number" id="iw-height" placeholder="Height (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                        </div>
+                                        <button onclick="calculateIdealWeight()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg">Calculate</button>
+                                        <p id="iw-result" class="mt-4 font-bold text-lg"></p>
+                                    </div>
+                                </div>
+                                 <!-- Lean Body Mass Calculator -->
+                                <div class="accordion-item bg-gray-800 rounded-lg">
+                                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                                        <span>Lean Body Mass (LBM) Calculator</span>
+                                        <i data-lucide="chevron-down" class="transform transition-transform"></i>
+                                    </button>
+                                    <div class="accordion-content px-4 pb-4">
+                                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
+                                            <select id="lbm-gender" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                            </select>
+                                            <input type="number" id="lbm-height" placeholder="Height (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                            <input type="number" id="lbm-weight" placeholder="Weight (kg)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                        </div>
+                                        <button onclick="calculateLBM()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg">Calculate</button>
+                                        <p id="lbm-result" class="mt-4 font-bold text-lg"></p>
+                                    </div>
+                                </div>
+                                 <!-- Ovulation Calculator -->
+                                <div class="accordion-item bg-gray-800 rounded-lg">
+                                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                                        <span>Ovulation Calculator</span>
+                                        <i data-lucide="chevron-down" class="transform transition-transform"></i>
+                                    </button>
+                                    <div class="accordion-content px-4 pb-4">
+                                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
+                                            <input type="text" onfocus="(this.type='date')" onblur="(this.type='text')" id="ov-last-period" placeholder="First Day of Last Period" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                            <input type="number" id="ov-cycle-length" placeholder="Avg. Cycle Length (days)" value="28" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                        </div>
+                                        <button onclick="calculateOvulation()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg">Calculate</button>
+                                        <p id="ov-result" class="mt-4 font-bold text-lg"></p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -281,7 +373,7 @@
         </div>
 
         <!-- Profile Drawer -->
-        <div id="profile-drawer" class="profile-drawer fixed bottom-0 right-0 h-screen w-80 bg-gray-800 shadow-lg p-6 transform translate-x-full z-30">
+        <div id="profile-drawer" class="profile-drawer fixed inset-y-0 right-0 h-screen w-80 bg-gray-800 shadow-lg p-6 transform translate-x-full z-30">
             <button id="close-drawer-btn" class="absolute top-4 right-4 text-gray-400 hover:text-white">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
@@ -304,17 +396,15 @@
         import { getFirestore, doc, setDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
         // --- CONFIGURATION ---
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCu5RfnRhT9refiyybPcW_IBt_7l5cgt2I",
-  authDomain: "calverse-e3cdb.firebaseapp.com",
-  projectId: "calverse-e3cdb",
-  storageBucket: "calverse-e3cdb.firebasestorage.app",
-  messagingSenderId: "284415302963",
-  appId: "1:284415302963:web:936ad62e589bad6fc9b246",
-  measurementId: "G-X28DSX7WYB"
-};
-      
+        const firebaseConfig = {
+            apiKey: "AIzaSyCu5RfnRhT9refiyybPcW_IBt_7l5cgt2I",
+            authDomain: "calverse-e3cdb.firebaseapp.com",
+            projectId: "calverse-e3cdb",
+            storageBucket: "calverse-e3cdb.firebasestorage.app",
+            messagingSenderId: "284415302963",
+            appId: "1:284415302963:web:936ad62e589bad6fc9b246",
+            measurementId: "G-X28DSX7WYB"
+        };
         
         // --- INITIALIZATION ---
         const app = initializeApp(firebaseConfig);
@@ -341,15 +431,16 @@ const firebaseConfig = {
         googleSignInBtn.addEventListener('click', async () => {
             try {
                 const result = await signInWithPopup(auth, provider);
-                const user = result.user;
-                await handleUserLogin(user);
+                // The onAuthStateChanged observer will handle the rest.
             } catch (error) {
                 console.error("Google Sign-In Error:", error);
+                alert("Could not sign in with Google. Please try again.");
             }
         });
         
         logoutBtn.addEventListener('click', async () => {
             await signOut(auth);
+            // Using reload to reset the app state completely.
             window.location.reload();
         });
 
@@ -375,6 +466,7 @@ const firebaseConfig = {
             const userDoc = await getDoc(userRef);
 
             if (!userDoc.exists()) {
+                // Create a more readable and unique custom ID
                 const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
                 const simpleName = user.displayName.split(' ')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
                 const customId = `${simpleName}-${randomPart}`;
@@ -396,10 +488,12 @@ const firebaseConfig = {
             const userDoc = await getDoc(userRef);
             const userData = userDoc.data();
 
+            const photoUrl = user.photoURL || `https://placehold.co/80x80/7c3aed/ffffff?text=${user.displayName[0]}`;
+            
             // Nav Bar
-            document.getElementById('user-avatar').src = user.photoURL || `https://placehold.co/40x40/7c3aed/ffffff?text=${user.displayName[0]}`;
+            document.getElementById('user-avatar').src = photoUrl;
             // Profile Drawer
-            document.getElementById('drawer-user-avatar').src = user.photoURL || `https://placehold.co/80x80/7c3aed/ffffff?text=${user.displayName[0]}`;
+            document.getElementById('drawer-user-avatar').src = photoUrl;
             document.getElementById('drawer-user-name').textContent = user.displayName;
             document.getElementById('drawer-user-email').textContent = user.email;
             // Settings Page
@@ -409,9 +503,9 @@ const firebaseConfig = {
         }
 
         // --- GEMINI API LOGIC ---
-        const geminiKeys = [ "AIzaSyAjKByev9K4Zh6Tx9b99ESdBYT-7iEp850","AIzaSyAIJZmqyztvwoThqI7iu2-xzQr71aJaKEU" ];
-        let currentKeyIndex = 0;
+        const apiKey = ""; // API Key will be injected by the environment.
 
+        // Schemas for structured responses
         const nutritionSchema = {
             type: "OBJECT",
             properties: {
@@ -434,15 +528,22 @@ const firebaseConfig = {
             },
             required: ["foodItem", "servingSize", "calories", "totalFat", "protein", "totalCarbohydrate"]
         };
+        
+        const mealAnalysisSchema = {
+            type: "OBJECT",
+            properties: {
+                nutrition: nutritionSchema,
+                suggestions: {
+                    type: "OBJECT",
+                    properties: {
+                        taste: { type: "STRING", description: "A suggestion to improve the meal's taste." },
+                        health: { type: "STRING", description: "A suggestion to make the meal healthier." }
+                    }
+                }
+            }
+        };
 
         async function callGeminiApi(prompt, schema = null) {
-            if (geminiKeys.length === 0) {
-                console.error("Gemini API keys are not configured.");
-                alert("This feature is currently unavailable. API keys are not set up.");
-                return null;
-            }
-
-            const apiKey = geminiKeys[currentKeyIndex];
             const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             
             const payload = {
@@ -473,11 +574,8 @@ const firebaseConfig = {
                 }
 
             } catch (error) {
-                console.error(`Error with API key index ${currentKeyIndex}:`, error);
-                currentKeyIndex = (currentKeyIndex + 1) % geminiKeys.length;
-                console.log(`Failing over to next API key index: ${currentKeyIndex}`);
-                // Simple failover, doesn't retry the same request automatically in this version
-                alert("An error occurred while contacting the AI. Please try again.");
+                console.error("Gemini API Error:", error);
+                alert("An error occurred while contacting the AI. Please check the console and try again.");
                 return null;
             }
         }
@@ -498,11 +596,7 @@ const firebaseConfig = {
 
                 // Show target section
                 sections.forEach(section => {
-                    if (section.id === targetId) {
-                        section.classList.remove('hidden');
-                    } else {
-                        section.classList.add('hidden');
-                    }
+                    section.id === targetId ? section.classList.remove('hidden') : section.classList.add('hidden');
                 });
 
                 // Update page title
@@ -524,36 +618,37 @@ const firebaseConfig = {
         // Profile drawer toggle
         const profileDrawer = document.getElementById('profile-drawer');
         const drawerOverlay = document.getElementById('drawer-overlay');
-        document.getElementById('profile-avatar-btn').addEventListener('click', () => {
-            profileDrawer.classList.remove('translate-x-full');
-            drawerOverlay.classList.remove('hidden');
-        });
-        document.getElementById('close-drawer-btn').addEventListener('click', () => {
-            profileDrawer.classList.add('translate-x-full');
-            drawerOverlay.classList.add('hidden');
-        });
-        drawerOverlay.addEventListener('click', () => {
-            profileDrawer.classList.add('translate-x-full');
-            drawerOverlay.classList.add('hidden');
-        });
+        const closeDrawerBtn = document.getElementById('close-drawer-btn');
+        
+        function toggleDrawer(show) {
+            if (show) {
+                profileDrawer.classList.remove('translate-x-full');
+                drawerOverlay.classList.remove('hidden');
+            } else {
+                profileDrawer.classList.add('translate-x-full');
+                drawerOverlay.classList.add('hidden');
+            }
+        }
+        
+        document.getElementById('profile-avatar-btn').addEventListener('click', () => toggleDrawer(true));
+        closeDrawerBtn.addEventListener('click', () => toggleDrawer(false));
+        drawerOverlay.addEventListener('click', () => toggleDrawer(false));
 
         // Accordion logic for calculators
         document.querySelectorAll('.accordion-header').forEach(header => {
             header.addEventListener('click', () => {
                 const content = header.nextElementSibling;
-                const icon = header.querySelector('i');
-                
-                header.parentElement.parentElement.querySelectorAll('.accordion-content').forEach(c => {
-                    if (c !== content) {
-                        c.style.maxHeight = null;
-                        c.previousElementSibling.querySelector('i').classList.remove('rotate-180');
-                    }
-                });
+                const icon = header.querySelector('i[data-lucide]');
+                const isOpen = content.style.maxHeight;
 
-                if (content.style.maxHeight) {
-                    content.style.maxHeight = null;
-                    icon.classList.remove('rotate-180');
-                } else {
+                // Close all other accordions
+                document.querySelectorAll('.accordion-content').forEach(c => {
+                    c.style.maxHeight = null;
+                    c.previousElementSibling.querySelector('i[data-lucide]').classList.remove('rotate-180');
+                });
+                
+                // Open the clicked one if it was closed
+                if (!isOpen) {
                     content.style.maxHeight = content.scrollHeight + "px";
                     icon.classList.add('rotate-180');
                 }
@@ -586,9 +681,9 @@ const firebaseConfig = {
             if (data) {
                 nutritionOutput.innerHTML = renderNutritionLabel(data);
             } else {
-                nutritionOutput.innerHTML = `<p class="text-red-400">Could not retrieve nutrition data. Please try again.</p>`;
+                nutritionOutput.innerHTML = `<p class="text-red-400 text-center">Could not retrieve nutrition data. Please try again.</p>`;
             }
-            setLoadingState(getNutritionBtn, false, 'Analyze');
+            setLoadingState(getNutritionBtn, false, `<i data-lucide="bar-chart-big" class="w-5 h-5 mr-2"></i> Analyze`);
         }
 
         // Know Your Meal
@@ -606,34 +701,31 @@ const firebaseConfig = {
             mealOutput.innerHTML = getSpinnerHTML('Analyzing your meal...');
 
             const mealInput = url ? `URL: ${url}` : `Ingredients: ${ingredients}`;
-            const prompt = `Analyze the following meal. First, provide the total nutrition facts for the entire meal in the specified JSON schema format. Second, provide two actionable suggestions: one to improve the taste and one to improve the healthiness of the meal. Format the suggestions as a simple string. Meal details: ${mealInput}`;
+            const prompt = `Analyze the following meal. Provide the total nutrition facts for the entire meal and two actionable suggestions (one for taste, one for health) in the specified JSON schema format. Meal details: ${mealInput}`;
             
-            // For this combined prompt, we will parse the response manually
-            const responseText = await callGeminiApi(prompt);
+            const data = await callGeminiApi(prompt, mealAnalysisSchema);
 
-            if (responseText) {
-                try {
-                    // This is a simplified parsing. A more robust solution might need more advanced logic.
-                    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-                    const suggestionsMatch = responseText.split(/\{[\s\S]*\}/)[1];
-
-                    const nutritionData = JSON.parse(jsonMatch[0]);
-                    
-                    let html = renderNutritionLabel(nutritionData, 'Total Meal Nutrition');
-                    html += `<div class="mt-8 bg-gray-800 p-6 rounded-lg">
-                                <h3 class="text-xl font-semibold mb-4 flex items-center"><i data-lucide="lightbulb" class="w-6 h-6 mr-2 text-yellow-400"></i>AI Suggestions</h3>
-                                <div class="text-gray-300">${suggestionsMatch.replace(/\n/g, '<br>')}</div>
-                             </div>`;
-                    mealOutput.innerHTML = html;
-                    lucide.createIcons();
-                } catch (e) {
-                    console.error("Error parsing meal response:", e);
-                    mealOutput.innerHTML = `<p class="text-red-400">Could not parse the meal analysis. The AI returned an unexpected format.</p>`;
-                }
+            if (data && data.nutrition && data.suggestions) {
+                let html = renderNutritionLabel(data.nutrition, 'Total Meal Nutrition');
+                html += `<div class="mt-8 bg-gray-800 p-6 rounded-lg">
+                            <h3 class="text-xl font-semibold mb-4 flex items-center"><i data-lucide="lightbulb" class="w-6 h-6 mr-2 text-yellow-400"></i>AI Suggestions</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <h4 class="font-bold text-indigo-300">Taste Improvement:</h4>
+                                    <p class="text-gray-300">${data.suggestions.taste}</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-green-300">Health Improvement:</h4>
+                                    <p class="text-gray-300">${data.suggestions.health}</p>
+                                </div>
+                            </div>
+                         </div>`;
+                mealOutput.innerHTML = html;
+                lucide.createIcons();
             } else {
-                mealOutput.innerHTML = `<p class="text-red-400">Could not analyze the meal. Please try again.</p>`;
+                mealOutput.innerHTML = `<p class="text-red-400 text-center">Could not analyze the meal. The AI returned an unexpected format. Please try again.</p>`;
             }
-            setLoadingState(analyzeMealBtn, false, 'Analyze Meal');
+            setLoadingState(analyzeMealBtn, false, `<i data-lucide="brain-circuit" class="w-5 h-5 mr-2"></i> Analyze Meal`);
         });
 
         // Recipe & Cravings
@@ -646,10 +738,10 @@ const firebaseConfig = {
             if (!ingredients) return;
             setLoadingState(generateRecipeBtn, true, 'Generating...');
             recipeOutput.innerHTML = getSpinnerHTML('Creating a recipe for you...');
-            const prompt = `Create a healthy and delicious recipe using the following ingredients: ${ingredients}. Provide a recipe name, a list of ingredients (including the ones provided), and step-by-step instructions. Format the response clearly with headings.`;
+            const prompt = `Create a healthy and delicious recipe using the following ingredients: ${ingredients}. Provide a recipe name, a list of ingredients (including the ones provided), and step-by-step instructions. Use markdown for formatting: '### Recipe Name', '### Ingredients', '### Instructions'. Use '*' for list items.`;
             const recipe = await callGeminiApi(prompt);
             if (recipe) {
-                recipeOutput.innerHTML = `<div class="bg-gray-800 p-6 rounded-lg">${recipe.replace(/\n/g, '<br>')}</div>`;
+                recipeOutput.innerHTML = `<div class="bg-gray-800 p-6 rounded-lg ai-content">${formatAiText(recipe)}</div>`;
             } else {
                  recipeOutput.innerHTML = `<p class="text-red-400">Could not generate a recipe. Please try again.</p>`;
             }
@@ -661,10 +753,10 @@ const firebaseConfig = {
             if (!craving) return;
             setLoadingState(solveCravingBtn, true, 'Solving...');
             recipeOutput.innerHTML = getSpinnerHTML('Finding a healthy alternative...');
-            const prompt = `I'm craving ${craving}. Suggest a delicious and healthy alternative recipe. Provide the recipe name, ingredients, and step-by-step instructions. Explain briefly why it's a healthier choice.`;
+            const prompt = `I'm craving ${craving}. Suggest a delicious and healthy alternative recipe. Provide the recipe name, ingredients, and step-by-step instructions. Explain briefly why it's a healthier choice. Use markdown for formatting: '### Recipe Name', '### Why it's Healthier', '### Ingredients', '### Instructions'. Use '*' for list items.`;
             const alternative = await callGeminiApi(prompt);
             if (alternative) {
-                recipeOutput.innerHTML = `<div class="bg-gray-800 p-6 rounded-lg">${alternative.replace(/\n/g, '<br>')}</div>`;
+                recipeOutput.innerHTML = `<div class="bg-gray-800 p-6 rounded-lg ai-content">${formatAiText(alternative)}</div>`;
             } else {
                  recipeOutput.innerHTML = `<p class="text-red-400">Could not find an alternative. Please try again.</p>`;
             }
@@ -681,7 +773,7 @@ const firebaseConfig = {
                         <div class="serving-size">${data.foodItem || 'N/A'}</div>
                         <div>Serving Size ${data.servingSize || 'N/A'}</div>
                     </div>
-                    <div class="item"><span>Calories</span> <span>${data.calories || 'N/A'}</span></div>
+                    <div class="item"><span>Calories</span> <span>${data.calories ?? 'N/A'}</span></div>
                     <div class="item"><span>Total Fat</span> <span>${data.totalFat || 'N/A'}</span></div>
                     <div class="item indent"><span>Saturated Fat</span> <span>${data.saturatedFat || 'N/A'}</span></div>
                     <div class="item indent"><span>Trans Fat</span> <span>${data.transFat || 'N/A'}</span></div>
@@ -701,8 +793,7 @@ const firebaseConfig = {
             `;
         }
         
-        function setLoadingState(button, isLoading, loadingText) {
-            const originalContent = button.innerHTML;
+        function setLoadingState(button, isLoading, content) {
             if (isLoading) {
                 button.disabled = true;
                 button.innerHTML = `
@@ -710,13 +801,16 @@ const firebaseConfig = {
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    ${loadingText}
+                    ${content}
                 `;
             } else {
                 button.disabled = false;
-                // The button's original content needs to be restored correctly.
-                // The loadingText parameter when isLoading is false will be the original text.
-                button.innerHTML = loadingText;
+                button.innerHTML = content;
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons({
+                        nodes: [button]
+                    });
+                }
             }
         }
 
@@ -732,6 +826,20 @@ const firebaseConfig = {
             `;
         }
 
+        function formatAiText(text) {
+            return text
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/^\* (.*$)/gim, '<li>$1</li>')
+                .replace(/<\/li><li>/g, '</li></ul><ul><li>') // Group list items
+                .replace(/<\/li>([^<])/g, '</li></ul>$1') // Close list if followed by non-tag
+                .replace(/^<li>/g, '<ul><li>') // Open list at the start
+                .replace(/<\/li>$/g, '</li></ul>') // Close list at the end
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>')
+                .replace(/<br><ul>/g, '<ul>')
+                .replace(/<\/ul><br>/g, '</ul>');
+        }
+
         // --- CALCULATOR FUNCTIONS (Global Scope) ---
         window.calculateBMI = function() {
             const height = parseFloat(document.getElementById('bmi-height').value);
@@ -744,7 +852,7 @@ const firebaseConfig = {
                 else if (bmi < 24.9) category = 'Normal weight';
                 else if (bmi < 29.9) category = 'Overweight';
                 else category = 'Obesity';
-                resultEl.textContent = `Your BMI is ${bmi} (${category})`;
+                resultEl.innerHTML = `Your BMI is <span class="text-indigo-300">${bmi}</span> (${category})`;
             } else {
                 resultEl.textContent = 'Please enter valid height and weight.';
             }
@@ -759,15 +867,125 @@ const firebaseConfig = {
 
             if (age > 0 && height > 0 && weight > 0) {
                 let bmr = 0;
+                // Revised Harris-Benedict Equation
                 if (gender === 'male') {
                     bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
                 } else {
                     bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
                 }
-                resultEl.textContent = `Your BMR is approx. ${bmr.toFixed(0)} calories/day.`;
+                resultEl.innerHTML = `Your BMR is approx. <span class="text-indigo-300">${bmr.toFixed(0)}</span> calories/day.`;
             } else {
                 resultEl.textContent = 'Please fill in all fields correctly.';
             }
+        }
+        
+        window.calculateBodyFat = function() {
+            const gender = document.getElementById('bf-gender').value;
+            const height = parseFloat(document.getElementById('bf-height').value);
+            const weight = parseFloat(document.getElementById('bf-weight').value);
+            const neck = parseFloat(document.getElementById('bf-neck').value);
+            const waist = parseFloat(document.getElementById('bf-waist').value);
+            const hip = parseFloat(document.getElementById('bf-hip').value);
+            const resultEl = document.getElementById('bf-result');
+
+            if (height <= 0 || weight <= 0 || neck <= 0 || waist <= 0) {
+                resultEl.textContent = 'Please fill in height, weight, neck, and waist.';
+                return;
+            }
+
+            let bfp = 0;
+            // US Navy Method
+            if (gender === 'male') {
+                bfp = 495 / (1.0324 - 0.19077 * Math.log10(waist - neck) + 0.15456 * Math.log10(height)) - 450;
+            } else {
+                if (hip <= 0) {
+                     resultEl.textContent = 'Please fill in hip measurement for females.';
+                     return;
+                }
+                bfp = 495 / (1.29579 - 0.35004 * Math.log10(waist + hip - neck) + 0.22100 * Math.log10(height)) - 450;
+            }
+
+            if (bfp > 0 && bfp < 100) {
+                 resultEl.innerHTML = `Estimated Body Fat: <span class="text-indigo-300">${bfp.toFixed(1)}%</span>`;
+            } else {
+                 resultEl.textContent = 'Could not calculate. Please check your measurements.';
+            }
+        }
+
+        window.calculateIdealWeight = function() {
+            const gender = document.getElementById('iw-gender').value;
+            const height = parseFloat(document.getElementById('iw-height').value);
+            const resultEl = document.getElementById('iw-result');
+
+            if (height <= 152) {
+                resultEl.textContent = 'Height must be over 152 cm (5 ft).';
+                return;
+            }
+            
+            let baseWeight = 0;
+            let perInch = 0;
+            if (gender === 'male') {
+                baseWeight = 50; // kg for first 5 feet
+                perInch = 2.3; // kg per inch over 5 feet
+            } else {
+                baseWeight = 45.5; // kg for first 5 feet
+                perInch = 2.3; // kg per inch over 5 feet
+            }
+            
+            const heightInInches = height / 2.54;
+            const idealWeight = baseWeight + ((heightInInches - 60) * perInch);
+            
+            resultEl.innerHTML = `Ideal Weight (Robinson Formula): <span class="text-indigo-300">${idealWeight.toFixed(1)} kg</span>`;
+        }
+
+        window.calculateLBM = function() {
+            const gender = document.getElementById('lbm-gender').value;
+            const height = parseFloat(document.getElementById('lbm-height').value);
+            const weight = parseFloat(document.getElementById('lbm-weight').value);
+            const resultEl = document.getElementById('lbm-result');
+
+            if (height <= 0 || weight <= 0) {
+                resultEl.textContent = 'Please enter valid height and weight.';
+                return;
+            }
+
+            let lbm = 0;
+            // Boer Formula
+            if (gender === 'male') {
+                lbm = (0.407 * weight) + (0.267 * height) - 19.2;
+            } else {
+                lbm = (0.252 * weight) + (0.473 * height) - 48.3;
+            }
+            
+            resultEl.innerHTML = `Lean Body Mass is approx. <span class="text-indigo-300">${lbm.toFixed(1)} kg</span>`;
+        }
+        
+        window.calculateOvulation = function() {
+            const lastPeriodDateStr = document.getElementById('ov-last-period').value;
+            const cycleLength = parseInt(document.getElementById('ov-cycle-length').value, 10);
+            const resultEl = document.getElementById('ov-result');
+
+            if (!lastPeriodDateStr || isNaN(cycleLength) || cycleLength < 20 || cycleLength > 45) {
+                resultEl.textContent = 'Please enter a valid date and cycle length (20-45 days).';
+                return;
+            }
+
+            const lastPeriodDate = new Date(lastPeriodDateStr);
+            // Add a day to correct for timezone issues from date picker
+            lastPeriodDate.setDate(lastPeriodDate.getDate() + 1);
+
+            const ovulationDay = new Date(lastPeriodDate);
+            ovulationDay.setDate(lastPeriodDate.getDate() + cycleLength - 14);
+
+            const fertileStart = new Date(ovulationDay);
+            fertileStart.setDate(ovulationDay.getDate() - 5);
+
+            const fertileEnd = new Date(ovulationDay);
+            fertileEnd.setDate(ovulationDay.getDate() + 1);
+            
+            const formatDate = (date) => date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+
+            resultEl.innerHTML = `Estimated Ovulation: <span class="text-indigo-300">${formatDate(ovulationDay)}</span><br>Fertile Window: <span class="text-green-300">${formatDate(fertileStart)} - ${formatDate(fertileEnd)}</span>`;
         }
 
     </script>
