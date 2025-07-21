@@ -18,45 +18,64 @@
 
     <!-- Custom Styles -->
     <style>
+        :root {
+            --background: #0B0F19;
+            --sidebar-bg: #111827;
+            --card-bg: #1A202C;
+            --border-color: #2D3748;
+            --primary: #8B5CF6;
+            --primary-hover: #7C3AED;
+            --text-primary: #F7FAFC;
+            --text-secondary: #A0AEC0;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #111827; /* bg-gray-900 */
-            color: #f9fafb; /* text-gray-50 */
+            background-color: var(--background);
+            color: var(--text-primary);
         }
         .sidebar {
             transition: transform 0.3s ease-in-out;
+            border-right: 1px solid var(--border-color);
         }
         .profile-drawer {
             transition: transform 0.3s ease-in-out;
         }
         .nutrition-label {
-            border: 2px solid #4b5563; /* border-gray-600 */
-            border-radius: 0.5rem;
-            padding: 1rem;
-            background-color: #1f2937; /* bg-gray-800 */
-            max-width: 380px;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            max-width: 400px;
             margin: auto;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
         .nutrition-label h1 {
-            font-size: 1.875rem; /* text-3xl */
+            font-size: 2.25rem;
             font-weight: 800;
             margin-bottom: 0.25rem;
+            line-height: 1.2;
         }
         .nutrition-label .serving-size {
-            font-size: 1.25rem; /* text-xl */
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
         }
         .nutrition-label .header {
-            border-bottom: 10px solid #4b5563; /* border-gray-600 */
-            padding-bottom: 0.5rem;
-            margin-bottom: 0.5rem;
+            border-bottom: 8px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
         }
         .nutrition-label .item {
             display: flex;
             justify-content: space-between;
-            padding: 0.25rem 0;
-            border-bottom: 1px solid #374151; /* border-gray-700 */
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1rem;
+        }
+        .nutrition-label .item:last-child {
+            border-bottom: none;
         }
         .nutrition-label .item span:first-child {
             font-weight: 600;
@@ -65,55 +84,57 @@
             margin-left: 1.5rem;
         }
         .nutrition-label .footer {
-            border-top: 5px solid #4b5563; /* border-gray-600 */
-            padding-top: 0.5rem;
-            margin-top: 0.5rem;
-            font-size: 0.875rem; /* text-sm */
+            border-top: 4px solid var(--border-color);
+            padding-top: 0.75rem;
+            margin-top: 0.75rem;
         }
-        /* Accordion styles */
+        .accordion-item {
+             background-color: var(--card-bg);
+             border: 1px solid var(--border-color);
+             border-radius: 0.75rem;
+        }
         .accordion-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out;
+            transition: max-height 0.4s ease-in-out;
         }
-        /* Scrollbar styles */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1f2937; /* bg-gray-800 */
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #4b5563; /* bg-gray-600 */
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #6b7280; /* bg-gray-500 */
-        }
-        /* Nicer formatting for AI responses */
         .ai-content h3 {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: #93c5fd; /* text-blue-300 */
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
+            color: var(--primary);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
         }
         .ai-content ul {
-            list-style-type: disc;
-            padding-left: 1.5rem;
+            list-style-type: none;
+            padding-left: 0;
             margin-bottom: 1rem;
         }
          .ai-content li {
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
         }
+        .ai-content li::before {
+            content: '✓';
+            color: var(--primary);
+            font-weight: bold;
+            margin-right: 0.75rem;
+            margin-top: 0.125rem;
+        }
+        /* Scrollbar styles */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--sidebar-bg); }
+        ::-webkit-scrollbar-thumb { background: #4A5568; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #718096; }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-50">
+<body class="bg-background text-text-primary">
 
     <!-- Loading Overlay -->
-    <div id="loading-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-50 flex items-center justify-center">
+    <div id="loading-overlay" class="fixed inset-0 bg-background bg-opacity-90 z-50 flex items-center justify-center">
         <div class="flex flex-col items-center">
-            <svg class="animate-spin h-10 w-10 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg class="animate-spin h-10 w-10 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -122,11 +143,14 @@
     </div>
 
     <!-- Auth Screen -->
-    <div id="auth-container" class="hidden h-screen w-screen flex items-center justify-center bg-gray-900 p-4">
-        <div class="text-center p-8 bg-gray-800 rounded-2xl shadow-2xl max-w-sm mx-auto">
-            <h1 class="text-4xl font-bold text-white mb-2">Welcome to Calverse</h1>
-            <p class="text-gray-400 mb-8">Your AI-powered health companion.</p>
-            <button id="google-signin-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300 ease-in-out">
+    <div id="auth-container" class="hidden h-screen w-screen flex items-center justify-center bg-background p-4">
+        <div class="text-center p-8 sm:p-12 bg-sidebar-bg rounded-2xl shadow-2xl max-w-md mx-auto border border-border-color">
+            <div class="flex justify-center mb-6">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"/><path d="M7 13l3 3 7-7"/></svg>
+            </div>
+            <h1 class="text-4xl font-bold text-text-primary mb-2">Welcome to Calverse</h1>
+            <p class="text-text-secondary mb-8">Your AI-powered health companion.</p>
+            <button id="google-signin-btn" class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300 ease-in-out shadow-lg">
                 <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691c-1.258 3.055-1.95 6.45-1.95 10.023s.692 6.968 1.95 10.023l-5.657 5.657C.252 34.668 0 29.556 0 24.614s.252-10.053 1.95-15.58l5.657 5.657z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-5.657-5.657C30.01 35.091 27.215 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-5.657 5.657C9.033 40.519 15.903 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083L43.595 20L42 20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l5.657 5.657C42.463 35.931 44 30.556 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
                 Sign In with Google
             </button>
@@ -137,233 +161,121 @@
     <div id="app-container" class="hidden">
         <div class="flex h-screen">
             <!-- Sidebar -->
-            <aside id="sidebar" class="sidebar bg-gray-800 text-gray-200 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 z-20">
-                <a href="#" class="text-white flex items-center space-x-2 px-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"/><path d="M7 13l3 3 7-7"/></svg>
+            <aside id="sidebar" class="sidebar bg-sidebar-bg text-text-primary w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 z-20">
+                <a href="#" class="text-white flex items-center space-x-3 px-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"/><path d="M7 13l3 3 7-7"/></svg>
                     <span class="text-2xl font-extrabold">Calverse</span>
                 </a>
-                <nav id="main-nav">
-                    <a href="#nutrition-lookup" class="nav-link block py-2.5 px-4 rounded transition duration-200 bg-gray-700 text-white">
-                        <i data-lucide="search" class="inline-block w-5 h-5 mr-2"></i> Nutrition Lookup
+                <nav id="main-nav" class="px-2">
+                    <a href="#nutrition-lookup" class="nav-link flex items-center py-2.5 px-4 my-2 rounded-lg transition duration-200 bg-primary/20 text-primary border-l-4 border-primary">
+                        <i data-lucide="search" class="inline-block w-5 h-5 mr-3"></i> <span class="font-semibold">Nutrition Lookup</span>
                     </a>
-                    <a href="#know-your-meal" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
-                        <i data-lucide="utensils-crossed" class="inline-block w-5 h-5 mr-2"></i> Know Your Meal
+                    <a href="#know-your-meal" class="nav-link flex items-center py-2.5 px-4 my-2 rounded-lg transition duration-200 hover:bg-primary/10 hover:text-primary">
+                        <i data-lucide="utensils-crossed" class="inline-block w-5 h-5 mr-3"></i> <span class="font-semibold">Know Your Meal</span>
                     </a>
-                    <a href="#recipe-suggestions" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
-                        <i data-lucide="notebook-pen" class="inline-block w-5 h-5 mr-2"></i> Recipes & Cravings
+                    <a href="#recipe-suggestions" class="nav-link flex items-center py-2.5 px-4 my-2 rounded-lg transition duration-200 hover:bg-primary/10 hover:text-primary">
+                        <i data-lucide="notebook-pen" class="inline-block w-5 h-5 mr-3"></i> <span class="font-semibold">Recipes & Cravings</span>
                     </a>
-                    <a href="#health-calculators" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
-                        <i data-lucide="calculator" class="inline-block w-5 h-5 mr-2"></i> Health Calculators
+                    <a href="#health-calculators" class="nav-link flex items-center py-2.5 px-4 my-2 rounded-lg transition duration-200 hover:bg-primary/10 hover:text-primary">
+                        <i data-lucide="calculator" class="inline-block w-5 h-5 mr-3"></i> <span class="font-semibold">Health Calculators</span>
                     </a>
-                    <a href="#settings" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
-                        <i data-lucide="settings" class="inline-block w-5 h-5 mr-2"></i> Settings
+                     <a href="#settings" class="nav-link flex items-center py-2.5 px-4 my-2 rounded-lg transition duration-200 hover:bg-primary/10 hover:text-primary">
+                        <i data-lucide="settings" class="inline-block w-5 h-5 mr-3"></i> <span class="font-semibold">Settings</span>
                     </a>
                 </nav>
             </aside>
 
             <!-- Main content -->
             <div class="flex-1 flex flex-col overflow-hidden">
-                <header class="bg-gray-800/50 backdrop-blur-sm shadow-md sticky top-0 z-10">
+                <header class="bg-sidebar-bg/80 backdrop-blur-sm shadow-md sticky top-0 z-10 border-b border-border-color">
                     <div class="flex justify-between items-center p-4">
                         <div class="flex items-center">
-                            <button id="mobile-menu-btn" class="md:hidden text-gray-300 focus:outline-none mr-4">
+                            <button id="mobile-menu-btn" class="md:hidden text-text-secondary focus:outline-none mr-4">
                                 <i data-lucide="menu" class="h-6 w-6"></i>
                             </button>
-                            <h1 id="page-title" class="text-xl font-semibold">Nutrition Lookup</h1>
+                            <h1 id="page-title" class="text-xl font-bold text-text-primary">Nutrition Lookup</h1>
                         </div>
                         <button id="profile-avatar-btn" class="flex items-center space-x-2">
-                            <img id="user-avatar" src="https://placehold.co/40x40/7c3aed/ffffff?text=U" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-indigo-400">
+                            <img id="user-avatar" src="https://placehold.co/40x40/8B5CF6/ffffff?text=U" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-primary">
                         </button>
                     </div>
                 </header>
-                <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-900 p-4 sm:p-6 lg:p-8">
+                <main class="flex-1 overflow-x-hidden overflow-y-auto bg-background p-4 sm:p-6 lg:p-8">
                     
                     <!-- App Sections -->
                     <section id="nutrition-lookup" class="app-section">
                         <div class="max-w-4xl mx-auto">
-                            <h2 class="text-2xl font-bold mb-4">AI-Powered Nutrition Lookup</h2>
-                            <p class="text-gray-400 mb-6">Enter a food item and quantity to get its detailed nutrition facts.</p>
+                            <h2 class="text-3xl font-bold mb-2">AI-Powered Nutrition Lookup</h2>
+                            <p class="text-text-secondary mb-8">Enter a food item and quantity to get its detailed nutrition facts.</p>
                             <div class="flex flex-col sm:flex-row gap-4 mb-8">
-                                <input id="nutrition-input" type="text" placeholder="e.g., '100g soya chunks' or '2 medium bananas'" class="flex-grow bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
-                                <button id="get-nutrition-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center">
-                                    <i data-lucide="bar-chart-big" class="w-5 h-5 mr-2"></i> Analyze
+                                <input id="nutrition-input" type="text" placeholder="e.g., '100g soya chunks' or '2 medium bananas'" class="flex-grow bg-card-bg border border-border-color rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition">
+                                <button id="get-nutrition-btn" class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center transition shadow-lg">
+                                    <i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Analyze
                                 </button>
                             </div>
-                            <div id="nutrition-output" class="mt-8">
-                                <!-- FDA Label will be rendered here -->
-                            </div>
+                            <div id="nutrition-output" class="mt-8"></div>
                         </div>
                     </section>
                     
                     <section id="know-your-meal" class="app-section hidden">
                         <div class="max-w-4xl mx-auto">
-                            <h2 class="text-2xl font-bold mb-4">Know Your Meal</h2>
-                            <p class="text-gray-400 mb-6">Paste a recipe URL or list ingredients to analyze your entire meal.</p>
-                            <div class="space-y-6">
-                                <input id="meal-url-input" type="text" placeholder="Paste a recipe URL (e.g., from YouTube, blogs)" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
-                                <div class="text-center text-gray-500">OR</div>
-                                <textarea id="meal-ingredients-input" placeholder="List ingredients and quantities, e.g.,&#10;1 cup cooked rice&#10;150g grilled chicken breast&#10;1/2 avocado" class="w-full h-32 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"></textarea>
-                                <button id="analyze-meal-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center">
+                            <h2 class="text-3xl font-bold mb-2">Know Your Meal</h2>
+                            <p class="text-text-secondary mb-8">Paste a recipe URL or list ingredients to analyze your entire meal.</p>
+                            <div class="bg-card-bg p-6 rounded-xl border border-border-color space-y-6">
+                                <input id="meal-url-input" type="text" placeholder="Paste a recipe URL (e.g., from YouTube, blogs)" class="w-full bg-sidebar-bg border border-border-color rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition">
+                                <div class="relative">
+                                    <div class="absolute inset-0 flex items-center" aria-hidden="true"><div class="w-full border-t border-border-color"></div></div>
+                                    <div class="relative flex justify-center"><span class="bg-card-bg px-2 text-sm text-text-secondary">OR</span></div>
+                                </div>
+                                <textarea id="meal-ingredients-input" placeholder="List ingredients and quantities, e.g.,&#10;1 cup cooked rice&#10;150g grilled chicken breast&#10;1/2 avocado" class="w-full h-32 bg-sidebar-bg border border-border-color rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"></textarea>
+                                <button id="analyze-meal-btn" class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center transition shadow-lg">
                                     <i data-lucide="brain-circuit" class="w-5 h-5 mr-2"></i> Analyze Meal
                                 </button>
                             </div>
-                             <div id="meal-output" class="mt-8">
-                                <!-- Meal analysis will be rendered here -->
-                            </div>
+                             <div id="meal-output" class="mt-8"></div>
                         </div>
                     </section>
 
                     <section id="recipe-suggestions" class="app-section hidden">
                         <div class="max-w-4xl mx-auto">
-                            <h2 class="text-2xl font-bold mb-4">Recipes & Cravings</h2>
-                            <p class="text-gray-400 mb-6">Get recipe ideas based on ingredients you have, or find healthier alternatives for your cravings.</p>
+                            <h2 class="text-3xl font-bold mb-2">Recipes & Cravings</h2>
+                            <p class="text-text-secondary mb-8">Get recipe ideas based on ingredients you have, or find healthier alternatives for your cravings.</p>
                             <div class="grid md:grid-cols-2 gap-8">
-                                <!-- Recipe Generator -->
-                                <div class="bg-gray-800 p-6 rounded-lg">
-                                    <h3 class="text-xl font-semibold mb-4 flex items-center"><i data-lucide="chef-hat" class="w-6 h-6 mr-2 text-indigo-400"></i>Recipe Generator</h3>
-                                    <textarea id="recipe-ingredients-input" placeholder="What ingredients do you have?&#10;e.g., chicken breast, broccoli, soy sauce, garlic" class="w-full h-32 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"></textarea>
-                                    <button id="generate-recipe-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg">Generate Recipe</button>
+                                <div class="bg-card-bg p-6 rounded-xl border border-border-color">
+                                    <h3 class="text-xl font-semibold mb-4 flex items-center"><i data-lucide="chef-hat" class="w-6 h-6 mr-3 text-primary"></i>Recipe Generator</h3>
+                                    <textarea id="recipe-ingredients-input" placeholder="What ingredients do you have?&#10;e.g., chicken breast, broccoli, soy sauce, garlic" class="w-full h-32 bg-sidebar-bg border border-border-color rounded-lg px-4 py-3 mb-4 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"></textarea>
+                                    <button id="generate-recipe-btn" class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3 px-6 rounded-lg transition shadow-lg">Generate Recipe</button>
                                 </div>
-                                <!-- Craving Solver -->
-                                <div class="bg-gray-800 p-6 rounded-lg">
-                                    <h3 class="text-xl font-semibold mb-4 flex items-center"><i data-lucide="cookie" class="w-6 h-6 mr-2 text-indigo-400"></i>Craving Solver</h3>
-                                    <input id="craving-input" type="text" placeholder="What are you craving? e.g., Pizza" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
-                                    <button id="solve-craving-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg">Find Healthy Alternative</button>
+                                <div class="bg-card-bg p-6 rounded-xl border border-border-color">
+                                    <h3 class="text-xl font-semibold mb-4 flex items-center"><i data-lucide="cookie" class="w-6 h-6 mr-3 text-primary"></i>Craving Solver</h3>
+                                    <input id="craving-input" type="text" placeholder="What are you craving? e.g., Pizza" class="w-full bg-sidebar-bg border border-border-color rounded-lg px-4 py-3 mb-4 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition">
+                                    <button id="solve-craving-btn" class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3 px-6 rounded-lg transition shadow-lg">Find Healthy Alternative</button>
                                 </div>
                             </div>
-                            <div id="recipe-output" class="mt-8">
-                                <!-- Recipe/Craving output will be rendered here -->
-                            </div>
+                            <div id="recipe-output" class="mt-8"></div>
                         </div>
                     </section>
 
                     <section id="health-calculators" class="app-section hidden">
                         <div class="max-w-4xl mx-auto">
-                            <h2 class="text-2xl font-bold mb-4">Health Calculators</h2>
-                            <p class="text-gray-400 mb-6">A suite of tools to help you track your health metrics.</p>
+                            <h2 class="text-3xl font-bold mb-2">Health Calculators</h2>
+                            <p class="text-text-secondary mb-8">A suite of tools to help you track your health metrics.</p>
                             <div id="calculator-accordion" class="space-y-4">
-                                <!-- BMI Calculator -->
-                                <div class="accordion-item bg-gray-800 rounded-lg">
-                                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
-                                        <span>BMI (Body Mass Index) Calculator</span>
-                                        <i data-lucide="chevron-down" class="transform transition-transform"></i>
-                                    </button>
-                                    <div class="accordion-content px-4 pb-4">
-                                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
-                                            <input type="number" id="bmi-height" placeholder="Height (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                            <input type="number" id="bmi-weight" placeholder="Weight (kg)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                        </div>
-                                        <button onclick="calculateBMI()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg">Calculate</button>
-                                        <p id="bmi-result" class="mt-4 font-bold text-lg"></p>
-                                    </div>
-                                </div>
-                                <!-- BMR Calculator -->
-                                <div class="accordion-item bg-gray-800 rounded-lg">
-                                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
-                                        <span>BMR (Basal Metabolic Rate) Calculator</span>
-                                        <i data-lucide="chevron-down" class="transform transition-transform"></i>
-                                    </button>
-                                    <div class="accordion-content px-4 pb-4">
-                                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
-                                            <input type="number" id="bmr-age" placeholder="Age" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                            <select id="bmr-gender" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                                <option value="male">Male</option>
-                                                <option value="female">Female</option>
-                                            </select>
-                                            <input type="number" id="bmr-height" placeholder="Height (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                            <input type="number" id="bmr-weight" placeholder="Weight (kg)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                        </div>
-                                        <button onclick="calculateBMR()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg">Calculate</button>
-                                        <p id="bmr-result" class="mt-4 font-bold text-lg"></p>
-                                    </div>
-                                </div>
-                                 <!-- Body Fat Calculator -->
-                                <div class="accordion-item bg-gray-800 rounded-lg">
-                                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
-                                        <span>Body Fat Calculator</span>
-                                        <i data-lucide="chevron-down" class="transform transition-transform"></i>
-                                    </button>
-                                    <div class="accordion-content px-4 pb-4">
-                                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
-                                             <select id="bf-gender" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                                <option value="male">Male</option>
-                                                <option value="female">Female</option>
-                                            </select>
-                                            <input type="number" id="bf-height" placeholder="Height (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                            <input type="number" id="bf-weight" placeholder="Weight (kg)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                            <input type="number" id="bf-neck" placeholder="Neck (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                            <input type="number" id="bf-waist" placeholder="Waist (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                            <input type="number" id="bf-hip" placeholder="Hip (cm) (Females only)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                        </div>
-                                        <button onclick="calculateBodyFat()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg">Calculate</button>
-                                        <p id="bf-result" class="mt-4 font-bold text-lg"></p>
-                                    </div>
-                                </div>
-                                <!-- Ideal Weight Calculator -->
-                                <div class="accordion-item bg-gray-800 rounded-lg">
-                                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
-                                        <span>Ideal Weight Calculator</span>
-                                        <i data-lucide="chevron-down" class="transform transition-transform"></i>
-                                    </button>
-                                    <div class="accordion-content px-4 pb-4">
-                                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
-                                            <select id="iw-gender" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                                <option value="male">Male</option>
-                                                <option value="female">Female</option>
-                                            </select>
-                                            <input type="number" id="iw-height" placeholder="Height (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                        </div>
-                                        <button onclick="calculateIdealWeight()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg">Calculate</button>
-                                        <p id="iw-result" class="mt-4 font-bold text-lg"></p>
-                                    </div>
-                                </div>
-                                 <!-- Lean Body Mass Calculator -->
-                                <div class="accordion-item bg-gray-800 rounded-lg">
-                                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
-                                        <span>Lean Body Mass (LBM) Calculator</span>
-                                        <i data-lucide="chevron-down" class="transform transition-transform"></i>
-                                    </button>
-                                    <div class="accordion-content px-4 pb-4">
-                                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
-                                            <select id="lbm-gender" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                                <option value="male">Male</option>
-                                                <option value="female">Female</option>
-                                            </select>
-                                            <input type="number" id="lbm-height" placeholder="Height (cm)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                            <input type="number" id="lbm-weight" placeholder="Weight (kg)" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                        </div>
-                                        <button onclick="calculateLBM()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg">Calculate</button>
-                                        <p id="lbm-result" class="mt-4 font-bold text-lg"></p>
-                                    </div>
-                                </div>
-                                 <!-- Ovulation Calculator -->
-                                <div class="accordion-item bg-gray-800 rounded-lg">
-                                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
-                                        <span>Ovulation Calculator</span>
-                                        <i data-lucide="chevron-down" class="transform transition-transform"></i>
-                                    </button>
-                                    <div class="accordion-content px-4 pb-4">
-                                        <div class="grid sm:grid-cols-2 gap-4 mt-4">
-                                            <input type="text" onfocus="(this.type='date')" onblur="(this.type='text')" id="ov-last-period" placeholder="First Day of Last Period" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                            <input type="number" id="ov-cycle-length" placeholder="Avg. Cycle Length (days)" value="28" class="w-full bg-gray-700 border border-gray-600 p-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                        </div>
-                                        <button onclick="calculateOvulation()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg">Calculate</button>
-                                        <p id="ov-result" class="mt-4 font-bold text-lg"></p>
-                                    </div>
-                                </div>
+                                <!-- Calculators will be dynamically inserted here -->
                             </div>
                         </div>
                     </section>
 
                     <section id="settings" class="app-section hidden">
                         <div class="max-w-4xl mx-auto">
-                            <h2 class="text-2xl font-bold mb-4">Settings</h2>
-                            <div class="bg-gray-800 p-6 rounded-lg">
+                            <h2 class="text-3xl font-bold mb-2">Settings</h2>
+                             <p class="text-text-secondary mb-8">Manage your account information.</p>
+                            <div class="bg-card-bg p-6 rounded-xl border border-border-color">
                                 <h3 class="text-xl font-semibold mb-2" id="user-name-display">User Name</h3>
-                                <p class="text-gray-400 mb-4" id="user-email-display">user@example.com</p>
-                                <p class="text-gray-400 text-sm" id="user-id-display">User ID: </p>
+                                <p class="text-text-secondary mb-4" id="user-email-display">user@example.com</p>
+                                <p class="text-text-secondary text-sm" id="user-id-display">User ID: </p>
                             </div>
-                             <footer class="text-center mt-12 text-gray-500">
+                             <footer class="text-center mt-12 text-text-secondary">
                                 Made with ❤️ by Ashutosh Roy
                             </footer>
                         </div>
@@ -373,20 +285,20 @@
         </div>
 
         <!-- Profile Drawer -->
-        <div id="profile-drawer" class="profile-drawer fixed inset-y-0 right-0 h-screen w-80 bg-gray-800 shadow-lg p-6 transform translate-x-full z-30">
-            <button id="close-drawer-btn" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <div id="profile-drawer" class="profile-drawer fixed inset-y-0 right-0 h-screen w-80 bg-sidebar-bg shadow-lg p-6 transform translate-x-full z-30 border-l border-border-color">
+            <button id="close-drawer-btn" class="absolute top-4 right-4 text-text-secondary hover:text-white">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
-            <div class="flex flex-col items-center">
-                <img id="drawer-user-avatar" src="https://placehold.co/80x80/7c3aed/ffffff?text=U" alt="User Avatar" class="w-20 h-20 rounded-full border-4 border-indigo-400 mb-4">
+            <div class="flex flex-col items-center mt-8">
+                <img id="drawer-user-avatar" src="https://placehold.co/80x80/8B5CF6/ffffff?text=U" alt="User Avatar" class="w-24 h-24 rounded-full border-4 border-primary mb-4">
                 <h3 id="drawer-user-name" class="text-xl font-semibold">User Name</h3>
-                <p id="drawer-user-email" class="text-sm text-gray-400">user@example.com</p>
-                <button id="logout-btn" class="mt-8 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center">
+                <p id="drawer-user-email" class="text-sm text-text-secondary">user@example.com</p>
+                <button id="logout-btn" class="mt-8 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center transition">
                     <i data-lucide="log-out" class="w-5 h-5 mr-2"></i> Logout
                 </button>
             </div>
         </div>
-        <div id="drawer-overlay" class="fixed inset-0 bg-black/50 z-20 hidden"></div>
+        <div id="drawer-overlay" class="fixed inset-0 bg-black/60 z-20 hidden"></div>
     </div>
 
     <!-- Firebase SDK -->
@@ -397,7 +309,7 @@
         
         // --- CONFIGURATION ---
         const firebaseConfig = {
-            apiKey: "AIzaSyCu5RfnRhT9refiyybPcW_IBt_7l5cgt2I",
+            apiKey: "YOUR_API_KEY", // Replace with your actual Firebase config
             authDomain: "calverse-e3cdb.firebaseapp.com",
             projectId: "calverse-e3cdb",
             storageBucket: "calverse-e3cdb.firebasestorage.app",
@@ -407,16 +319,23 @@
         };
         
         // --- INITIALIZATION ---
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        enableIndexedDbPersistence(db).catch((err) => {
-            if (err.code == 'failed-precondition') {
-                console.warn("Firestore persistence failed: Multiple tabs open?");
-            } else if (err.code == 'unimplemented') {
-                console.warn("Firestore persistence not available in this browser.");
-            }
-        });
+        let app, auth, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            enableIndexedDbPersistence(db).catch((err) => {
+                if (err.code == 'failed-precondition') {
+                    console.warn("Firestore persistence failed: Multiple tabs open?");
+                } else if (err.code == 'unimplemented') {
+                    console.warn("Firestore persistence not available in this browser.");
+                }
+            });
+        } catch (e) {
+            console.error("Firebase initialization failed:", e);
+            alert("Could not connect to the backend. Please check your Firebase configuration.");
+        }
+
 
         // --- DOM ELEMENTS ---
         const loadingOverlay = document.getElementById('loading-overlay');
@@ -430,8 +349,7 @@
 
         googleSignInBtn.addEventListener('click', async () => {
             try {
-                const result = await signInWithPopup(auth, provider);
-                // The onAuthStateChanged observer will handle the rest.
+                await signInWithPopup(auth, provider);
             } catch (error) {
                 console.error("Google Sign-In Error:", error);
                 alert("Could not sign in with Google. Please try again.");
@@ -440,139 +358,80 @@
         
         logoutBtn.addEventListener('click', async () => {
             await signOut(auth);
-            // Using reload to reset the app state completely.
             window.location.reload();
         });
 
         onAuthStateChanged(auth, (user) => {
+            loadingOverlay.classList.add('hidden');
             if (user) {
                 handleUserLogin(user);
                 authContainer.classList.add('hidden');
                 appContainer.classList.remove('hidden');
-                loadingOverlay.classList.add('hidden');
-                // Initialize icons once the app container is visible
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
                 }
             } else {
                 authContainer.classList.remove('hidden');
                 appContainer.classList.add('hidden');
-                loadingOverlay.classList.add('hidden');
             }
         });
 
         async function handleUserLogin(user) {
             const userRef = doc(db, "users", user.uid);
-            const userDoc = await getDoc(userRef);
-
-            if (!userDoc.exists()) {
-                // Create a more readable and unique custom ID
-                const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
-                const simpleName = user.displayName.split(' ')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
-                const customId = `${simpleName}-${randomPart}`;
-
-                await setDoc(userRef, {
-                    uid: user.uid,
-                    displayName: user.displayName,
-                    email: user.email,
-                    photoURL: user.photoURL,
-                    customId: customId,
-                    createdAt: new Date()
-                });
+            try {
+                const userDoc = await getDoc(userRef);
+                if (!userDoc.exists()) {
+                    const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
+                    const simpleName = user.displayName.split(' ')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+                    const customId = `${simpleName}-${randomPart}`;
+                    await setDoc(userRef, {
+                        uid: user.uid,
+                        displayName: user.displayName,
+                        email: user.email,
+                        photoURL: user.photoURL,
+                        customId: customId,
+                        createdAt: new Date()
+                    });
+                }
+                updateUIWithUserData(user);
+            } catch (error) {
+                console.error("Error handling user login:", error);
             }
-            updateUIWithUserData(user);
         }
 
         async function updateUIWithUserData(user) {
             const userRef = doc(db, "users", user.uid);
             const userDoc = await getDoc(userRef);
+            if (!userDoc.exists()) return;
             const userData = userDoc.data();
-
-            const photoUrl = user.photoURL || `https://placehold.co/80x80/7c3aed/ffffff?text=${user.displayName[0]}`;
+            const photoUrl = user.photoURL || `https://placehold.co/80x80/8B5CF6/ffffff?text=${user.displayName[0]}`;
             
-            // Nav Bar
             document.getElementById('user-avatar').src = photoUrl;
-            // Profile Drawer
             document.getElementById('drawer-user-avatar').src = photoUrl;
             document.getElementById('drawer-user-name').textContent = user.displayName;
             document.getElementById('drawer-user-email').textContent = user.email;
-            // Settings Page
             document.getElementById('user-name-display').textContent = user.displayName;
             document.getElementById('user-email-display').textContent = user.email;
             document.getElementById('user-id-display').textContent = `User ID: ${userData.customId}`;
         }
 
         // --- GEMINI API LOGIC ---
-        const apiKey = ""; // API Key will be injected by the environment.
+        const apiKey = ""; // Injected by environment
 
-        // Schemas for structured responses
-        const nutritionSchema = {
-            type: "OBJECT",
-            properties: {
-                foodItem: { type: "STRING" },
-                servingSize: { type: "STRING" },
-                calories: { type: "NUMBER" },
-                totalFat: { type: "STRING" },
-                saturatedFat: { type: "STRING" },
-                transFat: { type: "STRING" },
-                cholesterol: { type: "STRING" },
-                sodium: { type: "STRING" },
-                totalCarbohydrate: { type: "STRING" },
-                dietaryFiber: { type: "STRING" },
-                totalSugars: { type: "STRING" },
-                protein: { type: "STRING" },
-                vitaminD: { type: "STRING" },
-                calcium: { type: "STRING" },
-                iron: { type: "STRING" },
-                potassium: { type: "STRING" },
-            },
-            required: ["foodItem", "servingSize", "calories", "totalFat", "protein", "totalCarbohydrate"]
-        };
-        
-        const mealAnalysisSchema = {
-            type: "OBJECT",
-            properties: {
-                nutrition: nutritionSchema,
-                suggestions: {
-                    type: "OBJECT",
-                    properties: {
-                        taste: { type: "STRING", description: "A suggestion to improve the meal's taste." },
-                        health: { type: "STRING", description: "A suggestion to make the meal healthier." }
-                    }
-                }
-            }
-        };
+        const nutritionSchema = { type: "OBJECT", properties: { foodItem: { type: "STRING" }, servingSize: { type: "STRING" }, calories: { type: "NUMBER" }, totalFat: { type: "STRING" }, saturatedFat: { type: "STRING" }, transFat: { type: "STRING" }, cholesterol: { type: "STRING" }, sodium: { type: "STRING" }, totalCarbohydrate: { type: "STRING" }, dietaryFiber: { type: "STRING" }, totalSugars: { type: "STRING" }, protein: { type: "STRING" }, vitaminD: { type: "STRING" }, calcium: { type: "STRING" }, iron: { type: "STRING" }, potassium: { type: "STRING" } }, required: ["foodItem", "servingSize", "calories", "totalFat", "protein", "totalCarbohydrate"] };
+        const mealAnalysisSchema = { type: "OBJECT", properties: { nutrition: nutritionSchema, suggestions: { type: "OBJECT", properties: { taste: { type: "STRING", description: "A suggestion to improve the meal's taste." }, health: { type: "STRING", description: "A suggestion to make the meal healthier." } } } } };
 
         async function callGeminiApi(prompt, schema = null) {
             const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-            
-            const payload = {
-                contents: [{ role: "user", parts: [{ text: prompt }] }],
-                generationConfig: schema ? {
-                    responseMimeType: "application/json",
-                    responseSchema: schema
-                } : {}
-            };
-
+            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: schema ? { responseMimeType: "application/json", responseSchema: schema } : {} };
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`API request failed with status ${response.status}`);
-                }
-                
+                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
                 const data = await response.json();
                 if (data.candidates && data.candidates.length > 0) {
                     const content = data.candidates[0].content.parts[0].text;
                     return schema ? JSON.parse(content) : content;
-                } else {
-                     throw new Error("No content returned from API.");
-                }
-
+                } else { throw new Error("No content returned from API."); }
             } catch (error) {
                 console.error("Gemini API Error:", error);
                 alert("An error occurred while contacting the AI. Please check the console and try again.");
@@ -590,403 +449,159 @@
                 e.preventDefault();
                 const targetId = link.getAttribute('href').substring(1);
                 
-                // Update active link style
-                navLinks.forEach(l => l.classList.remove('bg-gray-700', 'text-white'));
-                link.classList.add('bg-gray-700', 'text-white');
+                navLinks.forEach(l => l.classList.remove('bg-primary/20', 'text-primary', 'border-l-4', 'border-primary'));
+                link.classList.add('bg-primary/20', 'text-primary', 'border-l-4', 'border-primary');
 
-                // Show target section
-                sections.forEach(section => {
-                    section.id === targetId ? section.classList.remove('hidden') : section.classList.add('hidden');
-                });
-
-                // Update page title
-                pageTitle.textContent = link.textContent.trim();
+                sections.forEach(section => section.id === targetId ? section.classList.remove('hidden') : section.classList.add('hidden'));
+                pageTitle.textContent = link.querySelector('span').textContent.trim();
                 
-                // Close sidebar on mobile after navigation
                 if (window.innerWidth < 768) {
                     document.getElementById('sidebar').classList.add('-translate-x-full');
                 }
             });
         });
 
-        // Mobile menu toggle
         const sidebar = document.getElementById('sidebar');
-        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-            sidebar.classList.toggle('-translate-x-full');
-        });
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => sidebar.classList.toggle('-translate-x-full'));
 
-        // Profile drawer toggle
         const profileDrawer = document.getElementById('profile-drawer');
         const drawerOverlay = document.getElementById('drawer-overlay');
-        const closeDrawerBtn = document.getElementById('close-drawer-btn');
-        
-        function toggleDrawer(show) {
-            if (show) {
-                profileDrawer.classList.remove('translate-x-full');
-                drawerOverlay.classList.remove('hidden');
-            } else {
-                profileDrawer.classList.add('translate-x-full');
-                drawerOverlay.classList.add('hidden');
-            }
-        }
-        
+        const toggleDrawer = (show) => {
+            profileDrawer.classList.toggle('translate-x-full', !show);
+            drawerOverlay.classList.toggle('hidden', !show);
+        };
         document.getElementById('profile-avatar-btn').addEventListener('click', () => toggleDrawer(true));
-        closeDrawerBtn.addEventListener('click', () => toggleDrawer(false));
+        document.getElementById('close-drawer-btn').addEventListener('click', () => toggleDrawer(false));
         drawerOverlay.addEventListener('click', () => toggleDrawer(false));
 
-        // Accordion logic for calculators
+        // --- DYNAMIC CALCULATOR RENDERING ---
+        const calculators = [
+            { id: 'bmi', name: 'BMI (Body Mass Index)', icon: 'ruler', fields: [ {id: 'height', placeholder: 'Height (cm)', type: 'number'}, {id: 'weight', placeholder: 'Weight (kg)', type: 'number'} ], func: 'calculateBMI' },
+            { id: 'bmr', name: 'BMR (Basal Metabolic Rate)', icon: 'flame', fields: [ {id: 'age', placeholder: 'Age', type: 'number'}, {id: 'gender', type: 'select', options: ['Male', 'Female']}, {id: 'height', placeholder: 'Height (cm)', type: 'number'}, {id: 'weight', placeholder: 'Weight (kg)', type: 'number'} ], func: 'calculateBMR' },
+            { id: 'bf', name: 'Body Fat', icon: 'percent', fields: [ {id: 'gender', type: 'select', options: ['Male', 'Female']}, {id: 'height', placeholder: 'Height (cm)', type: 'number'}, {id: 'weight', placeholder: 'Weight (kg)', type: 'number'}, {id: 'neck', placeholder: 'Neck (cm)', type: 'number'}, {id: 'waist', placeholder: 'Waist (cm)', type: 'number'}, {id: 'hip', placeholder: 'Hip (cm) (Females)', type: 'number'} ], func: 'calculateBodyFat' },
+            { id: 'iw', name: 'Ideal Weight', icon: 'weight', fields: [ {id: 'gender', type: 'select', options: ['Male', 'Female']}, {id: 'height', placeholder: 'Height (cm)', type: 'number'} ], func: 'calculateIdealWeight' },
+            { id: 'lbm', name: 'Lean Body Mass (LBM)', icon: 'bone', fields: [ {id: 'gender', type: 'select', options: ['Male', 'Female']}, {id: 'height', placeholder: 'Height (cm)', type: 'number'}, {id: 'weight', placeholder: 'Weight (kg)', type: 'number'} ], func: 'calculateLBM' },
+            { id: 'ov', name: 'Ovulation', icon: 'calendar-heart', fields: [ {id: 'last-period', placeholder: 'First Day of Last Period', type: 'date'}, {id: 'cycle-length', placeholder: 'Avg. Cycle Length', type: 'number', value: 28} ], func: 'calculateOvulation' },
+        ];
+        
+        const accordionContainer = document.getElementById('calculator-accordion');
+        accordionContainer.innerHTML = calculators.map(calc => `
+            <div class="accordion-item">
+                <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center transition-colors hover:text-primary">
+                    <span class="flex items-center"><i data-lucide="${calc.icon}" class="w-5 h-5 mr-3"></i> ${calc.name}</span>
+                    <i data-lucide="chevron-down" class="transform transition-transform"></i>
+                </button>
+                <div class="accordion-content px-4 pb-4">
+                    <div class="grid sm:grid-cols-2 gap-4 mt-4">
+                        ${calc.fields.map(f => f.type === 'select' ?
+                            `<select id="${calc.id}-${f.id}" class="w-full bg-sidebar-bg border border-border-color p-3 rounded-lg outline-none focus:ring-2 focus:ring-primary transition">${f.options.map(o => `<option value="${o.toLowerCase()}">${o}</option>`).join('')}</select>` :
+                            `<input type="${f.type === 'date' ? 'text' : f.type}" onfocus="${f.type === 'date' ? "(this.type='date')" : ''}" onblur="${f.type === 'date' ? "(this.type='text')" : ''}" id="${calc.id}-${f.id}" placeholder="${f.placeholder}" ${f.value ? `value="${f.value}"` : ''} class="w-full bg-sidebar-bg border border-border-color p-3 rounded-lg outline-none focus:ring-2 focus:ring-primary transition">`
+                        ).join('')}
+                    </div>
+                    <button onclick="${calc.func}()" class="mt-4 bg-primary hover:bg-primary-hover text-white font-bold px-4 py-2 rounded-lg transition shadow-md">Calculate</button>
+                    <p id="${calc.id}-result" class="mt-4 font-bold text-lg"></p>
+                </div>
+            </div>`).join('');
+
         document.querySelectorAll('.accordion-header').forEach(header => {
             header.addEventListener('click', () => {
                 const content = header.nextElementSibling;
-                const icon = header.querySelector('i[data-lucide]');
+                const icon = header.querySelector('i[data-lucide="chevron-down"]');
                 const isOpen = content.style.maxHeight;
-
-                // Close all other accordions
-                document.querySelectorAll('.accordion-content').forEach(c => {
-                    c.style.maxHeight = null;
-                    c.previousElementSibling.querySelector('i[data-lucide]').classList.remove('rotate-180');
-                });
-                
-                // Open the clicked one if it was closed
-                if (!isOpen) {
-                    content.style.maxHeight = content.scrollHeight + "px";
-                    icon.classList.add('rotate-180');
-                }
+                document.querySelectorAll('.accordion-content').forEach(c => { c.style.maxHeight = null; c.previousElementSibling.querySelector('i[data-lucide="chevron-down"]').classList.remove('rotate-180'); });
+                if (!isOpen) { content.style.maxHeight = content.scrollHeight + "px"; icon.classList.add('rotate-180'); }
             });
         });
 
+
         // --- FEATURE LOGIC ---
-        
-        // Nutrition Lookup
         const getNutritionBtn = document.getElementById('get-nutrition-btn');
         const nutritionInput = document.getElementById('nutrition-input');
         const nutritionOutput = document.getElementById('nutrition-output');
 
-        getNutritionBtn.addEventListener('click', handleGetNutrition);
-        nutritionInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleGetNutrition();
-        });
-
-        async function handleGetNutrition() {
+        const handleGetNutrition = async () => {
             const query = nutritionInput.value.trim();
             if (!query) return;
-
             setLoadingState(getNutritionBtn, true, 'Analyzing...');
             nutritionOutput.innerHTML = getSpinnerHTML('Fetching nutrition data...');
-
-            const prompt = `Analyze the nutrition facts for the following food item and provide the data in JSON format according to the specified schema. All values should be strings, except for calories which should be a number. If a value is not applicable or unknown, use "N/A". Food: "${query}"`;
-            
+            const prompt = `Analyze the nutrition facts for: "${query}". Provide the data in the specified JSON schema. All values should be strings, except for calories (number). Use "N/A" for unknown values.`;
             const data = await callGeminiApi(prompt, nutritionSchema);
-            
-            if (data) {
-                nutritionOutput.innerHTML = renderNutritionLabel(data);
-            } else {
-                nutritionOutput.innerHTML = `<p class="text-red-400 text-center">Could not retrieve nutrition data. Please try again.</p>`;
-            }
-            setLoadingState(getNutritionBtn, false, `<i data-lucide="bar-chart-big" class="w-5 h-5 mr-2"></i> Analyze`);
-        }
+            if (data) { nutritionOutput.innerHTML = renderNutritionLabel(data); } 
+            else { nutritionOutput.innerHTML = `<p class="text-red-400 text-center">Could not retrieve nutrition data. Please try again.</p>`; }
+            setLoadingState(getNutritionBtn, false, `<i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Analyze`);
+        };
+        getNutritionBtn.addEventListener('click', handleGetNutrition);
+        nutritionInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleGetNutrition());
 
-        // Know Your Meal
         const analyzeMealBtn = document.getElementById('analyze-meal-btn');
-        const mealUrlInput = document.getElementById('meal-url-input');
-        const mealIngredientsInput = document.getElementById('meal-ingredients-input');
         const mealOutput = document.getElementById('meal-output');
-
         analyzeMealBtn.addEventListener('click', async () => {
-            const url = mealUrlInput.value.trim();
-            const ingredients = mealIngredientsInput.value.trim();
+            const url = document.getElementById('meal-url-input').value.trim();
+            const ingredients = document.getElementById('meal-ingredients-input').value.trim();
             if (!url && !ingredients) return;
-
             setLoadingState(analyzeMealBtn, true, 'Analyzing...');
             mealOutput.innerHTML = getSpinnerHTML('Analyzing your meal...');
-
             const mealInput = url ? `URL: ${url}` : `Ingredients: ${ingredients}`;
-            const prompt = `Analyze the following meal. Provide the total nutrition facts for the entire meal and two actionable suggestions (one for taste, one for health) in the specified JSON schema format. Meal details: ${mealInput}`;
-            
+            const prompt = `Analyze this meal: ${mealInput}. Provide total nutrition facts and two actionable suggestions (taste, health) in the specified JSON schema.`;
             const data = await callGeminiApi(prompt, mealAnalysisSchema);
-
             if (data && data.nutrition && data.suggestions) {
                 let html = renderNutritionLabel(data.nutrition, 'Total Meal Nutrition');
-                html += `<div class="mt-8 bg-gray-800 p-6 rounded-lg">
-                            <h3 class="text-xl font-semibold mb-4 flex items-center"><i data-lucide="lightbulb" class="w-6 h-6 mr-2 text-yellow-400"></i>AI Suggestions</h3>
+                html += `<div class="mt-8 bg-card-bg p-6 rounded-xl border border-border-color">
+                            <h3 class="text-xl font-semibold mb-4 flex items-center"><i data-lucide="lightbulb" class="w-6 h-6 mr-3 text-yellow-400"></i>AI Suggestions</h3>
                             <div class="space-y-4">
-                                <div>
-                                    <h4 class="font-bold text-indigo-300">Taste Improvement:</h4>
-                                    <p class="text-gray-300">${data.suggestions.taste}</p>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-green-300">Health Improvement:</h4>
-                                    <p class="text-gray-300">${data.suggestions.health}</p>
-                                </div>
-                            </div>
-                         </div>`;
+                                <div><h4 class="font-bold text-primary">Taste Improvement:</h4><p class="text-text-secondary">${data.suggestions.taste}</p></div>
+                                <div><h4 class="font-bold text-green-400">Health Improvement:</h4><p class="text-text-secondary">${data.suggestions.health}</p></div>
+                            </div></div>`;
                 mealOutput.innerHTML = html;
                 lucide.createIcons();
-            } else {
-                mealOutput.innerHTML = `<p class="text-red-400 text-center">Could not analyze the meal. The AI returned an unexpected format. Please try again.</p>`;
-            }
+            } else { mealOutput.innerHTML = `<p class="text-red-400 text-center">Could not analyze the meal. The AI returned an unexpected format.</p>`; }
             setLoadingState(analyzeMealBtn, false, `<i data-lucide="brain-circuit" class="w-5 h-5 mr-2"></i> Analyze Meal`);
         });
 
-        // Recipe & Cravings
-        const generateRecipeBtn = document.getElementById('generate-recipe-btn');
-        const solveCravingBtn = document.getElementById('solve-craving-btn');
         const recipeOutput = document.getElementById('recipe-output');
-
-        generateRecipeBtn.addEventListener('click', async () => {
-            const ingredients = document.getElementById('recipe-ingredients-input').value.trim();
-            if (!ingredients) return;
-            setLoadingState(generateRecipeBtn, true, 'Generating...');
-            recipeOutput.innerHTML = getSpinnerHTML('Creating a recipe for you...');
-            const prompt = `Create a healthy and delicious recipe using the following ingredients: ${ingredients}. Provide a recipe name, a list of ingredients (including the ones provided), and step-by-step instructions. Use markdown for formatting: '### Recipe Name', '### Ingredients', '### Instructions'. Use '*' for list items.`;
-            const recipe = await callGeminiApi(prompt);
-            if (recipe) {
-                recipeOutput.innerHTML = `<div class="bg-gray-800 p-6 rounded-lg ai-content">${formatAiText(recipe)}</div>`;
-            } else {
-                 recipeOutput.innerHTML = `<p class="text-red-400">Could not generate a recipe. Please try again.</p>`;
-            }
-            setLoadingState(generateRecipeBtn, false, 'Generate Recipe');
-        });
-
-        solveCravingBtn.addEventListener('click', async () => {
-            const craving = document.getElementById('craving-input').value.trim();
-            if (!craving) return;
-            setLoadingState(solveCravingBtn, true, 'Solving...');
-            recipeOutput.innerHTML = getSpinnerHTML('Finding a healthy alternative...');
-            const prompt = `I'm craving ${craving}. Suggest a delicious and healthy alternative recipe. Provide the recipe name, ingredients, and step-by-step instructions. Explain briefly why it's a healthier choice. Use markdown for formatting: '### Recipe Name', '### Why it's Healthier', '### Ingredients', '### Instructions'. Use '*' for list items.`;
-            const alternative = await callGeminiApi(prompt);
-            if (alternative) {
-                recipeOutput.innerHTML = `<div class="bg-gray-800 p-6 rounded-lg ai-content">${formatAiText(alternative)}</div>`;
-            } else {
-                 recipeOutput.innerHTML = `<p class="text-red-400">Could not find an alternative. Please try again.</p>`;
-            }
-            setLoadingState(solveCravingBtn, false, 'Find Healthy Alternative');
-        });
+        const setupRecipeButton = (btnId, inputId, promptFn) => {
+            const btn = document.getElementById(btnId);
+            btn.addEventListener('click', async () => {
+                const input = document.getElementById(inputId).value.trim();
+                if (!input) return;
+                const originalText = btn.textContent;
+                setLoadingState(btn, true, 'Generating...');
+                recipeOutput.innerHTML = getSpinnerHTML('Crafting a response for you...');
+                const prompt = promptFn(input);
+                const result = await callGeminiApi(prompt);
+                if (result) { recipeOutput.innerHTML = `<div class="bg-card-bg p-6 rounded-xl border border-border-color ai-content">${formatAiText(result)}</div>`; } 
+                else { recipeOutput.innerHTML = `<p class="text-red-400 text-center">Could not generate a response. Please try again.</p>`; }
+                setLoadingState(btn, false, originalText);
+            });
+        };
+        setupRecipeButton('generate-recipe-btn', 'recipe-ingredients-input', (i) => `Create a healthy recipe using: ${i}. Use markdown for formatting: '### Recipe Name', '### Ingredients', '### Instructions'. Use '*' for list items.`);
+        setupRecipeButton('solve-craving-btn', 'craving-input', (c) => `I'm craving ${c}. Suggest a healthy alternative recipe. Use markdown for formatting: '### Recipe Name', '### Why it's Healthier', '### Ingredients', '### Instructions'. Use '*' for list items.`);
 
 
         // --- HELPER FUNCTIONS ---
-        function renderNutritionLabel(data, title = 'Nutrition Facts') {
-            return `
-                <div class="nutrition-label">
-                    <div class="header">
-                        <h1>${title}</h1>
-                        <div class="serving-size">${data.foodItem || 'N/A'}</div>
-                        <div>Serving Size ${data.servingSize || 'N/A'}</div>
-                    </div>
-                    <div class="item"><span>Calories</span> <span>${data.calories ?? 'N/A'}</span></div>
-                    <div class="item"><span>Total Fat</span> <span>${data.totalFat || 'N/A'}</span></div>
-                    <div class="item indent"><span>Saturated Fat</span> <span>${data.saturatedFat || 'N/A'}</span></div>
-                    <div class="item indent"><span>Trans Fat</span> <span>${data.transFat || 'N/A'}</span></div>
-                    <div class="item"><span>Cholesterol</span> <span>${data.cholesterol || 'N/A'}</span></div>
-                    <div class="item"><span>Sodium</span> <span>${data.sodium || 'N/A'}</span></div>
-                    <div class="item"><span>Total Carbohydrate</span> <span>${data.totalCarbohydrate || 'N/A'}</span></div>
-                    <div class="item indent"><span>Dietary Fiber</span> <span>${data.dietaryFiber || 'N/A'}</span></div>
-                    <div class="item indent"><span>Total Sugars</span> <span>${data.totalSugars || 'N/A'}</span></div>
-                    <div class="item"><span>Protein</span> <span>${data.protein || 'N/A'}</span></div>
-                    <div class="footer">
-                        <div class="item"><span>Vitamin D</span> <span>${data.vitaminD || 'N/A'}</span></div>
-                        <div class="item"><span>Calcium</span> <span>${data.calcium || 'N/A'}</span></div>
-                        <div class="item"><span>Iron</span> <span>${data.iron || 'N/A'}</span></div>
-                        <div class="item"><span>Potassium</span> <span>${data.potassium || 'N/A'}</span></div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        function setLoadingState(button, isLoading, content) {
+        const renderNutritionLabel = (data, title = 'Nutrition Facts') => `<div class="nutrition-label"><div class="header"><h1>${title}</h1><div class="serving-size">${data.foodItem||'N/A'}</div><div>Serving Size ${data.servingSize||'N/A'}</div></div><div class="item"><span>Calories</span> <span>${data.calories??'N/A'}</span></div><div class="item"><span>Total Fat</span> <span>${data.totalFat||'N/A'}</span></div><div class="item indent"><span>Saturated Fat</span> <span>${data.saturatedFat||'N/A'}</span></div><div class="item indent"><span>Trans Fat</span> <span>${data.transFat||'N/A'}</span></div><div class="item"><span>Cholesterol</span> <span>${data.cholesterol||'N/A'}</span></div><div class="item"><span>Sodium</span> <span>${data.sodium||'N/A'}</span></div><div class="item"><span>Total Carbohydrate</span> <span>${data.totalCarbohydrate||'N/A'}</span></div><div class="item indent"><span>Dietary Fiber</span> <span>${data.dietaryFiber||'N/A'}</span></div><div class="item indent"><span>Total Sugars</span> <span>${data.totalSugars||'N/A'}</span></div><div class="item"><span>Protein</span> <span>${data.protein||'N/A'}</span></div><div class="footer"><div class="item"><span>Vitamin D</span> <span>${data.vitaminD||'N/A'}</span></div><div class="item"><span>Calcium</span> <span>${data.calcium||'N/A'}</span></div><div class="item"><span>Iron</span> <span>${data.iron||'N/A'}</span></div><div class="item"><span>Potassium</span> <span>${data.potassium||'N/A'}</span></div></div></div>`;
+        const setLoadingState = (button, isLoading, content) => {
+            button.disabled = isLoading;
             if (isLoading) {
-                button.disabled = true;
-                button.innerHTML = `
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    ${content}
-                `;
+                button.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>${content}`;
             } else {
-                button.disabled = false;
                 button.innerHTML = content;
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons({
-                        nodes: [button]
-                    });
-                }
+                lucide.createIcons({ nodes: [button] });
             }
-        }
-
-        function getSpinnerHTML(text) {
-            return `
-                <div class="flex flex-col items-center justify-center p-8 text-center">
-                    <svg class="animate-spin h-8 w-8 text-indigo-400 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <p class="text-lg font-semibold text-gray-300">${text}</p>
-                </div>
-            `;
-        }
-
-        function formatAiText(text) {
-            return text
-                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-                .replace(/^\* (.*$)/gim, '<li>$1</li>')
-                .replace(/<\/li><li>/g, '</li></ul><ul><li>') // Group list items
-                .replace(/<\/li>([^<])/g, '</li></ul>$1') // Close list if followed by non-tag
-                .replace(/^<li>/g, '<ul><li>') // Open list at the start
-                .replace(/<\/li>$/g, '</li></ul>') // Close list at the end
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\n/g, '<br>')
-                .replace(/<br><ul>/g, '<ul>')
-                .replace(/<\/ul><br>/g, '</ul>');
-        }
+        };
+        const getSpinnerHTML = (text) => `<div class="flex flex-col items-center justify-center p-8 text-center"><svg class="animate-spin h-8 w-8 text-primary mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><p class="text-lg font-semibold text-text-secondary">${text}</p></div>`;
+        const formatAiText = (text) => text.replace(/^### (.*$)/gim, '<h3>$1</h3>').replace(/^\* (.*$)/gim, '<li>$1</li>').replace(/<\/li><li>/g, '</li></ul><ul><li>').replace(/<\/li>([^<])/g, '</li></ul>$1').replace(/^<li>/g, '<ul><li>').replace(/<\/li>$/g, '</li></ul>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>').replace(/<br><ul>/g, '<ul>').replace(/<\/ul><br>/g, '</ul>');
 
         // --- CALCULATOR FUNCTIONS (Global Scope) ---
-        window.calculateBMI = function() {
-            const height = parseFloat(document.getElementById('bmi-height').value);
-            const weight = parseFloat(document.getElementById('bmi-weight').value);
-            const resultEl = document.getElementById('bmi-result');
-            if (height > 0 && weight > 0) {
-                const bmi = (weight / ((height / 100) ** 2)).toFixed(2);
-                let category = '';
-                if (bmi < 18.5) category = 'Underweight';
-                else if (bmi < 24.9) category = 'Normal weight';
-                else if (bmi < 29.9) category = 'Overweight';
-                else category = 'Obesity';
-                resultEl.innerHTML = `Your BMI is <span class="text-indigo-300">${bmi}</span> (${category})`;
-            } else {
-                resultEl.textContent = 'Please enter valid height and weight.';
-            }
-        }
-
-        window.calculateBMR = function() {
-            const age = parseFloat(document.getElementById('bmr-age').value);
-            const gender = document.getElementById('bmr-gender').value;
-            const height = parseFloat(document.getElementById('bmr-height').value);
-            const weight = parseFloat(document.getElementById('bmr-weight').value);
-            const resultEl = document.getElementById('bmr-result');
-
-            if (age > 0 && height > 0 && weight > 0) {
-                let bmr = 0;
-                // Revised Harris-Benedict Equation
-                if (gender === 'male') {
-                    bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
-                } else {
-                    bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
-                }
-                resultEl.innerHTML = `Your BMR is approx. <span class="text-indigo-300">${bmr.toFixed(0)}</span> calories/day.`;
-            } else {
-                resultEl.textContent = 'Please fill in all fields correctly.';
-            }
-        }
+        const getCalcValues = (ids) => ids.map(id => document.getElementById(id) ? document.getElementById(id).value : null);
+        const setCalcResult = (id, text) => document.getElementById(id).innerHTML = text;
         
-        window.calculateBodyFat = function() {
-            const gender = document.getElementById('bf-gender').value;
-            const height = parseFloat(document.getElementById('bf-height').value);
-            const weight = parseFloat(document.getElementById('bf-weight').value);
-            const neck = parseFloat(document.getElementById('bf-neck').value);
-            const waist = parseFloat(document.getElementById('bf-waist').value);
-            const hip = parseFloat(document.getElementById('bf-hip').value);
-            const resultEl = document.getElementById('bf-result');
-
-            if (height <= 0 || weight <= 0 || neck <= 0 || waist <= 0) {
-                resultEl.textContent = 'Please fill in height, weight, neck, and waist.';
-                return;
-            }
-
-            let bfp = 0;
-            // US Navy Method
-            if (gender === 'male') {
-                bfp = 495 / (1.0324 - 0.19077 * Math.log10(waist - neck) + 0.15456 * Math.log10(height)) - 450;
-            } else {
-                if (hip <= 0) {
-                     resultEl.textContent = 'Please fill in hip measurement for females.';
-                     return;
-                }
-                bfp = 495 / (1.29579 - 0.35004 * Math.log10(waist + hip - neck) + 0.22100 * Math.log10(height)) - 450;
-            }
-
-            if (bfp > 0 && bfp < 100) {
-                 resultEl.innerHTML = `Estimated Body Fat: <span class="text-indigo-300">${bfp.toFixed(1)}%</span>`;
-            } else {
-                 resultEl.textContent = 'Could not calculate. Please check your measurements.';
-            }
-        }
-
-        window.calculateIdealWeight = function() {
-            const gender = document.getElementById('iw-gender').value;
-            const height = parseFloat(document.getElementById('iw-height').value);
-            const resultEl = document.getElementById('iw-result');
-
-            if (height <= 152) {
-                resultEl.textContent = 'Height must be over 152 cm (5 ft).';
-                return;
-            }
-            
-            let baseWeight = 0;
-            let perInch = 0;
-            if (gender === 'male') {
-                baseWeight = 50; // kg for first 5 feet
-                perInch = 2.3; // kg per inch over 5 feet
-            } else {
-                baseWeight = 45.5; // kg for first 5 feet
-                perInch = 2.3; // kg per inch over 5 feet
-            }
-            
-            const heightInInches = height / 2.54;
-            const idealWeight = baseWeight + ((heightInInches - 60) * perInch);
-            
-            resultEl.innerHTML = `Ideal Weight (Robinson Formula): <span class="text-indigo-300">${idealWeight.toFixed(1)} kg</span>`;
-        }
-
-        window.calculateLBM = function() {
-            const gender = document.getElementById('lbm-gender').value;
-            const height = parseFloat(document.getElementById('lbm-height').value);
-            const weight = parseFloat(document.getElementById('lbm-weight').value);
-            const resultEl = document.getElementById('lbm-result');
-
-            if (height <= 0 || weight <= 0) {
-                resultEl.textContent = 'Please enter valid height and weight.';
-                return;
-            }
-
-            let lbm = 0;
-            // Boer Formula
-            if (gender === 'male') {
-                lbm = (0.407 * weight) + (0.267 * height) - 19.2;
-            } else {
-                lbm = (0.252 * weight) + (0.473 * height) - 48.3;
-            }
-            
-            resultEl.innerHTML = `Lean Body Mass is approx. <span class="text-indigo-300">${lbm.toFixed(1)} kg</span>`;
-        }
-        
-        window.calculateOvulation = function() {
-            const lastPeriodDateStr = document.getElementById('ov-last-period').value;
-            const cycleLength = parseInt(document.getElementById('ov-cycle-length').value, 10);
-            const resultEl = document.getElementById('ov-result');
-
-            if (!lastPeriodDateStr || isNaN(cycleLength) || cycleLength < 20 || cycleLength > 45) {
-                resultEl.textContent = 'Please enter a valid date and cycle length (20-45 days).';
-                return;
-            }
-
-            const lastPeriodDate = new Date(lastPeriodDateStr);
-            // Add a day to correct for timezone issues from date picker
-            lastPeriodDate.setDate(lastPeriodDate.getDate() + 1);
-
-            const ovulationDay = new Date(lastPeriodDate);
-            ovulationDay.setDate(lastPeriodDate.getDate() + cycleLength - 14);
-
-            const fertileStart = new Date(ovulationDay);
-            fertileStart.setDate(ovulationDay.getDate() - 5);
-
-            const fertileEnd = new Date(ovulationDay);
-            fertileEnd.setDate(ovulationDay.getDate() + 1);
-            
-            const formatDate = (date) => date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-
-            resultEl.innerHTML = `Estimated Ovulation: <span class="text-indigo-300">${formatDate(ovulationDay)}</span><br>Fertile Window: <span class="text-green-300">${formatDate(fertileStart)} - ${formatDate(fertileEnd)}</span>`;
-        }
+        window.calculateBMI = () => { const [h, w] = getCalcValues(['bmi-height', 'bmi-weight']); if(h>0&&w>0){ const bmi=(w/((h/100)**2)).toFixed(2); let c=''; if(bmi<18.5)c='Underweight'; else if(bmi<24.9)c='Normal'; else if(bmi<29.9)c='Overweight'; else c='Obesity'; setCalcResult('bmi-result',`BMI: <span class="text-primary">${bmi}</span> (${c})`); } else { setCalcResult('bmi-result', 'Enter valid height & weight.'); } };
+        window.calculateBMR = () => { const [age, gender, h, w] = getCalcValues(['bmr-age', 'bmr-gender', 'bmr-height', 'bmr-weight']); if(age>0&&h>0&&w>0){ let bmr=0; if(gender==='male'){bmr=88.362+(13.397*w)+(4.799*h)-(5.677*age);}else{bmr=447.593+(9.247*w)+(3.098*h)-(4.330*age);} setCalcResult('bmr-result',`BMR: <span class="text-primary">${bmr.toFixed(0)}</span> kcal/day`); } else { setCalcResult('bmr-result', 'Please fill all fields.'); } };
+        window.calculateBodyFat = () => { const [gender, h, w, neck, waist, hip] = getCalcValues(['bf-gender', 'bf-height', 'bf-weight', 'bf-neck', 'bf-waist', 'bf-hip']); if(h<=0||w<=0||neck<=0||waist<=0){setCalcResult('bf-result', 'Fill height, weight, neck, & waist.'); return;} let bfp=0; if(gender==='male'){bfp=495/(1.0324-0.19077*Math.log10(waist-neck)+0.15456*Math.log10(h))-450;}else{if(hip<=0){setCalcResult('bf-result', 'Hip is required for females.'); return;} bfp=495/(1.29579-0.35004*Math.log10(parseFloat(waist)+parseFloat(hip)-neck)+0.22100*Math.log10(h))-450;} if(bfp>0&&bfp<100){setCalcResult('bf-result',`Body Fat: <span class="text-primary">${bfp.toFixed(1)}%</span>`);}else{setCalcResult('bf-result','Invalid measurements.');} };
+        window.calculateIdealWeight = () => { const [gender, h] = getCalcValues(['iw-gender', 'iw-height']); if(h<=152){setCalcResult('iw-result','Height must be > 152cm.'); return;} let base=gender==='male'?50:45.5; let perInch=2.3; const iw=base+(((h/2.54)-60)*perInch); setCalcResult('iw-result',`Ideal Weight: <span class="text-primary">${iw.toFixed(1)} kg</span>`); };
+        window.calculateLBM = () => { const [gender, h, w] = getCalcValues(['lbm-gender', 'lbm-height', 'lbm-weight']); if(h<=0||w<=0){setCalcResult('lbm-result','Enter valid height & weight.'); return;} let lbm = gender==='male'?(0.407*w)+(0.267*h)-19.2:(0.252*w)+(0.473*h)-48.3; setCalcResult('lbm-result',`LBM: <span class="text-primary">${lbm.toFixed(1)} kg</span>`); };
+        window.calculateOvulation = () => { const [dateStr, cycle] = getCalcValues(['ov-last-period', 'ov-cycle-length']); if(!dateStr||isNaN(cycle)||cycle<20||cycle>45){setCalcResult('ov-result','Enter valid date & cycle (20-45 days).'); return;} const d=new Date(dateStr); d.setDate(d.getDate()+1); const o=new Date(d); o.setDate(d.getDate()+cycle-14); const fs=new Date(o); fs.setDate(o.getDate()-5); const fe=new Date(o); fe.setDate(o.getDate()+1); const fDate=(dt)=>dt.toLocaleDateString('en-US',{month:'long',day:'numeric'}); setCalcResult('ov-result',`Ovulation: <span class="text-primary">${fDate(o)}</span><br>Fertile Window: <span class="text-green-400">${fDate(fs)} - ${fDate(fe)}</span>`); };
 
     </script>
 </body>
