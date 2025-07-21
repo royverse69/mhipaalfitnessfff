@@ -19,6 +19,7 @@
             --text-muted-color: #a3a3a3;
             --border-color: #2e2e2e;
             --error-color: #ef4444;
+            --success-color: #22c55e;
         }
 
         * {
@@ -71,6 +72,7 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            flex-grow: 1;
         }
 
         .sidebar .nav-link {
@@ -92,10 +94,15 @@
         .sidebar .nav-link.active {
             background-color: var(--primary-color);
             color: #000;
+            font-weight: 600;
         }
         
         .sidebar .nav-link.active .material-icons {
              color: #000;
+        }
+        
+        .sidebar .profile-link {
+            margin-top: auto;
         }
 
         /* --- Main Content --- */
@@ -237,6 +244,11 @@
             width: 100%;
             transition: background-color 0.2s;
         }
+        
+        button.logout-btn {
+            background-color: var(--error-color);
+            color: #fff;
+        }
 
         /* --- Results & Utility --- */
         .results-container {
@@ -276,7 +288,7 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background-color: var(--surface-color);
+            background-color: #1a1a1a;
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
@@ -299,6 +311,29 @@
             color: var(--primary-color);
         }
 
+        /* --- Profile Page --- */
+        .profile-card {
+            text-align: center;
+        }
+        
+        .profile-card .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            border: 3px solid var(--primary-color);
+        }
+        
+        .profile-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .profile-card p {
+            color: var(--text-muted-color);
+            margin-bottom: 2rem;
+        }
+
         /* --- Responsive Layout --- */
         @media (min-width: 768px) {
             .sidebar {
@@ -313,7 +348,7 @@
             }
         }
         
-        /* Login Modal remains similar */
+        /* Modals */
         .modal-overlay {
             display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.8); justify-content: center; align-items: center; backdrop-filter: blur(5px);
@@ -331,6 +366,19 @@
         #login-with-google-btn img {
             width: 20px; height: 20px; background-color: #fff; border-radius: 50%; padding: 2px;
         }
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .modal-buttons button {
+            background-color: var(--border-color);
+            color: var(--text-color);
+        }
+        .modal-buttons button.confirm-btn {
+            background-color: var(--error-color);
+            color: #fff;
+        }
         
     </style>
 </head>
@@ -345,6 +393,7 @@
                 <li><a href="#" class="nav-link" data-target="meal"><span class="material-icons">restaurant_menu</span>Your Meal</a></li>
                 <li><a href="#" class="nav-link" data-target="recipe"><span class="material-icons">menu_book</span>Recipes</a></li>
                 <li><a href="#" class="nav-link" data-target="calculators"><span class="material-icons">calculate</span>Calculators</a></li>
+                <li class="profile-link"><a href="#" class="nav-link" data-target="profile"><span class="material-icons">person</span>Profile</a></li>
             </ul>
         </nav>
 
@@ -415,15 +464,28 @@
                      <!-- Calculators will be rendered here by JS -->
                  </div>
             </section>
+            
+            <!-- Section 5: Profile -->
+            <section id="profile" class="page-section">
+                 <h1 class="page-title">Profile</h1>
+                 <p class="page-subtitle">Manage your account details and preferences.</p>
+                 <div class="card profile-card">
+                    <img src="" alt="Profile Picture" id="profile-pic" class="profile-pic">
+                    <h2 id="profile-name"></h2>
+                    <p id="profile-email"></p>
+                    <button id="logout-btn-confirm" class="logout-btn">Logout</button>
+                 </div>
+            </section>
         </main>
     </div>
     
     <!-- Bottom Navigation for Mobile -->
     <nav class="bottom-nav">
-        <a href="#" class="nav-link active" data-target="nutrition"><span class="material-icons">home</span>Home</a>
+        <a href="#" class="nav-link active" data-target="nutrition"><span class="material-icons">search</span>Nutrition</a>
         <a href="#" class="nav-link" data-target="meal"><span class="material-icons">restaurant_menu</span>Meal</a>
         <a href="#" class="nav-link" data-target="recipe"><span class="material-icons">menu_book</span>Recipes</a>
         <a href="#" class="nav-link" data-target="calculators"><span class="material-icons">calculate</span>Calculators</a>
+        <a href="#" class="nav-link" data-target="profile"><span class="material-icons">person</span>Profile</a>
     </nav>
     
     <!-- Login Modal -->
@@ -438,6 +500,19 @@
             </button>
         </div>
     </div>
+    
+    <!-- Logout Confirmation Modal -->
+    <div id="logout-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Logout</h3>
+            <p>Are you sure you want to logout?</p>
+            <div class="modal-buttons">
+                <button id="cancel-logout-btn">Cancel</button>
+                <button id="confirm-logout-btn" class="confirm-btn">Logout</button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -468,6 +543,17 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         let currentUser = null;
+        
+        // --- UI Helpers (CRITICAL: DEFINE BEFORE USE) ---
+        const showLoader = (container) => { container.innerHTML = '<div class="loader"></div>'; };
+        const hideLoader = (container) => { if (container && container.querySelector('.loader')) container.innerHTML = ''; };
+        const showResult = (id, content) => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.innerHTML = content;
+                el.style.display = 'block';
+            }
+        };
 
         // --- Gemini API Call ---
         let currentApiKeyIndex = 0;
@@ -501,10 +587,18 @@
 
         // --- Auth ---
         const loginModal = document.getElementById('login-modal');
+        const logoutModal = document.getElementById('logout-modal');
         auth.onAuthStateChanged(user => {
             currentUser = user;
             loginModal.style.display = user ? 'none' : 'flex';
-            if (user) document.getElementById('user-profile-icon').innerHTML = `<img src="${user.photoURL}" alt="Profile">`;
+            if (user) {
+                document.getElementById('user-profile-icon').innerHTML = `<img src="${user.photoURL}" alt="Profile">`;
+                document.getElementById('profile-pic').src = user.photoURL;
+                document.getElementById('profile-name').textContent = user.displayName;
+                document.getElementById('profile-email').textContent = user.email;
+            } else {
+                 document.getElementById('user-profile-icon').innerHTML = `<span class="material-icons">account_circle</span>`;
+            }
         });
         document.getElementById('login-with-google-btn').addEventListener('click', () => {
             auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(err => {
@@ -512,6 +606,10 @@
                 document.getElementById('login-error-message').style.display = 'block';
             });
         });
+        document.getElementById('logout-btn-confirm').addEventListener('click', () => logoutModal.style.display = 'flex');
+        document.getElementById('cancel-logout-btn').addEventListener('click', () => logoutModal.style.display = 'none');
+        document.getElementById('confirm-logout-btn').addEventListener('click', () => auth.signOut());
+
 
         // --- Navigation ---
         const navLinks = document.querySelectorAll('.nav-link');
@@ -527,6 +625,7 @@
             e.preventDefault();
             switchPage(e.currentTarget.dataset.target);
         }));
+        document.getElementById('user-profile-icon').addEventListener('click', () => switchPage('profile'));
 
         // --- Nutrition Search ---
         const foodSearchInput = document.getElementById('food-search-input');
@@ -544,24 +643,27 @@
         // --- Meal & Recipe ---
         document.getElementById('analyze-meal-btn').addEventListener('click', async () => {
             const ingredients = document.getElementById('meal-ingredients-input').value.trim();
+            const resultsContainer = document.getElementById('meal-results');
             if (!ingredients) return;
             const prompt = `Analyze the nutritional content of a meal with these ingredients:\n${ingredients}\n\nFirst, provide an estimated total for key nutrients (Calories, Protein, Carbs, Fat). Then, give two specific, actionable suggestions to make this meal healthier and tastier. Format the entire response clearly with headings.`;
-            const result = await geminiFetch(prompt, document.getElementById('meal-results'));
-            if (result) document.getElementById('meal-results').textContent = result;
+            const result = await geminiFetch(prompt, resultsContainer);
+            if (result) resultsContainer.textContent = result;
         });
         document.getElementById('get-recipe-btn').addEventListener('click', async () => {
             const ingredients = document.getElementById('recipe-ingredients-input').value.trim();
+            const resultsContainer = document.getElementById('recipe-results');
             if (!ingredients) return;
             const prompt = `I have the following ingredients: ${ingredients}. Suggest a healthy and delicious recipe I can make. Provide a name for the recipe, a list of required ingredients, and a step-by-step cooking process.`;
-            const result = await geminiFetch(prompt, document.getElementById('recipe-results'));
-            if (result) document.getElementById('recipe-results').textContent = result;
+            const result = await geminiFetch(prompt, resultsContainer);
+            if (result) resultsContainer.textContent = result;
         });
         document.getElementById('get-craving-btn').addEventListener('click', async () => {
             const craving = document.getElementById('craving-input').value.trim();
+            const resultsContainer = document.getElementById('recipe-results');
             if (!craving) return;
             const prompt = `I'm craving "${craving}". Suggest a healthier, delicious alternative. Provide a recipe name, ingredients, and step-by-step instructions to make it.`;
-            const result = await geminiFetch(prompt, document.getElementById('recipe-results'));
-            if (result) document.getElementById('recipe-results').textContent = result;
+            const result = await geminiFetch(prompt, resultsContainer);
+            if (result) resultsContainer.textContent = result;
         });
 
         // --- Calculators ---
@@ -611,11 +713,6 @@
         renderCalculators();
         
         // --- Calculation Functions ---
-        const showResult = (id, content) => {
-            const el = document.getElementById(id);
-            el.innerHTML = content;
-            el.style.display = 'block';
-        };
         window.calculateBMI = () => {
             const w = parseFloat(document.getElementById('bmi-weight').value), h = parseFloat(document.getElementById('bmi-height').value);
             if (!w || !h) return;
@@ -658,10 +755,6 @@
             const opts = { month: 'long', day: 'numeric' };
             showResult('ovulation-results', `<h4>Est. Ovulation: ${ovulationDate.toLocaleDateString(undefined, opts)}</h4>`);
         };
-        
-        // --- UI Helpers ---
-        const showLoader = (container) => { container.innerHTML = '<div class="loader"></div>'; };
-        const hideLoader = (container) => { if (container.querySelector('.loader')) container.innerHTML = ''; };
 
     });
     </script>
