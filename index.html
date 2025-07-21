@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calverse</title>
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* --- Basic Setup & Variables --- */
+        :root {
+            --primary-color: #fdd835; /* A strong, accessible yellow */
+            --background-color: #121212;
+            --surface-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --text-muted-color: #9e9e9e;
+            --border-color: #2c2c2c;
+            --error-color: #cf6679;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            /* Add padding to prevent content from being hidden by fixed header and nav */
+            padding-top: 70px;
+            padding-bottom: 80px;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--surface-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .logo-c {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+            width: 32px;
+            height: 32px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            margin-right: 0.75rem;
+            font-weight: 900;
+        }
+
+        .profile-container {
+            position: relative;
+        }
+
+        #user-profile-icon {
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--border-color);
+            overflow: hidden;
+        }
+        
+        #user-profile-icon .material-icons {
+            font-size: 2rem;
+            color: var(--text-muted-color);
+        }
+        
+        #user-profile-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #profile-menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            width: 180px;
+            z-index: 101;
+        }
+
+        #profile-menu button {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            text-align: left;
+            cursor: pointer;
+        }
+
+        #profile-menu button:hover {
+            background-color: var(--border-color);
+        }
+
+        /* --- Bottom Navigation --- */
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background-color: var(--surface-color);
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid var(--border-color);
+            z-index: 100;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out, transform 0.1s ease;
+            padding: 4px 0;
+        }
+        
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+
+        .nav-btn .material-icons {
+            font-size: 1.6rem;
+        }
+        .nav-btn .nav-text {
+            font-size: 0.7rem;
+            margin-top: 2px;
+        }
+
+        .nav-btn.active {
+            color: var(--primary-color);
+        }
+
+        /* --- Main Content & Page Sections --- */
+        main {
+            padding: 1rem;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        p.section-description {
+            color: var(--text-muted-color);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        /* --- Forms & Inputs --- */
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-muted-color);
+        }
+
+        .search-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="text"], input[type="url"], textarea, select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(253, 216, 53, 0.3);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background-color 0.2s, transform 0.1s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #ffeb3b; /* Lighter yellow */
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .search-container button {
+            width: auto;
+            padding: 12px;
+        }
+
+        .divider {
+            border: 0;
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 2rem 0;
+        }
+
+        /* --- Results Containers --- */
+        .results-container {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: var(--surface-color);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            min-height: 100px;
+            white-space: pre-wrap; /* To respect newlines from Gemini */
+            line-height: 1.6;
+        }
+
+        .loader {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background-color: var(--error-color);
+            color: #000;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* --- Nutrition Label Style --- */
+        .nutrition-label {
+            background-color: #fff;
+            color: #000;
+            border: 2px solid #000;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+        .nutrition-label h3 { font-size: 2rem; font-weight: 900; border-bottom: 10px solid #000; padding-bottom: 0.5rem; margin-bottom: 0.5rem; }
+        .nutrition-label p { margin: 0; color: #000; }
+        .nutrition-item { display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid #ccc;}
+        .nutrition-item.indented { margin-left: 1rem; }
+        .nutrition-item span:first-child { font-weight: 700; }
+        .nutrition-item span:last-child { font-weight: normal; }
+        .nutrition-item .value { font-weight: 700; }
+        .nutrition-label .serving-size { font-size: 1.2rem; font-weight: 700; padding-bottom: 0.5rem; border-bottom: 4px solid #000; margin-bottom: 0.5rem;}
+        .nutrition-label .calories { font-size: 1.5rem; font-weight: 700; }
+        .nutrition-label .dv { text-align: right; font-weight: 700; }
+        .nutrition-label .footer { font-size: 0.8rem; margin-top: 1rem; }
+
+        /* --- Calculator --- */
+        #calculator-forms .calc-form { display: none; }
+        #calculator-forms .calc-form.active { display: block; }
+        .calc-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .calc-input-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .calc-input-row label {
+            flex-basis: 40%;
+        }
+        .calc-input-row input {
+            flex-grow: 1;
+        }
+
+
+        /* --- Login Modal --- */
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--surface-color);
+            margin: auto;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            width: 90%;
+            max-width: 400px;
+            border-radius: 16px;
+            text-align: center;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        #login-with-google-btn {
+            background-color: #fff;
+            color: #444;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+        #login-with-google-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted-color);
+            position: fixed;
+            bottom: 65px; /* Above nav bar */
+            width: 100%;
+            background-color: var(--background-color);
+            z-index: 99;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <div class="logo-c">C</div>
+            <span>Calverse</span>
+        </div>
+        <div class="profile-container">
+            <div id="user-profile-icon">
+                <span class="material-icons">account_circle</span>
+            </div>
+            <div id="profile-menu">
+                <button id="logout-btn">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        <!-- Section 1: Nutrition Search -->
+        <section id="nutrition" class="page-section active">
+            <h2>Nutrition Lookup</h2>
+            <p class="section-description">Enter a food item with its quantity to get its detailed nutritional information.</p>
+            <div class="search-container">
+                <input type="text" id="food-search-input" placeholder="e.g., 100g of soya chunks">
+                <button id="food-search-btn">
+                    <i class="material-icons">search</i>
+                </button>
+            </div>
+            <div id="nutrition-results" class="results-container">
+                <p>Your nutrition results will appear here.</p>
+            </div>
+        </section>
+
+        <!-- Section 2: Know Your Meal -->
+        <section id="meal" class="page-section">
+            <h2>Know Your Meal</h2>
+            <p class="section-description">Add ingredients or paste a recipe link to analyze your meal's nutrition and get suggestions.</p>
+            <div class="input-group">
+                <label for="meal-ingredients-input">List Ingredients (one per line)</label>
+                <textarea id="meal-ingredients-input" placeholder="e.g.,&#10;1 cup rice&#10;150g lentils&#10;1 tbsp olive oil"></textarea>
+                <button id="analyze-meal-btn">Analyze Ingredients</button>
+            </div>
+            <div class="divider"></div>
+            <div class="input-group">
+                <label for="recipe-link-input">Paste Recipe URL</label>
+                <input type="url" id="recipe-link-input" placeholder="https://example.com/recipe">
+                <button id="analyze-link-btn">Analyze Link</button>
+            </div>
+            <div id="meal-results" class="results-container">
+                 <p>Your meal analysis will appear here.</p>
+            </div>
+        </section>
+
+        <!-- Section 3: Recipe Suggestions -->
+        <section id="recipe" class="page-section">
+            <h2>Recipe Ideas</h2>
+            <p class="section-description">Get healthy recipe ideas based on what you have or what you're craving.</p>
+             <div class="input-group">
+                <label for="recipe-ingredients-input">What ingredients do you have?</label>
+                <textarea id="recipe-ingredients-input" placeholder="e.g., chicken, tomatoes, onions, garlic"></textarea>
+                <button id="get-recipe-btn">Suggest a Recipe</button>
+            </div>
+            <div class="divider"></div>
+            <div class="input-group">
+                <label for="craving-input">What are you craving?</label>
+                <input type="text" id="craving-input" placeholder="e.g., something sweet and chocolaty">
+                <button id="get-craving-btn">Find Healthier Alternative</button>
+            </div>
+            <div id="recipe-results" class="results-container">
+                 <p>Recipe suggestions will appear here.</p>
+            </div>
+        </section>
+
+        <!-- Section 4: Calculators -->
+        <section id="calculators" class="page-section">
+            <h2>Health Calculators</h2>
+            <p class="section-description">Select a calculator to determine your health metrics.</p>
+            <div class="input-group">
+                <select id="calculator-select">
+                    <option value="bmi">BMI Calculator</option>
+                    <option value="bmr">BMR Calculator</option>
+                    <option value="body-fat">Body Fat Calculator</option>
+                    <option value="ideal-weight">Ideal Weight Calculator</option>
+                    <option value="lbm">Lean Body Mass Calculator</option>
+                    <option value="ovulation">Ovulation Calculator</option>
+                </select>
+            </div>
+
+            <div id="calculator-forms">
+                <!-- Calculator forms will be injected here by JS -->
+            </div>
+            <div id="calculator-results" class="results-container">
+                <p>Calculation results will appear here.</p>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Welcome to Calverse</h3>
+            <p>Sign in with Google to save your data and track your nutrition journey.</p>
+            <button id="login-with-google-btn">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
+                Sign in with Google
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Bottom Navigation -->
+    <nav>
+        <button class="nav-btn active" data-target="nutrition">
+            <i class="material-icons">nutrition</i>
+            <span class="nav-text">Nutrition</span>
+        </button>
+        <button class="nav-btn" data-target="meal">
+            <i class="material-icons">restaurant_menu</i>
+            <span class="nav-text">Your Meal</span>
+        </button>
+        <button class="nav-btn" data-target="recipe">
+            <i class="material-icons">menu_book</i>
+            <span class="nav-text">Recipes</span>
+        </button>
+        <button class="nav-btn" data-target="calculators">
+            <i class="material-icons">calculate</i>
+            <span class="nav-text">Calculators</span>
+        </button>
+    </nav>
+
+    <!-- Footer -->
+    <footer>
+        Made with ❤️ by Ashutosh Roy
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- API & Firebase Configuration ---
+        const GEMINI_API_KEYS = [
+            "AIzaSyCiPL-DcZN82CxH6OmYv9Ll4yM3WiVjxXY",
+            "AIzaSyAvU63lMyAjbSJfcTBuBnkZQ0DPoBpm6Ho",
+            "AIzaSyAIJZmqyztvwoThqI7iu2-xzQr71aJaKEU",
+            "AIzaSyAmbO3Szmr9vAj24MkRkbMQeQi1j7_-m4Y"
+        ];
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCu5RfnRhT9refiyybPcW_IBt_7l5cgt2I",
+            authDomain: "calverse-e3cdb.firebaseapp.com",
+            projectId: "calverse-e3cdb",
+            storageBucket: "calverse-e3cdb.firebasestorage.app",
+            messagingSenderId: "284415302963",
+            appId: "1:284415302963:web:936ad62e589bad6fc9b246",
+        };
+
+        // --- Initialize Firebase ---
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        let currentUser = null;
+        let userId = null;
+
+        // --- Gemini API Key Management ---
+        let currentApiKeyIndex = 0;
+
+        async function geminiFetch(prompt, resultContainer) {
+            showLoader(resultContainer);
+            for (let i = 0; i < GEMINI_API_KEYS.length; i++) {
+                const apiKey = GEMINI_API_KEYS[currentApiKeyIndex];
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+
+                    if (response.status === 429 || response.status >= 500) {
+                        throw new Error(`Rate limit or server error. Trying next key.`);
+                    }
+                    if (!response.ok) {
+                         const errorData = await response.json();
+                         throw new Error(`API Error: ${errorData.error.message}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.candidates && data.candidates.length > 0) {
+                        hideLoader(resultContainer);
+                        return data.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error("Invalid response structure from Gemini API.");
+                    }
+
+                } catch (error) {
+                    console.warn(`API Key ${currentApiKeyIndex + 1} failed: ${error.message}. Trying next one.`);
+                    currentApiKeyIndex = (currentApiKeyIndex + 1) % GEMINI_API_KEYS.length;
+                }
+            }
+            
+            hideLoader(resultContainer);
+            showError("All API attempts failed. The service might be temporarily unavailable. Please try again later.", resultContainer);
+            return null;
+        }
+
+        // --- UI Element Selectors ---
+        const loginModal = document.getElementById('login-modal');
+        const loginBtn = document.getElementById('login-with-google-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const profileIcon = document.getElementById('user-profile-icon');
+        const profileMenu = document.getElementById('profile-menu');
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const pageSections = document.querySelectorAll('.page-section');
+
+        // --- Authentication Logic ---
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                userId = generateUserId(user.displayName);
+                loginModal.style.display = 'none';
+                updateProfileIcon(user.photoURL);
+            } else {
+                currentUser = null;
+                userId = null;
+                loginModal.style.display = 'flex';
+                updateProfileIcon(null);
+            }
+        });
+
+        loginBtn.addEventListener('click', () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).catch(error => console.error("Login failed:", error));
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut();
+            profileMenu.style.display = 'none';
+        });
+
+        profileIcon.addEventListener('click', () => {
+            if (currentUser) {
+                profileMenu.style.display = profileMenu.style.display === 'block' ? 'none' : 'block';
+            } else {
+                loginModal.style.display = 'flex';
+            }
+        });
+
+        // Close profile menu if clicked outside
+        window.addEventListener('click', (e) => {
+            if (!profileIcon.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.style.display = 'none';
+            }
+        });
+
+        function generateUserId(name) {
+            const namePart = name.slice(0, 3).toLowerCase();
+            const randomPart = Math.random().toString(36).substring(2, 7);
+            return `${namePart}${randomPart}`;
+        }
+        
+        function updateProfileIcon(photoURL) {
+            if (photoURL) {
+                profileIcon.innerHTML = `<img src="${photoURL}" alt="Profile Picture">`;
+            } else {
+                profileIcon.innerHTML = `<span class="material-icons">account_circle</span>`;
+            }
+        }
+        
+        // --- Firestore Data Saving ---
+        async function saveData(collection, data) {
+            if (!currentUser) return;
+            try {
+                await db.collection('users').doc(userId).collection(collection).add({
+                    ...data,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Error saving data to Firestore:", error);
+            }
+        }
+
+        // --- Navigation Logic ---
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.dataset.target;
+
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                pageSections.forEach(section => {
+                    section.classList.remove('active');
+                    if (section.id === targetId) {
+                        section.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // --- Section 1: Nutrition Lookup ---
+        const foodSearchInput = document.getElementById('food-search-input');
+        const foodSearchBtn = document.getElementById('food-search-btn');
+        const nutritionResults = document.getElementById('nutrition-results');
+
+        foodSearchBtn.addEventListener('click', async () => {
+            const query = foodSearchInput.value.trim();
+            if (!query) return;
+            
+            const prompt = `Provide a detailed nutrition facts label for "${query}". The output should be formatted EXACTLY like a standard US nutrition label, inside a single HTML block with the class "nutrition-label". Use h3 for the title 'Nutrition Facts', and p tags for serving size. Use divs with class "nutrition-item" for each nutrient (like Total Fat, Cholesterol, Sodium, Total Carbohydrate, Protein). Indent sub-nutrients like Saturated Fat and Sugars using a class "indented". Include values for Calories, Total Fat, Saturated Fat, Trans Fat, Cholesterol, Sodium, Total Carbohydrate, Dietary Fiber, Total Sugars, Added Sugars, and Protein. Also include values for Vitamin D, Calcium, Iron, and Potassium. If a value is not available, state "N/A". At the end, add a footer paragraph with the standard FDA disclaimer.`;
+
+            const result = await geminiFetch(prompt, nutritionResults);
+            if (result) {
+                nutritionResults.innerHTML = result;
+                saveData('nutrition_searches', { query: query, result: result });
+            }
+        });
+
+        // --- Section 2: Know Your Meal ---
+        const mealIngredientsInput = document.getElementById('meal-ingredients-input');
+        const analyzeMealBtn = document.getElementById('analyze-meal-btn');
+        const recipeLinkInput = document.getElementById('recipe-link-input');
+        const analyzeLinkBtn = document.getElementById('analyze-link-btn');
+        const mealResults = document.getElementById('meal-results');
+
+        analyzeMealBtn.addEventListener('click', async () => {
+            const ingredients = mealIngredientsInput.value.trim();
+            if (!ingredients) return;
+            
+            const prompt = `Analyze the nutritional content of a meal with these ingredients:\n${ingredients}\n\nFirst, provide an estimated total for key nutrients (Calories, Protein, Carbs, Fat). Then, give two specific, actionable suggestions to make this meal healthier and tastier. Format the entire response clearly with headings.`;
+            
+            const result = await geminiFetch(prompt, mealResults);
+            if (result) {
+                mealResults.textContent = result;
+                saveData('meal_analyses', { type: 'ingredients', input: ingredients, result: result });
+            }
+        });
+
+        analyzeLinkBtn.addEventListener('click', async () => {
+            const url = recipeLinkInput.value.trim();
+            if (!url) return;
+
+            const prompt = `I will provide a URL to a recipe. Please act as a nutrition expert. Your task is to visit this URL in your simulated environment, extract the full list of ingredients and their quantities, and then perform a detailed nutritional analysis for the entire recipe. Provide the estimated total Calories, Protein, Carbohydrates, and Fat. Finally, give two actionable suggestions to make the recipe healthier. The URL is: ${url}`;
+            
+            const result = await geminiFetch(prompt, mealResults);
+            if (result) {
+                mealResults.textContent = result;
+                saveData('meal_analyses', { type: 'link', input: url, result: result });
+            }
+        });
+
+        // --- Section 3: Recipe Suggestions ---
+        const recipeIngredientsInput = document.getElementById('recipe-ingredients-input');
+        const getRecipeBtn = document.getElementById('get-recipe-btn');
+        const cravingInput = document.getElementById('craving-input');
+        const getCravingBtn = document.getElementById('get-craving-btn');
+        const recipeResults = document.getElementById('recipe-results');
+
+        getRecipeBtn.addEventListener('click', async () => {
+            const ingredients = recipeIngredientsInput.value.trim();
+            if (!ingredients) return;
+
+            const prompt = `I have the following ingredients: ${ingredients}. Suggest a healthy and delicious recipe I can make. Provide a name for the recipe, a list of required ingredients (including any I might need to add), and a step-by-step cooking process.`;
+            
+            const result = await geminiFetch(prompt, recipeResults);
+            if (result) {
+                recipeResults.textContent = result;
+                saveData('recipe_suggestions', { type: 'ingredients', input: ingredients, result: result });
+            }
+        });
+
+        getCravingBtn.addEventListener('click', async () => {
+            const craving = cravingInput.value.trim();
+            if (!craving) return;
+
+            const prompt = `I'm craving "${craving}". Suggest a healthier, delicious alternative. Provide a recipe name, ingredients, and step-by-step instructions to make it.`;
+            
+            const result = await geminiFetch(prompt, recipeResults);
+            if (result) {
+                recipeResults.textContent = result;
+                saveData('recipe_suggestions', { type: 'craving', input: craving, result: result });
+            }
+        });
+
+        // --- Section 4: Calculators ---
+        const calculatorSelect = document.getElementById('calculator-select');
+        const calculatorFormsContainer = document.getElementById('calculator-forms');
+        const calculatorResults = document.getElementById('calculator-results');
+
+        const calculatorTemplates = {
+            bmi: `
+                <div class="calc-form active" id="bmi-form">
+                    <div class="calc-input-group">
+                        <div class="calc-input-row"><label for="bmi-weight">Weight (kg)</label><input type="number" id="bmi-weight" placeholder="e.g., 70"></div>
+                        <div class="calc-input-row"><label for="bmi-height">Height (cm)</label><input type="number" id="bmi-height" placeholder="e.g., 175"></div>
+                    </div>
+                    <button id="bmi-calc-btn">Calculate BMI</button>
+                </div>`,
+            bmr: `
+                <div class="calc-form" id="bmr-form">
+                     <div class="calc-input-group">
+                        <div class="calc-input-row"><label for="bmr-weight">Weight (kg)</label><input type="number" id="bmr-weight" placeholder="e.g., 70"></div>
+                        <div class="calc-input-row"><label for="bmr-height">Height (cm)</label><input type="number" id="bmr-height" placeholder="e.g., 175"></div>
+                        <div class="calc-input-row"><label for="bmr-age">Age</label><input type="number" id="bmr-age" placeholder="e.g., 30"></div>
+                        <div class="calc-input-row"><label for="bmr-gender">Gender</label><select id="bmr-gender"><option value="male">Male</option><option value="female">Female</option></select></div>
+                    </div>
+                    <button id="bmr-calc-btn">Calculate BMR</button>
+                </div>`
+            // Add other calculator templates here...
+        };
+
+        function renderCalculator() {
+            const selected = calculatorSelect.value;
+            calculatorFormsContainer.innerHTML = calculatorTemplates[selected] || '';
+            calculatorResults.innerHTML = '<p>Calculation results will appear here.</p>';
+            attachCalculatorListeners();
+        }
+
+        function attachCalculatorListeners() {
+            const bmiBtn = document.getElementById('bmi-calc-btn');
+            if (bmiBtn) bmiBtn.addEventListener('click', calculateBMI);
+
+            const bmrBtn = document.getElementById('bmr-calc-btn');
+            if (bmrBtn) bmrBtn.addEventListener('click', calculateBMR);
+        }
+
+        function calculateBMI() {
+            const weight = parseFloat(document.getElementById('bmi-weight').value);
+            const height = parseFloat(document.getElementById('bmi-height').value);
+            if (weight > 0 && height > 0) {
+                const bmi = (weight / ((height / 100) ** 2)).toFixed(2);
+                let category = '';
+                if (bmi < 18.5) category = 'Underweight';
+                else if (bmi < 24.9) category = 'Normal weight';
+                else if (bmi < 29.9) category = 'Overweight';
+                else category = 'Obesity';
+                calculatorResults.innerHTML = `<h3>Your BMI is: ${bmi}</h3><p>This is considered: <strong>${category}</strong></p>`;
+            } else {
+                calculatorResults.innerHTML = `<p class="error-message">Please enter valid weight and height.</p>`;
+            }
+        }
+        
+        function calculateBMR() {
+            const weight = parseFloat(document.getElementById('bmr-weight').value);
+            const height = parseFloat(document.getElementById('bmr-height').value);
+            const age = parseInt(document.getElementById('bmr-age').value);
+            const gender = document.getElementById('bmr-gender').value;
+            
+            if (weight > 0 && height > 0 && age > 0) {
+                let bmr = 0;
+                if (gender === 'male') {
+                    bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+                } else {
+                    bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+                }
+                calculatorResults.innerHTML = `<h3>Your Basal Metabolic Rate (BMR) is:</h3><p><strong>${bmr.toFixed(0)} Calories/day</strong></p><p>This is the number of calories your body needs to function at rest.</p>`;
+            } else {
+                 calculatorResults.innerHTML = `<p class="error-message">Please enter valid weight, height, and age.</p>`;
+            }
+        }
+
+        calculatorSelect.addEventListener('change', renderCalculator);
+        
+        // Initial render
+        renderCalculator();
+
+
+        // --- Helper Functions for UI ---
+        function showLoader(container) {
+            container.innerHTML = '<div class="loader"></div>';
+        }
+
+        function hideLoader(container) {
+            const loader = container.querySelector('.loader');
+            if (loader) {
+                loader.remove();
+            }
+        }
+
+        function showError(message, container) {
+            container.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+
+    });
+    </script>
+</body>
+</html>
