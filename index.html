@@ -1,762 +1,821 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calverse</title>
-    <!-- Google Fonts & Icons -->
+    <title>Calverse - Your AI Nutrition Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        /* --- Professional Dark Mode UI --- */
-        :root {
-            --primary-color: #facc15; /* Gold/Yellow */
-            --background-color: #111111;
-            --surface-color: #1e1e1e;
-            --text-color: #f5f5f5;
-            --text-muted-color: #a3a3a3;
-            --border-color: #2e2e2e;
-            --error-color: #ef4444;
-            --success-color: #22c55e;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        /* Custom Styles */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
+            background-color: #111827; /* bg-gray-900 */
+            color: #d1d5db; /* text-gray-300 */
         }
-
-        .app-container {
-            display: flex;
+        .sidebar-icon {
+            transition: all 0.2s ease-in-out;
         }
-
-        /* --- Sidebar Navigation (Desktop) --- */
-        .sidebar {
-            display: none; /* Hidden on mobile */
-            width: 240px;
-            background-color: var(--background-color);
-            border-right: 1px solid var(--border-color);
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
+        .sidebar-icon:hover, .sidebar-icon.active {
+            background-color: #facc15; /* yellow-400 */
+            color: #111827; /* bg-gray-900 */
         }
-        
-        .sidebar .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 2.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .fab-halo {
+            box-shadow: 0 0 20px 5px rgba(250, 204, 21, 0.5);
         }
-
-        .sidebar .nav-links {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            flex-grow: 1;
+        .nutrition-label {
+            border: 2px solid #4b5563; /* gray-600 */
+            background-color: #1f2937; /* gray-800 */
+            color: white;
         }
-
-        .sidebar .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            color: var(--text-muted-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.2s, color 0.2s;
+        .nutrition-label h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            margin-bottom: 0.25rem;
         }
-        
-        .sidebar .nav-link:hover {
-            background-color: var(--surface-color);
+        .nutrition-label .line {
+            border-top: 10px solid #4b5563; /* gray-600 */
         }
-
-        .sidebar .nav-link.active {
-            background-color: var(--primary-color);
-            color: #000;
-            font-weight: 600;
+        .nutrition-label .line.thin {
+            border-top-width: 5px;
         }
-        
-        .sidebar .nav-link.active .material-icons {
-             color: #000;
+        .nutrition-label .line.medium {
+            border-top-width: 2px;
         }
-        
-        .sidebar .profile-link {
-            margin-top: auto;
-        }
-
-        /* --- Main Content --- */
-        .main-content {
-            width: 100%;
-            padding: 1.5rem;
-            padding-bottom: 100px; /* Space for bottom nav */
-        }
-
-        /* --- Header (Mobile) --- */
-        .mobile-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-        
-        .mobile-header .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-        
-        #user-profile-icon {
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--surface-color);
+        .accordion-content {
+            max-height: 0;
             overflow: hidden;
-            border: 1px solid var(--border-color);
+            transition: max-height 0.3s ease-out;
         }
-        
-        #user-profile-icon img {
-            width: 100%; height: 100%; object-fit: cover;
+        .accordion-button[aria-expanded="true"] + .accordion-content {
+            max-height: 1000px; /* Adjust as needed */
         }
-        
-        #user-profile-icon .material-icons {
-             font-size: 2.5rem; color: var(--text-muted-color);
-        }
-
-        /* --- Page Sections --- */
-        .page-section {
-            display: none;
-        }
-        .page-section.active {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .page-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        
-        .page-subtitle {
-            color: var(--text-muted-color);
-            margin-bottom: 2rem;
-        }
-
-        /* --- Card & Input Styles --- */
-        .card {
-            background-color: var(--surface-color);
-            padding: 1.5rem;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 1.5rem;
-        }
-        
-        .input-group {
-            position: relative;
-            margin-bottom: 1rem;
-        }
-        
-        .input-group .material-icons {
-            position: absolute;
-            top: 50%;
-            left: 1rem;
-            transform: translateY(-50%);
-            color: var(--text-muted-color);
-        }
-        
-        input, textarea, select {
-            width: 100%;
-            padding: 1rem;
-            background-color: var(--background-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-color);
-            font-size: 1rem;
-            font-family: 'Inter', sans-serif;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        
-        .input-group input {
-             padding-left: 3rem;
-        }
-        
-        textarea { min-height: 120px; }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.3);
-        }
-
-        .suggestion-pills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        
-        .pill {
-            background-color: var(--border-color);
-            color: var(--text-muted-color);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        
-        .pill:hover {
-            background-color: #3f3f46;
-        }
-        
-        button {
-            background-color: var(--primary-color);
-            color: #000;
-            border: none;
-            padding: 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1rem;
-            width: 100%;
-            transition: background-color 0.2s;
-        }
-        
-        button.logout-btn {
-            background-color: var(--error-color);
-            color: #fff;
-        }
-
-        /* --- Results & Utility --- */
-        .results-container {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background-color: var(--background-color);
-            border-radius: 8px;
-            min-height: 50px;
-            white-space: pre-wrap;
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-        
         .loader {
-            border: 4px solid var(--border-color);
-            border-top: 4px solid var(--primary-color);
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #facc15;
             border-radius: 50%;
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
-            margin: 2rem auto;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .disclaimer {
-            font-size: 0.8rem;
-            color: var(--text-muted-color);
-            padding: 0.75rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-            text-align: center;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-
-        /* --- Bottom Navigation (Mobile) --- */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #1a1a1a;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-            padding: 0.5rem 0;
-            z-index: 100;
-        }
-        
-        .bottom-nav .nav-link {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: var(--text-muted-color);
-            text-decoration: none;
-            padding: 0.5rem;
-            flex-grow: 1;
-        }
-        
-        .bottom-nav .nav-link.active {
-            color: var(--primary-color);
-        }
-
-        /* --- Profile Page --- */
-        .profile-card {
-            text-align: center;
-        }
-        
-        .profile-card .profile-pic {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 0 auto 1rem;
-            border: 3px solid var(--primary-color);
-        }
-        
-        .profile-card h2 {
-            font-size: 1.5rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .profile-card p {
-            color: var(--text-muted-color);
-            margin-bottom: 2rem;
-        }
-
-        /* --- Responsive Layout --- */
-        @media (min-width: 768px) {
-            .sidebar {
-                display: flex;
-            }
-            .main-content {
-                margin-left: 240px;
-                padding: 2.5rem;
-            }
-            .mobile-header, .bottom-nav {
-                display: none;
-            }
-        }
-        
-        /* Modals */
-        .modal-overlay {
-            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.8); justify-content: center; align-items: center; backdrop-filter: blur(5px);
-        }
-        .modal-content {
-            background-color: var(--surface-color); margin: auto; padding: 2rem; border: 1px solid var(--border-color);
-            width: 90%; max-width: 400px; border-radius: 16px; text-align: center;
-            animation: slideIn 0.3s ease-out; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-        }
-        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        #login-with-google-btn {
-            background-color: #4285F4; color: #fff; width: 100%; margin-top: 1.5rem;
-            display: flex; align-items: center; justify-content: center; gap: 0.75rem;
-        }
-        #login-with-google-btn img {
-            width: 20px; height: 20px; background-color: #fff; border-radius: 50%; padding: 2px;
-        }
-        .modal-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-        .modal-buttons button {
-            background-color: var(--border-color);
-            color: var(--text-color);
-        }
-        .modal-buttons button.confirm-btn {
-            background-color: var(--error-color);
-            color: #fff;
-        }
-        
     </style>
 </head>
-<body>
+<body class="flex h-screen">
 
-    <div class="app-container">
-        <!-- Sidebar for Desktop -->
-        <nav class="sidebar">
-            <div class="logo"><span class="material-icons">spa</span>Calverse</div>
-            <ul class="nav-links">
-                <li><a href="#" class="nav-link active" data-target="nutrition"><span class="material-icons">search</span>Nutrition</a></li>
-                <li><a href="#" class="nav-link" data-target="meal"><span class="material-icons">restaurant_menu</span>Your Meal</a></li>
-                <li><a href="#" class="nav-link" data-target="recipe"><span class="material-icons">menu_book</span>Recipes</a></li>
-                <li><a href="#" class="nav-link" data-target="calculators"><span class="material-icons">calculate</span>Calculators</a></li>
-                <li class="profile-link"><a href="#" class="nav-link" data-target="profile"><span class="material-icons">person</span>Profile</a></li>
-            </ul>
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="bg-gray-800 text-gray-300 w-16 md:w-20 flex flex-col items-center space-y-6 py-6">
+        <a href="#" class="text-2xl font-bold text-yellow-400">C</a>
+        <nav class="flex flex-col items-center space-y-4 flex-grow">
+            <a href="#home" class="sidebar-icon p-3 rounded-lg" data-section="home" title="Home"><i class="fas fa-home"></i></a>
+            <a href="#nutrition" class="sidebar-icon p-3 rounded-lg active" data-section="nutrition" title="Nutrition"><i class="fas fa-utensils"></i></a>
+            <a href="#meal" class="sidebar-icon p-3 rounded-lg" data-section="meal" title="Know Your Meal"><i class="fas fa-plate-wheat"></i></a>
+            <a href="#recipe" class="sidebar-icon p-3 rounded-lg" data-section="recipe" title="Recipe Suggestion"><i class="fas fa-lightbulb"></i></a>
+            <a href="#calculators" class="sidebar-icon p-3 rounded-lg" data-section="calculators" title="Calculators"><i class="fas fa-calculator"></i></a>
         </nav>
+        <div class="flex flex-col items-center space-y-4">
+            <a href="#settings" class="sidebar-icon p-3 rounded-lg" data-section="settings" title="Settings"><i class="fas fa-cog"></i></a>
+        </div>
+    </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Mobile Header -->
-            <header class="mobile-header">
-                <div class="logo">Calverse</div>
-                <div id="user-profile-icon">
-                    <span class="material-icons">account_circle</span>
-                </div>
-            </header>
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+        <header class="bg-gray-800/50 backdrop-blur-sm sticky top-0 z-10 flex items-center justify-between p-4 border-b border-gray-700">
+            <h1 id="page-title" class="text-xl font-bold text-white">Nutrition</h1>
+            <div id="auth-container" class="relative">
+                <!-- Auth content will be injected here -->
+            </div>
+        </header>
 
-            <!-- Section 1: Nutrition Search -->
-            <section id="nutrition" class="page-section active">
-                <h1 class="page-title">Calorie Chart & Nutrition Facts</h1>
-                <p class="page-subtitle">Search for a food or select a suggestion.</p>
-                <div class="card">
-                    <div class="input-group">
-                        <span class="material-icons">search</span>
-                        <input type="text" id="food-search-input" placeholder="E.g., 'Apple' or 'Big Mac'">
-                    </div>
-                    <div class="suggestion-pills">
-                        <span class="pill">Chicken Breast</span>
-                        <span class="pill">Salad</span>
-                        <span class="pill">Banana</span>
-                        <span class="pill">Protein Shake</span>
-                        <span class="pill">Oats</span>
-                        <span class="pill">Egg</span>
-                    </div>
-                </div>
-                <div id="nutrition-results" class="results-container" style="display:none;"></div>
-            </section>
-
-            <!-- Section 2: Know Your Meal -->
-            <section id="meal" class="page-section">
-                 <h1 class="page-title">Know Your Meal</h1>
-                 <p class="page-subtitle">Analyze ingredients to understand your meal's nutrition.</p>
-                 <div class="card">
-                    <textarea id="meal-ingredients-input" placeholder="e.g.,&#10;1 cup rice&#10;150g lentils&#10;1 tbsp olive oil"></textarea>
-                    <button id="analyze-meal-btn" style="margin-top: 1rem;">Analyze Ingredients</button>
-                 </div>
-                 <div id="meal-results" class="results-container" style="display:none;"></div>
-            </section>
-            
-            <!-- Section 3: Recipe Suggestions -->
-            <section id="recipe" class="page-section">
-                <h1 class="page-title">Recipe Ideas</h1>
-                <p class="page-subtitle">Get recipes based on ingredients or cravings.</p>
-                <div class="card">
-                    <label>What ingredients do you have?</label>
-                    <textarea id="recipe-ingredients-input" placeholder="e.g., chicken, tomatoes, onions" style="margin-top:0.5rem;"></textarea>
-                    <button id="get-recipe-btn" style="margin-top: 1rem;">Suggest a Recipe</button>
-                </div>
-                <div class="card">
-                    <label>What are you craving?</label>
-                    <input type="text" id="craving-input" placeholder="e.g., something sweet and chocolaty" style="margin-top:0.5rem;">
-                    <button id="get-craving-btn" style="margin-top: 1rem;">Find Healthier Alternative</button>
-                </div>
-                <div id="recipe-results" class="results-container" style="display:none;"></div>
-            </section>
-
-            <!-- Section 4: Calculators -->
-            <section id="calculators" class="page-section">
-                 <h1 class="page-title">Health Calculators</h1>
-                 <p class="page-subtitle">Select a tool to calculate your health metrics.</p>
-                 <div id="calculators-list">
-                     <!-- Calculators will be rendered here by JS -->
-                 </div>
-            </section>
-            
-            <!-- Section 5: Profile -->
-            <section id="profile" class="page-section">
-                 <h1 class="page-title">Profile</h1>
-                 <p class="page-subtitle">Manage your account details and preferences.</p>
-                 <div class="card profile-card">
-                    <img src="" alt="Profile Picture" id="profile-pic" class="profile-pic">
-                    <h2 id="profile-name"></h2>
-                    <p id="profile-email"></p>
-                    <button id="logout-btn-confirm" class="logout-btn">Logout</button>
-                 </div>
-            </section>
+        <!-- App Sections -->
+        <main id="app-content" class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-gray-900">
+            <!-- Content will be injected here -->
         </main>
+        
+        <!-- Footer -->
+        <footer id="footer" class="bg-gray-900 text-center p-4 text-gray-500 text-sm hidden">
+            Made with <span class="text-red-500">&hearts;</span> by Ashutosh Roy
+        </footer>
+
+        <!-- FAB -->
+        <button id="fab" class="hidden fixed bottom-20 right-6 bg-yellow-400 text-gray-900 w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-lg fab-halo">
+            <i class="fas fa-plus"></i>
+        </button>
     </div>
-    
-    <!-- Bottom Navigation for Mobile -->
-    <nav class="bottom-nav">
-        <a href="#" class="nav-link active" data-target="nutrition"><span class="material-icons">search</span>Nutrition</a>
-        <a href="#" class="nav-link" data-target="meal"><span class="material-icons">restaurant_menu</span>Meal</a>
-        <a href="#" class="nav-link" data-target="recipe"><span class="material-icons">menu_book</span>Recipes</a>
-        <a href="#" class="nav-link" data-target="calculators"><span class="material-icons">calculate</span>Calculators</a>
-        <a href="#" class="nav-link" data-target="profile"><span class="material-icons">person</span>Profile</a>
-    </nav>
-    
+
     <!-- Login Modal -->
-    <div id="login-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Welcome to Calverse</h3>
-            <p>Sign in with Google to save your data and track your nutrition journey.</p>
-            <div id="login-error-message" style="display: none; margin: 1rem 0; color: var(--error-color);"></div>
-            <button id="login-with-google-btn">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
-                Sign in with Google
+    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-gray-800 p-8 rounded-lg text-center shadow-xl">
+            <h2 class="text-2xl font-bold mb-2 text-white">Welcome to Calverse</h2>
+            <p class="text-gray-400 mb-6">Sign in to track your nutrition and health.</p>
+            <button id="login-with-google" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center w-full">
+                <i class="fab fa-google mr-2"></i> Sign in with Google
             </button>
         </div>
     </div>
     
-    <!-- Logout Confirmation Modal -->
-    <div id="logout-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Logout</h3>
-            <p>Are you sure you want to logout?</p>
-            <div class="modal-buttons">
-                <button id="cancel-logout-btn">Cancel</button>
-                <button id="confirm-logout-btn" class="confirm-btn">Logout</button>
-            </div>
-        </div>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="loader"></div>
     </div>
 
+    <!-- Firebase and App Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            GoogleAuthProvider, 
+            signInWithPopup, 
+            signOut,
+            updateProfile,
+            updatePassword,
+            reauthenticateWithCredential,
+            EmailAuthProvider
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc,
+            enableIndexedDbPersistence 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-
-        // --- Config ---
-        const GEMINI_API_KEYS = [
-            "AIzaSyCiPL-DcZN82CxH6OmYv9Ll4yM3WiVjxXY",
-            "AIzaSyAvU63lMyAjbSJfcTBuBnkZQ0DPoBpm6Ho",
-            "AIzaSyAIJZmqyztvwoThqI7iu2-xzQr71aJaKEU",
-            "AIzaSyAmbO3Szmr9vAj24MkRkbMQeQi1j7_-m4Y"
-        ];
+        // --- 1. CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyCu5RfnRhT9refiyybPcW_IBt_7l5cgt2I",
             authDomain: "calverse-e3cdb.firebaseapp.com",
             projectId: "calverse-e3cdb",
             storageBucket: "calverse-e3cdb.firebasestorage.app",
             messagingSenderId: "284415302963",
-            appId: "1:284415302963:web:936ad62e589bad6fc9b246",
+            appId: "1:284415302963:web:936ad62e589bad6fc9b246"
         };
-
-        // --- Init Firebase ---
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        let currentUser = null;
         
-        // --- UI Helpers (CRITICAL: DEFINE BEFORE USE) ---
-        const showLoader = (container) => { container.innerHTML = '<div class="loader"></div>'; };
-        const hideLoader = (container) => { if (container && container.querySelector('.loader')) container.innerHTML = ''; };
-        const showResult = (id, content) => {
-            const el = document.getElementById(id);
-            if(el) {
-                el.innerHTML = content;
-                el.style.display = 'block';
-            }
-        };
-
-        // --- Gemini API Call ---
+        const geminiApiKeys = [
+            "AIzaSyCiPL-DcZN82CxH6OmYv9Ll4yM3WiVjxXY",
+            "AIzaSyAvU63lMyAjbSJfcTBuBnkZQ0DPoBpm6Ho",
+            "AIzaSyAIJZmqyztvwoThqI7iu2-xzQr71aJaKEU",
+            "AIzaSyAmbO3Szmr9vAj24MkRkbMQeQi1j7_-m4Y"
+        ];
         let currentApiKeyIndex = 0;
-        async function geminiFetch(prompt, resultContainer) {
-            showLoader(resultContainer);
-            resultContainer.style.display = 'block';
-            for (let i = 0; i < GEMINI_API_KEYS.length; i++) {
-                const apiKey = GEMINI_API_KEYS[currentApiKeyIndex];
-                const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+
+        // --- 2. FIREBASE INITIALIZATION ---
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        enableIndexedDbPersistence(db).catch((err) => {
+            if (err.code == 'failed-precondition') {
+                console.warn("Multiple tabs open, persistence can only be enabled in one tab at a time.");
+            } else if (err.code == 'unimplemented') {
+                console.warn("The current browser does not support all of the features required to enable persistence.");
+            }
+        });
+
+        // --- 3. GLOBAL STATE & UI ELEMENTS ---
+        let currentUser = null;
+        let userId = null;
+
+        const loginModal = document.getElementById('login-modal');
+        const loginButton = document.getElementById('login-with-google');
+        const authContainer = document.getElementById('auth-container');
+        const appContent = document.getElementById('app-content');
+        const pageTitle = document.getElementById('page-title');
+        const sidebarLinks = document.querySelectorAll('.sidebar-icon');
+        const fab = document.getElementById('fab');
+        const footer = document.getElementById('footer');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        // --- 4. GEMINI API HANDLER ---
+        async function callGemini(prompt) {
+            loadingOverlay.classList.remove('hidden');
+            let success = false;
+            let data = null;
+
+            for (let i = 0; i < geminiApiKeys.length; i++) {
+                const apiKey = geminiApiKeys[currentApiKeyIndex];
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+                
                 try {
-                    const response = await fetch(url, {
+                    const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }],
+                            generationConfig: {
+                                responseMimeType: "application/json",
+                            }
+                        })
                     });
-                    if (!response.ok) throw new Error(`API Error ${response.status}`);
-                    const data = await response.json();
-                    if (data.candidates && data.candidates.length > 0) {
-                        hideLoader(resultContainer);
-                        return data.candidates[0].content.parts[0].text;
-                    } else { throw new Error("Invalid response structure."); }
-                } catch (error) {
-                    console.warn(`API Key ${currentApiKeyIndex + 1} failed. Trying next.`);
-                    currentApiKeyIndex = (currentApiKeyIndex + 1) % GEMINI_API_KEYS.length;
-                }
-            }
-            hideLoader(resultContainer);
-            resultContainer.innerHTML = `<p style="color: var(--error-color);">Service is currently unavailable. Please try again later.</p>`;
-            return null;
-        }
 
-        // --- Auth ---
-        const loginModal = document.getElementById('login-modal');
-        const logoutModal = document.getElementById('logout-modal');
-        auth.onAuthStateChanged(user => {
-            currentUser = user;
-            loginModal.style.display = user ? 'none' : 'flex';
-            if (user) {
-                document.getElementById('user-profile-icon').innerHTML = `<img src="${user.photoURL}" alt="Profile">`;
-                document.getElementById('profile-pic').src = user.photoURL;
-                document.getElementById('profile-name').textContent = user.displayName;
-                document.getElementById('profile-email').textContent = user.email;
-            } else {
-                 document.getElementById('user-profile-icon').innerHTML = `<span class="material-icons">account_circle</span>`;
-            }
-        });
-        document.getElementById('login-with-google-btn').addEventListener('click', () => {
-            auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(err => {
-                document.getElementById('login-error-message').textContent = 'Login failed. Please try again.';
-                document.getElementById('login-error-message').style.display = 'block';
-            });
-        });
-        document.getElementById('logout-btn-confirm').addEventListener('click', () => logoutModal.style.display = 'flex');
-        document.getElementById('cancel-logout-btn').addEventListener('click', () => logoutModal.style.display = 'none');
-        document.getElementById('confirm-logout-btn').addEventListener('click', () => auth.signOut());
-
-
-        // --- Navigation ---
-        const navLinks = document.querySelectorAll('.nav-link');
-        const pageSections = document.querySelectorAll('.page-section');
-        function switchPage(targetId) {
-            pageSections.forEach(section => section.classList.remove('active'));
-            document.getElementById(targetId)?.classList.add('active');
-            navLinks.forEach(link => {
-                link.classList.toggle('active', link.dataset.target === targetId);
-            });
-        }
-        navLinks.forEach(link => link.addEventListener('click', (e) => {
-            e.preventDefault();
-            switchPage(e.currentTarget.dataset.target);
-        }));
-        document.getElementById('user-profile-icon').addEventListener('click', () => switchPage('profile'));
-
-        // --- Nutrition Search ---
-        const foodSearchInput = document.getElementById('food-search-input');
-        const nutritionResults = document.getElementById('nutrition-results');
-        async function searchFood(query) {
-            if (!query) return;
-            foodSearchInput.value = query;
-            const prompt = `Provide a detailed nutrition facts label for "${query}". The output should be plain text, formatted like a standard US nutrition label. Include values for Calories, Total Fat, Saturated Fat, Trans Fat, Cholesterol, Sodium, Total Carbohydrate, Dietary Fiber, Total Sugars, and Protein. Also include values for Vitamin D, Calcium, Iron, and Potassium.`;
-            const result = await geminiFetch(prompt, nutritionResults);
-            if (result) nutritionResults.textContent = result;
-        }
-        foodSearchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') searchFood(e.target.value.trim()); });
-        document.querySelectorAll('.pill').forEach(pill => pill.addEventListener('click', () => searchFood(pill.textContent)));
-        
-        // --- Meal & Recipe ---
-        document.getElementById('analyze-meal-btn').addEventListener('click', async () => {
-            const ingredients = document.getElementById('meal-ingredients-input').value.trim();
-            const resultsContainer = document.getElementById('meal-results');
-            if (!ingredients) return;
-            const prompt = `Analyze the nutritional content of a meal with these ingredients:\n${ingredients}\n\nFirst, provide an estimated total for key nutrients (Calories, Protein, Carbs, Fat). Then, give two specific, actionable suggestions to make this meal healthier and tastier. Format the entire response clearly with headings.`;
-            const result = await geminiFetch(prompt, resultsContainer);
-            if (result) resultsContainer.textContent = result;
-        });
-        document.getElementById('get-recipe-btn').addEventListener('click', async () => {
-            const ingredients = document.getElementById('recipe-ingredients-input').value.trim();
-            const resultsContainer = document.getElementById('recipe-results');
-            if (!ingredients) return;
-            const prompt = `I have the following ingredients: ${ingredients}. Suggest a healthy and delicious recipe I can make. Provide a name for the recipe, a list of required ingredients, and a step-by-step cooking process.`;
-            const result = await geminiFetch(prompt, resultsContainer);
-            if (result) resultsContainer.textContent = result;
-        });
-        document.getElementById('get-craving-btn').addEventListener('click', async () => {
-            const craving = document.getElementById('craving-input').value.trim();
-            const resultsContainer = document.getElementById('recipe-results');
-            if (!craving) return;
-            const prompt = `I'm craving "${craving}". Suggest a healthier, delicious alternative. Provide a recipe name, ingredients, and step-by-step instructions to make it.`;
-            const result = await geminiFetch(prompt, resultsContainer);
-            if (result) resultsContainer.textContent = result;
-        });
-
-        // --- Calculators ---
-        const calculatorsList = document.getElementById('calculators-list');
-        const calculatorData = {
-            bmi: { title: 'BMI Calculator', icon: 'monitor_weight', inputs: [{id: 'bmi-weight', label: 'Weight (kg)'}, {id: 'bmi-height', label: 'Height (cm)'}], func: 'calculateBMI'},
-            bmr: { title: 'BMR Calculator', icon: 'local_fire_department', inputs: [{id: 'bmr-weight', label: 'Weight (kg)'}, {id: 'bmr-height', label: 'Height (cm)'}, {id: 'bmr-age', label: 'Age'}, {id: 'bmr-gender', label: 'Gender', type: 'select', options: ['Male', 'Female']}], func: 'calculateBMR'},
-            bodyFat: { title: 'Body Fat Calculator', icon: 'fitness_center', inputs: [{id: 'bf-height', label: 'Height (cm)'}, {id: 'bf-neck', label: 'Neck (cm)'}, {id: 'bf-waist', label: 'Waist (cm)'}, {id: 'bf-hip', label: 'Hip (cm)', femaleOnly: true}, {id: 'bf-gender', label: 'Gender', type: 'select', options: ['Male', 'Female']}], func: 'calculateBodyFat'},
-            idealWeight: { title: 'Ideal Weight Calculator', icon: 'scale', inputs: [{id: 'iw-height', label: 'Height (cm)'}, {id: 'iw-gender', label: 'Gender', type: 'select', options: ['Male', 'Female']}], func: 'calculateIdealWeight'},
-            lbm: { title: 'Lean Body Mass Calculator', icon: 'directions_run', inputs: [{id: 'lbm-weight', label: 'Weight (kg)'}, {id: 'lbm-height', label: 'Height (cm)'}, {id: 'lbm-gender', label: 'Gender', type: 'select', options: ['Male', 'Female']}], func: 'calculateLBM'},
-            ovulation: { title: 'Ovulation Calculator', icon: 'calendar_month', inputs: [{id: 'ov-last-period', label: 'First Day of Last Period', type: 'date'}, {id: 'ov-cycle-length', label: 'Avg. Cycle (days)'}], func: 'calculateOvulation'},
-        };
-        
-        function renderCalculators() {
-            let html = '';
-            for (const key in calculatorData) {
-                const calc = calculatorData[key];
-                let inputsHtml = calc.inputs.map(input => {
-                    if (input.type === 'select') {
-                        return `<div class="input-group" ${input.femaleOnly ? `id="${input.id}-group"` : ''}><label>${input.label}</label><select id="${input.id}">${input.options.map(o => `<option value="${o.toLowerCase()}">${o}</option>`).join('')}</select></div>`;
+                    if (!response.ok) {
+                        throw new Error(`API call failed with status: ${response.status}`);
                     }
-                    return `<div class="input-group"><label>${input.label}</label><input type="${input.type || 'number'}" id="${input.id}"></div>`;
-                }).join('');
-                html += `
-                <div class="card">
-                    <h3><span class="material-icons">${calc.icon}</span> ${calc.title}</h3>
-                    <div class="calc-inputs">${inputsHtml}</div>
-                    <button onclick="${calc.func}()">Calculate</button>
-                    <div id="${key}-results" class="results-container" style="display:none;"></div>
-                    <p class="disclaimer">Estimates are for informational purposes only.</p>
-                </div>`;
-            }
-            calculatorsList.innerHTML = html;
-            // Add event listener for body fat hip input
-            const bfGenderSelect = document.getElementById('bf-gender');
-            if (bfGenderSelect) {
-                const hipGroup = document.getElementById('bf-hip-group');
-                if (hipGroup) { // Check if the hip input group exists
-                    bfGenderSelect.addEventListener('change', (e) => {
-                        hipGroup.style.display = e.target.value === 'female' ? 'block' : 'none';
-                    });
-                    // Initial hide
-                    hipGroup.style.display = 'none';
+                    
+                    const result = await response.json();
+                    const text = result.candidates[0].content.parts[0].text;
+                    data = JSON.parse(text.replace(/```json|```/g, '').trim());
+                    success = true;
+                    break; // Exit loop on success
+
+                } catch (error) {
+                    console.error(`Error with API key index ${currentApiKeyIndex}:`, error);
+                    currentApiKeyIndex = (currentApiKeyIndex + 1) % geminiApiKeys.length; // Rotate key
                 }
             }
-        }
-        renderCalculators();
-        
-        // --- Calculation Functions ---
-        window.calculateBMI = () => {
-            const w = parseFloat(document.getElementById('bmi-weight').value), h = parseFloat(document.getElementById('bmi-height').value);
-            if (!w || !h) return;
-            const bmi = (w / ((h / 100) ** 2)).toFixed(1);
-            let cat = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal' : bmi < 30 ? 'Overweight' : 'Obesity';
-            showResult('bmi-results', `<h4>Your BMI is ${bmi} (${cat})</h4>`);
-        };
-        window.calculateBMR = () => {
-            const w = parseFloat(document.getElementById('bmr-weight').value), h = parseFloat(document.getElementById('bmr-height').value), age = parseInt(document.getElementById('bmr-age').value), g = document.getElementById('bmr-gender').value;
-            if (!w || !h || !age) return;
-            let bmr = g === 'male' ? (10 * w) + (6.25 * h) - (5 * age) + 5 : (10 * w) + (6.25 * h) - (5 * age) - 161;
-            showResult('bmr-results', `<h4>Est. BMR: ${bmr.toFixed(0)} kcal/day</h4>`);
-        };
-        window.calculateBodyFat = () => {
-            const h = parseFloat(document.getElementById('bf-height').value), n = parseFloat(document.getElementById('bf-neck').value), w = parseFloat(document.getElementById('bf-waist').value), g = document.getElementById('bf-gender').value;
-            const hip = parseFloat(document.getElementById('bf-hip').value);
-            if (!h || !n || !w || (g === 'female' && !hip)) return;
-            let bfp = g === 'male' ? 495 / (1.0324 - 0.19077 * Math.log10(w - n) + 0.15456 * Math.log10(h)) - 450 : 495 / (1.29579 - 0.35004 * Math.log10(w + hip - n) + 0.22100 * Math.log10(h)) - 450;
-            showResult('bodyFat-results', `<h4>Est. Body Fat: ${bfp.toFixed(1)}%</h4>`);
-        };
-        window.calculateIdealWeight = () => {
-            const h = parseFloat(document.getElementById('iw-height').value), g = document.getElementById('iw-gender').value;
-            if (!h) return;
-            let iw = g === 'male' ? 50 + 0.91 * (h - 152.4) : 45.5 + 0.91 * (h - 152.4);
-            showResult('idealWeight-results', `<h4>Est. Ideal Weight: ${iw.toFixed(1)} kg</h4>`);
-        };
-        window.calculateLBM = () => {
-            const w = parseFloat(document.getElementById('lbm-weight').value), h = parseFloat(document.getElementById('lbm-height').value), g = document.getElementById('lbm-gender').value;
-            if (!w || !h) return;
-            let lbm = g === 'male' ? (0.407 * w) + (0.267 * h) - 19.2 : (0.252 * w) + (0.473 * h) - 48.3;
-            showResult('lbm-results', `<h4>Est. Lean Body Mass: ${lbm.toFixed(1)} kg</h4>`);
-        };
-        window.calculateOvulation = () => {
-            const lastPeriod = new Date(document.getElementById('ov-last-period').value), cycle = parseInt(document.getElementById('ov-cycle-length').value);
-            if (isNaN(lastPeriod.getTime()) || !cycle) return;
-            const ovulationDate = new Date(lastPeriod);
-            ovulationDate.setDate(lastPeriod.getDate() + cycle - 14);
-            const fertileStart = new Date(ovulationDate);
-            fertileStart.setDate(ovulationDate.getDate() - 5);
-            const opts = { month: 'long', day: 'numeric' };
-            showResult('ovulation-results', `<h4>Est. Ovulation: ${ovulationDate.toLocaleDateString(undefined, opts)}</h4>`);
-        };
 
-    });
+            loadingOverlay.classList.add('hidden');
+            if (!success) {
+                alert('Failed to get nutrition data after trying all available keys. Please try again later.');
+                return null;
+            }
+            return data;
+        }
+
+        // --- 5. AUTHENTICATION ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const displayName = user.displayName || 'User';
+                const prefix = displayName.substring(0, 3).toLowerCase();
+                const randomPart = Math.random().toString(36).substring(2, 7);
+                userId = `${prefix}${randomPart}`;
+
+                const userRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userRef);
+
+                if (!userDoc.exists()) {
+                    await setDoc(userRef, {
+                        uid: user.uid,
+                        displayName: user.displayName,
+                        email: user.email,
+                        photoURL: user.photoURL,
+                        customUserId: userId,
+                        createdAt: new Date(),
+                        recentActivity: []
+                    });
+                } else {
+                    userId = userDoc.data().customUserId || userId;
+                }
+
+                loginModal.classList.add('hidden');
+                updateUIForUser(user);
+                navigateTo(window.location.hash || '#nutrition');
+            } else {
+                currentUser = null;
+                userId = null;
+                loginModal.classList.remove('hidden');
+                authContainer.innerHTML = '';
+            }
+        });
+
+        loginButton.addEventListener('click', () => {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider).catch(error => {
+                console.error("Google Sign-In Error:", error);
+                alert("Could not sign in with Google. Please try again.");
+            });
+        });
+
+        function handleLogout() {
+            signOut(auth).then(() => {
+                window.location.hash = '';
+                window.location.reload();
+            }).catch(error => {
+                console.error("Logout Error:", error);
+            });
+        }
+
+        // --- 6. UI RENDERING & ROUTING ---
+        function updateUIForUser(user) {
+            authContainer.innerHTML = `
+                <div class="relative">
+                    <button id="profile-button" class="w-10 h-10 rounded-full overflow-hidden border-2 border-yellow-400">
+                        <img src="${user.photoURL || 'https://placehold.co/40x40/1f2937/facc15?text=U'}" alt="User Avatar" class="w-full h-full object-cover">
+                    </button>
+                    <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-gray-700 rounded-md shadow-lg py-1 z-20">
+                        <a href="#settings" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-600" data-section="settings">Edit Profile</a>
+                        <button id="logout-button" class="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-600">Logout</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('profile-button').addEventListener('click', () => {
+                document.getElementById('profile-dropdown').classList.toggle('hidden');
+            });
+            document.getElementById('logout-button').addEventListener('click', handleLogout);
+            document.querySelectorAll('#profile-dropdown a').forEach(link => {
+                link.addEventListener('click', () => {
+                    document.getElementById('profile-dropdown').classList.add('hidden');
+                })
+            });
+        }
+
+        function navigateTo(hash) {
+            const section = hash.substring(1) || 'home';
+            renderSection(section);
+            updateActiveSidebar(section);
+        }
+
+        function updateActiveSidebar(activeSection) {
+            sidebarLinks.forEach(link => {
+                if (link.dataset.section === activeSection) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            pageTitle.textContent = document.querySelector(`a[data-section="${activeSection}"]`).title;
+
+            if (activeSection === 'settings') {
+                fab.classList.remove('hidden');
+                footer.classList.remove('hidden');
+            } else {
+                fab.classList.add('hidden');
+                footer.classList.add('hidden');
+            }
+        }
+
+        window.addEventListener('hashchange', () => navigateTo(window.location.hash));
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo(link.getAttribute('href'));
+            });
+        });
+        
+        function renderSection(section) {
+            appContent.innerHTML = ''; // Clear previous content
+            switch (section) {
+                case 'nutrition':
+                    renderNutritionSection();
+                    break;
+                case 'meal':
+                    renderMealSection();
+                    break;
+                case 'recipe':
+                    renderRecipeSection();
+                    break;
+                case 'calculators':
+                    renderCalculatorsSection();
+                    break;
+                case 'settings':
+                    renderSettingsSection();
+                    break;
+                case 'home':
+                default:
+                    renderHomeSection();
+                    break;
+            }
+        }
+
+        // --- 7. SECTION RENDERERS ---
+        
+        function renderHomeSection() {
+            appContent.innerHTML = `
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-white mb-4">Welcome to Calverse, ${currentUser?.displayName || 'User'}!</h2>
+                    <p class="text-lg text-gray-400">Your AI-powered nutrition and health companion.</p>
+                    <p class="mt-4 text-gray-500">Select an option from the sidebar to get started.</p>
+                </div>
+            `;
+        }
+        
+        function renderNutritionSection() {
+            appContent.innerHTML = `
+                <div class="max-w-3xl mx-auto">
+                    <div class="bg-gray-800 p-4 rounded-lg shadow-md">
+                        <h2 class="text-2xl font-bold text-white mb-4">Analyze Food Nutrition</h2>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="text" id="nutrition-input" class="flex-grow bg-gray-700 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="e.g., '100g soya chunks' or '1 large apple'">
+                            <button id="analyze-nutrition-btn" class="bg-yellow-400 text-gray-900 font-bold px-6 py-2 rounded-md hover:bg-yellow-500 transition">Analyze</button>
+                        </div>
+                         <div id="nutrition-suggestions" class="mt-3 flex flex-wrap gap-2">
+                            <button class="bg-gray-700 text-sm text-gray-300 px-3 py-1 rounded-full hover:bg-gray-600">1 glass milk</button>
+                            <button class="bg-gray-700 text-sm text-gray-300 px-3 py-1 rounded-full hover:bg-gray-600">2 boiled eggs</button>
+                            <button class="bg-gray-700 text-sm text-gray-300 px-3 py-1 rounded-full hover:bg-gray-600">100g chicken breast</button>
+                        </div>
+                    </div>
+                    <div id="nutrition-result" class="mt-6"></div>
+                </div>
+            `;
+            
+            document.getElementById('analyze-nutrition-btn').addEventListener('click', handleNutritionAnalysis);
+            document.querySelectorAll('#nutrition-suggestions button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('nutrition-input').value = btn.textContent;
+                    handleNutritionAnalysis();
+                });
+            });
+        }
+
+        async function handleNutritionAnalysis() {
+            const query = document.getElementById('nutrition-input').value.trim();
+            if (!query) {
+                alert('Please enter a food item.');
+                return;
+            }
+
+            const prompt = `
+                Analyze the nutrition for "${query}". Return a JSON object in the FDA Nutrition Facts label format.
+                The JSON object must have these exact keys: "servingSize", "calories", "nutrients".
+                "nutrients" should be an array of objects, each with "name", "amount", "dv" (Daily Value as a percentage number), and optional "isBold" (boolean).
+                Include major nutrients like Total Fat, Saturated Fat, Trans Fat, Cholesterol, Sodium, Total Carbohydrate, Dietary Fiber, Total Sugars, Added Sugars, and Protein.
+                Also include at least 4 key micronutrients like Vitamin D, Calcium, Iron, and Potassium.
+                Example structure:
+                {
+                  "servingSize": "1 cup (244g)",
+                  "calories": 150,
+                  "nutrients": [
+                    { "name": "Total Fat", "amount": "8g", "dv": 10, "isBold": true },
+                    { "name": "Saturated Fat", "amount": "1g", "dv": 5, "isBold": false },
+                    { "name": "Protein", "amount": "8g", "dv": 16, "isBold": true }
+                  ]
+                }
+            `;
+
+            const data = await callGemini(prompt);
+            if (data) {
+                renderNutritionLabel(data, 'nutrition-result');
+            }
+        }
+
+        function renderNutritionLabel(data, containerId) {
+            const container = document.getElementById(containerId);
+            if (!data || !data.servingSize || !data.calories || !data.nutrients) {
+                container.innerHTML = `<p class="text-red-400 text-center">Could not parse nutrition data. The AI response might be in an unexpected format.</p>`;
+                return;
+            }
+
+            let nutrientsHtml = data.nutrients.map(n => {
+                const isIndented = !n.isBold && (n.name.includes('Fat') || n.name.includes('Sugars'));
+                return `
+                    <div class="flex justify-between items-end py-1 border-t border-gray-600 ${n.isBold ? 'font-bold' : ''} ${isIndented ? 'pl-4' : ''}">
+                        <span>${n.name} ${n.amount}</span>
+                        ${n.dv !== undefined ? `<span>${n.dv}%</span>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="nutrition-label p-4 rounded-lg max-w-sm mx-auto">
+                    <h1 class="font-extrabold tracking-tighter">Nutrition Facts</h1>
+                    <div class="line"></div>
+                    <div class="py-1">
+                        <span>Serving size</span>
+                        <span class="float-right font-bold">${data.servingSize}</span>
+                    </div>
+                    <div class="line thin"></div>
+                    <div class="flex justify-between font-bold py-1">
+                        <span>Calories</span>
+                        <span>${data.calories}</span>
+                    </div>
+                    <div class="line"></div>
+                    <div class="text-right font-bold py-1">% Daily Value*</div>
+                    <div class="line medium"></div>
+                    ${nutrientsHtml}
+                    <div class="line"></div>
+                    <p class="text-xs pt-2">*The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2,000 calories a day is used for general nutrition advice.</p>
+                </div>
+            `;
+        }
+        
+        function renderMealSection() {
+            appContent.innerHTML = `
+                <div class="max-w-3xl mx-auto">
+                    <div class="bg-gray-800 p-4 rounded-lg shadow-md">
+                        <h2 class="text-2xl font-bold text-white mb-4">Know Your Meal</h2>
+                        <textarea id="meal-input" class="w-full bg-gray-700 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" rows="6" placeholder="Paste a list of ingredients (e.g., '100g chicken, 1 cup rice, 1 tbsp olive oil'), a recipe, or a YouTube recipe link."></textarea>
+                        <button id="analyze-meal-btn" class="mt-2 w-full bg-yellow-400 text-gray-900 font-bold px-6 py-2 rounded-md hover:bg-yellow-500 transition">Analyze Meal</button>
+                    </div>
+                    <div id="meal-result" class="mt-6"></div>
+                    <div id="meal-suggestions" class="mt-6"></div>
+                </div>
+            `;
+            document.getElementById('analyze-meal-btn').addEventListener('click', handleMealAnalysis);
+        }
+
+        async function handleMealAnalysis() {
+            const input = document.getElementById('meal-input').value.trim();
+            if (!input) {
+                alert('Please enter ingredients or a recipe link.');
+                return;
+            }
+
+            const prompt = `
+                Analyze the total nutrition for the following meal input: "${input}". 
+                First, determine the ingredients and quantities. If it's a URL, extract the recipe.
+                Then, calculate the total nutrition for the entire meal.
+                Finally, provide two smart, actionable suggestions to make the meal healthier.
+
+                Return a JSON object with the exact keys: "nutrition", "suggestions".
+                The "nutrition" value should be an object formatted for the FDA label (with "servingSize", "calories", "nutrients"). Set "servingSize" to "1 entire meal".
+                The "suggestions" value should be an array of two strings.
+                
+                Example Response:
+                {
+                  "nutrition": {
+                    "servingSize": "1 entire meal",
+                    "calories": 850,
+                    "nutrients": [
+                      { "name": "Total Fat", "amount": "40g", "dv": 51, "isBold": true },
+                      ...
+                    ]
+                  },
+                  "suggestions": [
+                    "Suggestion 1: Replace white rice with brown rice to increase fiber content.",
+                    "Suggestion 2: Bake the chicken instead of frying to reduce the total fat."
+                  ]
+                }
+            `;
+
+            const data = await callGemini(prompt);
+            if (data && data.nutrition && data.suggestions) {
+                renderNutritionLabel(data.nutrition, 'meal-result');
+                const suggestionsContainer = document.getElementById('meal-suggestions');
+                suggestionsContainer.innerHTML = `
+                    <h3 class="text-xl font-bold text-white mb-2">Healthy Suggestions</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-300">
+                        ${data.suggestions.map(s => `<li>${s}</li>`).join('')}
+                    </ul>
+                `;
+            } else {
+                 document.getElementById('meal-result').innerHTML = `<p class="text-red-400 text-center">Could not analyze the meal. Please check your input or try again.</p>`;
+                 document.getElementById('meal-suggestions').innerHTML = '';
+            }
+        }
+
+        function renderRecipeSection() {
+            appContent.innerHTML = `
+                <div class="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Recipe Suggestion -->
+                    <div class="bg-gray-800 p-4 rounded-lg shadow-md">
+                        <h2 class="text-2xl font-bold text-white mb-4">Healthy Recipe Ideas</h2>
+                        <textarea id="recipe-ingredients-input" class="w-full bg-gray-700 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" rows="4" placeholder="What ingredients do you have? (e.g., 'eggs, tomatoes, spinach, cheese')"></textarea>
+                        <button id="suggest-recipe-btn" class="mt-2 w-full bg-yellow-400 text-gray-900 font-bold px-6 py-2 rounded-md hover:bg-yellow-500 transition">Get Recipe</button>
+                        <div id="recipe-suggestion-result" class="mt-4 text-gray-300"></div>
+                    </div>
+
+                    <!-- Craving Box -->
+                    <div class="bg-gray-800 p-4 rounded-lg shadow-md">
+                        <h2 class="text-2xl font-bold text-white mb-4">Craving Something?</h2>
+                        <input type="text" id="craving-input" class="w-full bg-gray-700 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="e.g., 'ice cream', 'salty chips'">
+                        <button id="find-alternative-btn" class="mt-2 w-full bg-yellow-400 text-gray-900 font-bold px-6 py-2 rounded-md hover:bg-yellow-500 transition">Find Healthy Alternative</button>
+                        <div id="craving-alternative-result" class="mt-4 text-gray-300"></div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('suggest-recipe-btn').addEventListener('click', handleRecipeSuggestion);
+            document.getElementById('find-alternative-btn').addEventListener('click', handleCravingAlternative);
+        }
+
+        async function handleRecipeSuggestion() {
+            const ingredients = document.getElementById('recipe-ingredients-input').value.trim();
+            if (!ingredients) {
+                alert('Please list your ingredients.');
+                return;
+            }
+            const resultContainer = document.getElementById('recipe-suggestion-result');
+            resultContainer.innerHTML = `<div class="loader mx-auto"></div>`;
+
+            const prompt = `
+                Based on these ingredients: "${ingredients}", suggest one healthy and simple recipe.
+                Return a JSON object with keys "recipeName", "description", "ingredients" (an array of strings), and "instructions" (an array of strings).
+                
+                Example:
+                {
+                  "recipeName": "Spinach and Tomato Omelette",
+                  "description": "A quick and protein-packed breakfast.",
+                  "ingredients": ["2 eggs", "1 cup spinach", "1/2 tomato, diced", "1/4 cup cheese"],
+                  "instructions": ["Whisk eggs in a bowl.", "Heat a pan...", "..."]
+                }
+            `;
+            const data = await callGemini(prompt);
+            if (data && data.recipeName) {
+                resultContainer.innerHTML = `
+                    <h3 class="font-bold text-lg text-yellow-400">${data.recipeName}</h3>
+                    <p class="text-sm italic mb-2">${data.description}</p>
+                    <h4 class="font-semibold mt-2">Ingredients:</h4>
+                    <ul class="list-disc list-inside text-sm">${data.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+                    <h4 class="font-semibold mt-2">Instructions:</h4>
+                    <ol class="list-decimal list-inside text-sm">${data.instructions.map(i => `<li>${i}</li>`).join('')}</ol>
+                `;
+            } else {
+                resultContainer.innerHTML = `<p class="text-red-400">Could not generate a recipe. Try different ingredients.</p>`;
+            }
+        }
+
+        async function handleCravingAlternative() {
+            const craving = document.getElementById('craving-input').value.trim();
+            if (!craving) {
+                alert('Please enter your craving.');
+                return;
+            }
+            const resultContainer = document.getElementById('craving-alternative-result');
+            resultContainer.innerHTML = `<div class="loader mx-auto"></div>`;
+
+            const prompt = `
+                I'm craving "${craving}". Suggest a healthier alternative and a simple recipe for it.
+                Return a JSON object with keys "alternativeName", "reason", and "recipe" (a string with simple instructions).
+
+                Example for "ice cream":
+                {
+                  "alternativeName": "Greek Yogurt with Berries",
+                  "reason": "It's high in protein and lower in sugar, but still creamy and satisfying.",
+                  "recipe": "Mix 1 cup of plain Greek yogurt with a handful of mixed berries and a drizzle of honey or maple syrup. For a frozen treat, spread on a tray and freeze for 2 hours."
+                }
+            `;
+            const data = await callGemini(prompt);
+             if (data && data.alternativeName) {
+                resultContainer.innerHTML = `
+                    <h3 class="font-bold text-lg text-yellow-400">${data.alternativeName}</h3>
+                    <p class="text-sm italic mb-2">${data.reason}</p>
+                    <p class="text-sm">${data.recipe}</p>
+                `;
+            } else {
+                resultContainer.innerHTML = `<p class="text-red-400">Could not find an alternative. Please try again.</p>`;
+            }
+        }
+
+        function renderCalculatorsSection() {
+            appContent.innerHTML = `
+                <div class="max-w-3xl mx-auto space-y-4" id="calculator-accordion">
+                    <!-- BMI Calculator -->
+                    <div class="bg-gray-800 rounded-lg">
+                        <h2>
+                            <button type="button" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-300 hover:bg-gray-700 rounded-lg" aria-expanded="false">
+                                <span>BMI Calculator</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </h2>
+                        <div class="accordion-content p-5 border-t border-gray-700">
+                            <!-- BMI Form -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="bmi-height" class="block mb-2 text-sm font-medium text-gray-400">Height (cm)</label>
+                                    <input type="number" id="bmi-height" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block w-full p-2.5">
+                                </div>
+                                <div>
+                                    <label for="bmi-weight" class="block mb-2 text-sm font-medium text-gray-400">Weight (kg)</label>
+                                    <input type="number" id="bmi-weight" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block w-full p-2.5">
+                                </div>
+                            </div>
+                            <button id="calc-bmi-btn" class="mt-4 bg-yellow-400 text-gray-900 font-bold py-2 px-4 rounded">Calculate</button>
+                            <div id="bmi-result" class="mt-4 text-lg font-bold"></div>
+                        </div>
+                    </div>
+                    <!-- BMR Calculator -->
+                     <div class="bg-gray-800 rounded-lg">
+                        <h2>
+                            <button type="button" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-300 hover:bg-gray-700 rounded-lg" aria-expanded="false">
+                                <span>BMR Calculator</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </h2>
+                        <div class="accordion-content p-5 border-t border-gray-700">
+                            <!-- BMR Form -->
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-400">Gender</label>
+                                    <div class="flex gap-4">
+                                        <label><input type="radio" name="bmr-gender" value="male" class="text-yellow-400 focus:ring-yellow-500"> Male</label>
+                                        <label><input type="radio" name="bmr-gender" value="female" class="text-yellow-400 focus:ring-yellow-500"> Female</label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="bmr-age" class="block mb-2 text-sm font-medium text-gray-400">Age</label>
+                                    <input type="number" id="bmr-age" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg w-full p-2.5">
+                                </div>
+                                <div>
+                                    <label for="bmr-height" class="block mb-2 text-sm font-medium text-gray-400">Height (cm)</label>
+                                    <input type="number" id="bmr-height" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg w-full p-2.5">
+                                </div>
+                                <div>
+                                    <label for="bmr-weight" class="block mb-2 text-sm font-medium text-gray-400">Weight (kg)</label>
+                                    <input type="number" id="bmr-weight" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg w-full p-2.5">
+                                </div>
+                            </div>
+                            <button id="calc-bmr-btn" class="mt-4 bg-yellow-400 text-gray-900 font-bold py-2 px-4 rounded">Calculate</button>
+                            <div id="bmr-result" class="mt-4 text-lg font-bold"></div>
+                        </div>
+                    </div>
+                    <!-- More calculators can be added here -->
+                </div>
+            `;
+            setupAccordion();
+            document.getElementById('calc-bmi-btn').addEventListener('click', calculateBmi);
+            document.getElementById('calc-bmr-btn').addEventListener('click', calculateBmr);
+        }
+        
+        function setupAccordion() {
+            const accordionButtons = document.querySelectorAll('#calculator-accordion button[aria-expanded]');
+            accordionButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+                    
+                    // Close all accordions first
+                    accordionButtons.forEach(btn => {
+                        btn.setAttribute('aria-expanded', 'false');
+                        btn.querySelector('i').classList.remove('rotate-180');
+                    });
+
+                    // Open the clicked one if it was closed
+                    if (!isExpanded) {
+                        button.setAttribute('aria-expanded', 'true');
+                        button.querySelector('i').classList.add('rotate-180');
+                    }
+                });
+            });
+        }
+
+        function calculateBmi() {
+            const height = parseFloat(document.getElementById('bmi-height').value);
+            const weight = parseFloat(document.getElementById('bmi-weight').value);
+            const resultEl = document.getElementById('bmi-result');
+            if (height > 0 && weight > 0) {
+                const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+                let category = '';
+                if (bmi < 18.5) category = 'Underweight';
+                else if (bmi < 24.9) category = 'Normal weight';
+                else if (bmi < 29.9) category = 'Overweight';
+                else category = 'Obesity';
+                resultEl.innerHTML = `Your BMI is <span class="text-yellow-400">${bmi}</span> (${category})`;
+            } else {
+                resultEl.textContent = 'Please enter valid height and weight.';
+            }
+        }
+
+        function calculateBmr() {
+            const gender = document.querySelector('input[name="bmr-gender"]:checked')?.value;
+            const age = parseFloat(document.getElementById('bmr-age').value);
+            const height = parseFloat(document.getElementById('bmr-height').value);
+            const weight = parseFloat(document.getElementById('bmr-weight').value);
+            const resultEl = document.getElementById('bmr-result');
+
+            if (gender && age > 0 && height > 0 && weight > 0) {
+                let bmr = 0;
+                if (gender === 'male') {
+                    bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+                } else {
+                    bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+                }
+                resultEl.innerHTML = `Your BMR is <span class="text-yellow-400">${bmr.toFixed(0)}</span> calories/day`;
+            } else {
+                resultEl.textContent = 'Please fill in all fields correctly.';
+            }
+        }
+
+        async function renderSettingsSection() {
+            const userRef = doc(db, "users", currentUser.uid);
+            const userDoc = await getDoc(userRef);
+            const userData = userDoc.data();
+
+            appContent.innerHTML = `
+                <div class="max-w-3xl mx-auto bg-gray-800 p-6 rounded-lg shadow-md">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <img src="${userData.photoURL}" alt="Avatar" class="w-20 h-20 rounded-full border-2 border-yellow-400">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">${userData.displayName}</h2>
+                            <p class="text-sm text-gray-400">User ID: ${userData.customUserId}</p>
+                            <p class="text-sm text-gray-400">${userData.email}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="displayName" class="block mb-2 text-sm font-medium text-gray-400">Display Name</label>
+                            <input type="text" id="displayName" value="${userData.displayName}" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg w-full p-2.5">
+                        </div>
+                        <button id="update-profile-btn" class="bg-yellow-400 text-gray-900 font-bold py-2 px-4 rounded">Update Profile</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('update-profile-btn').addEventListener('click', async () => {
+                const newName = document.getElementById('displayName').value.trim();
+                if (newName && newName !== currentUser.displayName) {
+                    loadingOverlay.classList.remove('hidden');
+                    try {
+                        await updateProfile(currentUser, { displayName: newName });
+                        await setDoc(userRef, { displayName: newName }, { merge: true });
+                        alert('Profile updated successfully!');
+                        // Refresh header
+                        updateUIForUser(auth.currentUser);
+                        renderSettingsSection(); // Re-render to show changes
+                    } catch (error) {
+                        console.error("Profile update error:", error);
+                        alert('Failed to update profile.');
+                    } finally {
+                        loadingOverlay.classList.add('hidden');
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
